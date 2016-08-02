@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+
+    <!-- Viewport mobile tag for sensible mobile support -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+    
+    <link rel="stylesheet" href="/styles/angular-toastr.css">
+    <link rel="stylesheet" href="/styles/bootstrap.3.1.1.css">
+    <link rel="stylesheet" href="/styles/handsontable.full.min.css">
+    <link rel="stylesheet" href="/styles/importer.css">
+    
+
+    <!--Added this so the client has access to the csrf tag and it's grabbed first service side on every page -->
+    <script type="text/javascript">
+    window.SAILS_LOCALS = { _csrf: "<%= _csrf %>" };
+    </script>
+
+  </head>
+
+  <body ng-app="HomepageModule" ng-controller="HomepageController" ng-cloak>
+
+    <div class="container-fluid">
+      <!-- Creates the navbar -->
+        <nav class="navbar navbar-default navbar-inverse">
+          <!-- This creates the mechanism for collapse button -->
+          <button type="button" class="navbar-toggle" data-toggle="collapse" ng-init="navCollapsed = true" ng-click="navCollapsed = !navCollapsed">
+            <!-- This controls the number of lines in the image when the nav collapse -->
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+
+          <!-- This is the brand on the left-hand side. -->
+          <a class="navbar-brand" href="/#"> SeGWADE</a>
+          <div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'">
+          <form ng-submit="submitLoginForm()" class="navbar-form navbar-right">
+
+              <div class="form-group">
+                  <input ng-model="loginForm.email" type="text" placeholder="Email" name="email" class="form-control">
+              </div>
+              <div class="form-group">
+                  <input ng-model="loginForm.password" type="password" placeholder="Password" name="password" class="form-control">
+              </div>
+              <button type="submit" class="btn btn-success">
+                <span ng-show="!loginForm.loading">Sign in</span>
+                <span ng-show="loginForm.loading" class="fa fa-spinner"></span>
+                <span ng-show="loginForm.loading">Signing in...</span>
+              </button>
+              <input type="hidden" name="_csrf" value="<%= _csrf %>" />
+          </form>
+        </nav>
+      </div>
+    </div>
+    <div class="row">
+      <div class=" col-md-8 col-md-offset-2">
+        <div class="jumbotron">
+          <h1>Serious Game for<br>WDS Analysis, Design & Evaluation</h1>
+          <h2>...optimise the flow of water in a network of pipes</h2>
+          <a href="/signup" class="btn btn-lg btn-success">Sign up now!</a>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="container">
+          <hr>
+          <footer class="footer pull-right">
+              <div>
+                  <a href="http://www.ex.ac.uk/cws">University of Exeter, Centre for Water Systems</a>
+                  <div>contact us for more details</div>
+              </div>
+          </footer>
+      </div>
+    </div>
+
+    <script src="/js/dependencies/sails.io.js"></script>
+    <script src="/js/dependencies/jquery-2.2.3.min.js"></script>
+    <script src="/js/dependencies/angular.min.js"></script>
+    <script src="/js/dependencies/angular-toastr.js"></script>
+    <script src="/js/dependencies/bootstrap-select.min.js"></script>
+    <script src="/js/dependencies/compareTo.module.js"></script> 
+    <script src="/js/public/homepage/HomepageModule.js"></script>
+    <script src="/js/public/homepage/HomepageController.js"></script>
+    
+  </body>
+</html>

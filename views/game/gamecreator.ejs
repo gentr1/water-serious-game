@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SeGWADE | Welcome back, <%= me.name %>!</title>
+    <!-- Viewport mobile tag for sensible mobile support -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    
+    <link rel="stylesheet" href="/styles/bootstrap.3.1.1.css">
+    <link rel="stylesheet" href="/styles/importer.css">
+    
+	<link rel="stylesheet" href="/styles/handsontable.full.min.css">
+    <!--Added this so the client has access to the csrf tag and it's grabbed first service side on every page -->
+    <script type="text/javascript">
+    window.SAILS_LOCALS = {
+      _csrf: '<%= _csrf %>',
+      me: <%- JSON.stringify(me) %>
+    };
+    var myuser = <%-JSON.stringify(me)%>
+	var listusers = <%-JSON.stringify(listusers)%>
+	var listnetworks = <%-JSON.stringify(listnetworks)%>
+	//var input=[];
+	//console.log(myuser);
+	//console.log(listusers);
+	//console.log(listnetworks);
+    </script>
+	
+	
+	
+  </head>
+  <body ng-app="DashboardModule" ng-controller="DashboardController">
+	
+    <!-- container = Fixed-width container container-fluid = full-width -->
+    <div id="big-container" >
+      <!-- Creates the navbar -->
+      <nav id ="mynav" class="navbar navbar-default navbar-inverse" style="margin-left:15px;margin-right:15px;height:50px">
+        <!-- This creates the mechanism for collapse button -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" ng-init="navCollapsed = true" ng-click="navCollapsed = !navCollapsed">
+        <!-- This controls the number of lines in the image when the nav collapse -->
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        </button>
+        <!-- This is the brand on the left-hand side. -->
+        <a class="navbar-brand" href="/#/"> SeGWADE</a>
+        <!-- This is what is the above collapse button points to when the mark-up below is collapsed -->
+        <div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'">
+          <!-- This is what "styles" the li's as navbar items -->
+          <ul class="nav navbar-nav navbar-right">
+            <!-- navbar-right pulls this element right -->
+            <!-- Using ng-show instead of ng-if because we need this mark-up to be in the dom when signup controller
+            fires.  If it's not there (which it wouldn't be in the case of ng-if) then the scope of the signup
+            controller will not be tied to this element. -->
+			<li>
+              <a id="netaccess" href="/seegames" style="">games</a>
+            </li>
+			<li>
+              <a id="netaccess" href="/seenetworks">networks</a>
+            </li>
+            <li>
+              <a href="/logout">sign-out</a>
+            </li>
+            <!-- <a ng-controller="signinController" class="btn btn-default navbar-btn navbar-right" href="#" ng-if="!isAuthenticated">sign-in</a> -->
+            <!-- Using ng-show instead of ng-if because we need this mark-up to be in the dom when signup controller
+            fires.  If it's not there (which it wouldn't be in the case of ng-if) then the scope of the signup
+            controller will not be tied to this element. -->
+          </ul>
+        </div>
+      </nav>
+
+      <h1 id="maintitle" align="center" style="height:39px;">Game creator</h1>
+	  <form action="creategame" enctype="multipart/form-data" method="post">
+		  <div style="width:100%; text-align:center;" align="center">
+		  <br><br>
+		  <input type="text" name="network-name" id ="network-name" style="visibility: hidden;" value="">
+		  <input type="text" name="players-teams" id ="players-teams" style="visibility: hidden;" value="">
+		  <input type="text" name="team-size" id ="team-size" style="visibility: hidden;" value="">
+		  
+		  <br>
+		  
+		  <strong>Game name :</strong><input type="text" name="game-name" id ="game-name" placeholder="Enter a unique name">
+		  <div align="center">
+			<strong>Select epanet network :</strong><select name="listnet" id="listnets"  onchange="OnSelectionChange (this)">
+			</select><br>
+			<strong>Select team size :</strong><select name="teamsize" id="teamsize"  onchange="OnSelectionChangeTeam (this)">
+			</select>
+			<br><strong>Time points :</strong><input type="number" min="1" max="24" name="time-points" id ="time-points"value=1>
+		  </div><br>
+		  
+		  <div align="center" >
+		  
+		  <div id="title_players"><strong>Players, teams, and team roles allocation</strong></div>
+		  <div id="table1" style="height:400px;overflow:auto;text-align:left;"></div>
+		  </div>
+		  
+		   				
+		  </div>
+		  
+		  <br><br>
+		  <input type="submit" id="cre" class="btn btn-lg btn-primary btn-block" value="Create"/>
+		  <input type="hidden" name="_csrf" value="<%= _csrf %>" />
+		</form>	  
+    </div>
+	
+   
+    <script src="/js/dependencies/sails.io.js"></script>
+    <script src="/js/dependencies/jquery-2.2.3.min.js"></script>
+    <script src="/js/dependencies/Underscore.1.8.3.min.js"></script>
+   
+   
+	  
+    
+    
+	<script src="/js/dependencies/handsontable.full.min.js"></script>
+	<script>
+	var nselect = document.getElementById('listnets');
+	for (var i = 0; i<listnetworks.length; i++){
+		var opt = document.createElement('option');
+		opt.value = listnetworks[i]['name'];
+		opt.innerHTML = listnetworks[i]['name'];
+		nselect.appendChild(opt);
+	}
+	if (listnetworks.length>0){
+		document.getElementById('network-name').value=nselect.options[nselect.selectedIndex].value;
+	}
+	
+	var obj_players_teams_roles={};
+	var listTeams=[];
+	var listUsersTeamsRoles=[];
+	listTeams.push(-1);
+	for(var i=0;i<listusers.length;i++){
+		listUsersTeamsRoles.push({user:listusers[i]['name'],team:(i),team_member:0});
+		listTeams.push(i);
+		obj_players_teams_roles[listusers[i]['name']]={team:(i),team_member:0};
+	}
+	
+	
+	var sselect = document.getElementById('teamsize');
+	for (var i = 0; i<listUsersTeamsRoles.length; i++){
+		var opt = document.createElement('option');
+		opt.value = i+1;
+		opt.innerHTML = ""+(i+1);
+		sselect.appendChild(opt);
+	}
+	var team_size=1;
+	var listTeamRoles=[-1,0];
+	document.getElementById('team-size').value=""+team_size;
+	
+	//document.getElementById(listUsersTeamsRoles);
+	var $container = $("#table1");
+	$container.handsontable({
+	  data: listUsersTeamsRoles,
+	  stretchH:"all",
+	  //width: 400,
+	  //height: 400,
+	  startRows: 1,
+	  startCols: 4,
+	  colHeaders: true,
+	  colHeaders: ['User', 'Team', 'Team member'],
+	  columns: [
+		{data: "user",editor: false},
+		{data: "team",type: 'dropdown', source: listTeams},
+		{data: "team_member",type: 'dropdown', source: listTeamRoles},
+	  ],
+	  afterChange: function(changes, source) {
+			var listChanged =this.getData();
+			for (var i=0, j=listChanged.length; i<j; i++){
+				
+				if (obj_players_teams_roles.hasOwnProperty(listChanged[i][0])){
+					obj_players_teams_roles[listChanged[i][0]]['team']=listChanged[i][1];
+					obj_players_teams_roles[listChanged[i][0]]['team_member']=listChanged[i][2];
+				}
+			}							
+			document.getElementById("players-teams").value=JSON.stringify(obj_players_teams_roles);
+			
+	  },
+	  minSpareRows: 0
+	});
+	var ct = $container.handsontable("getInstance");
+	
+	function OnSelectionChange (select) {
+		var selectedOption = select.options[select.selectedIndex];
+		//alert ("The selected option is " + selectedOption.value);
+		document.getElementById('network-name').value=selectedOption.value;
+		//console.log(document.getElementById('network-name').value)
+	}
+	
+	function OnSelectionChangeTeam (select) {
+		var selectedOption = select.options[select.selectedIndex];
+		team_size=parseInt(selectedOption.value);
+		document.getElementById('team-size').value=""+team_size;
+		//alert ("The selected option is " + selectedOption.value);
+		//document.getElementById('network-name').value=selectedOption.value;
+		//console.log(team_size);
+		listTeamRoles=[];
+		for (var i = 0; i<team_size; i++){
+			listTeamRoles.push(i);
+		}
+		listTeamRoles.push(-1);
+		ct.updateSettings({
+	  data: listUsersTeamsRoles,
+	  stretchH:"all",
+	  //width: 400,
+	  //height: 400,
+	  startRows: 1,
+	  startCols: 4,
+	  colHeaders: true,
+	  colHeaders: ['User', 'Team', 'Team member'],
+	  columns: [
+		{data: "user",editor: false},
+		{data: "team",type: 'dropdown', source: listTeams},
+		{data: "team_member",type: 'dropdown', source: listTeamRoles},
+	  ],
+	  afterChange: function(changes, source) {
+			var listChanged =this.getData();
+			for (var i=0, j=listChanged.length; i<j; i++){
+				
+				if (obj_players_teams_roles.hasOwnProperty(listChanged[i][0])){
+					obj_players_teams_roles[listChanged[i][0]]['team']=listChanged[i][1];
+					obj_players_teams_roles[listChanged[i][0]]['team_member']=listChanged[i][2];
+				}
+			}							
+			document.getElementById("players-teams").value=JSON.stringify(obj_players_teams_roles);
+			//console.log(document.getElementById("players-teams").value)
+	  },
+	  minSpareRows: 0
+	});
+    
+    ct.render();
+	}
+	
+	
+	</script>
+  </body>
+</html>

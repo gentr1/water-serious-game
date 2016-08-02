@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SeGWADE</title>
+    <!-- Viewport mobile tag for sensible mobile support -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    
+    <link rel="stylesheet" href="/styles/bootstrap.3.1.1.css">
+    <link rel="stylesheet" href="/styles/importer.css">
+    
+	<link rel="stylesheet" href="handsontable.full.min.css">
+    <!--Added this so the client has access to the csrf tag and it's grabbed first service side on every page -->
+    <script type="text/javascript">
+    window.SAILS_LOCALS = {
+      _csrf: '<%= _csrf %>',
+      me: <%- JSON.stringify(me) %>
+    };
+    var myuser = <%-JSON.stringify(me)%>
+	var games = <%-JSON.stringify(listgames)%>
+	//var input=[];
+	//console.log(myuser);
+    </script>
+	<style>
+	
+	//.table{width:300px}
+
+	</style>
+	
+  </head>
+  <body ng-app="DashboardModule" ng-controller="DashboardController">
+	
+    <!-- container = Fixed-width container container-fluid = full-width -->
+    <div id="big-container" >
+      <!-- Creates the navbar -->
+      <nav id ="mynav" class="navbar navbar-default navbar-inverse" style="margin-left:15px;margin-right:15px;height:50px">
+        <!-- This creates the mechanism for collapse button -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" ng-init="navCollapsed = true" ng-click="navCollapsed = !navCollapsed">
+        <!-- This controls the number of lines in the image when the nav collapse -->
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        </button>
+        <!-- This is the brand on the left-hand side. -->
+        <a class="navbar-brand" href="/#/"> SeGWADE</a>
+        <!-- This is what is the above collapse button points to when the mark-up below is collapsed -->
+        <div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'">
+          <!-- This is what "styles" the li's as navbar items -->
+          <ul class="nav navbar-nav navbar-right">
+            <!-- navbar-right pulls this element right -->
+            <!-- Using ng-show instead of ng-if because we need this mark-up to be in the dom when signup controller
+            fires.  If it's not there (which it wouldn't be in the case of ng-if) then the scope of the signup
+            controller will not be tied to this element. -->
+			<li>
+              <a id="useraccess" href="/editusers" style="">users</a>
+            </li>
+			<li>
+              <a id="gameaccess" href="/seegames" style="">games</a>
+            </li>
+			<li>
+              <a id="netaccess" href="/seenetworks">networks</a>
+            </li>
+            <li>
+              <a href="/logout">sign-out</a>
+            </li>
+            <!-- <a ng-controller="signinController" class="btn btn-default navbar-btn navbar-right" href="#" ng-if="!isAuthenticated">sign-in</a> -->
+            <!-- Using ng-show instead of ng-if because we need this mark-up to be in the dom when signup controller
+            fires.  If it's not there (which it wouldn't be in the case of ng-if) then the scope of the signup
+            controller will not be tied to this element. -->
+          </ul>
+        </div>
+      </nav>
+
+      <h1 id="maintitle" align="center" style="height:39px;">List of games</h1>
+	  <br><br>
+	  <div align="center"><a id="toupload" href="/gamecreator" class="btn btn-sm btn-primary">Add new game</a>
+	 
+	  <!-- <form action="/updateNetwork" id="network-edit-form" method="POST" class="form-signin form-inline"> -->
+	  <table id="listAllGames" class="table" style="font-size:18px;width:200px">
+		<thead>
+		  <tr>
+			<th style="min-width:200px">Game name</th>
+			<th colspan="3">Action</th>
+		  </tr>
+		  
+		</thead>
+	  </table>
+	  <!-- <input type="text" name="netid" id ="netid" style="visibility: hidden;" value="">
+	  <input type="submit" id="ub" style="visibility:hidden" class="btn btn-lg btn-primary btn-block" value="Update"/>-->
+	
+	  
+    </div>
+    <script src="/js/dependencies/sails.io.js"></script>
+    <script src="/js/dependencies/jquery-2.2.3.min.js"></script>
+    <script src="/js/dependencies/Underscore.1.8.3.min.js"></script>
+  
+	<script>
+	var tbl  = document.getElementById('listAllGames');
+    //tbl.style.width  = '100px';
+    //tbl.style.border = '1px solid black';
+	for(var i = 0; i < games.length; i++){
+	
+		//var myform = document.createElement("form");
+    //myform.action = "myForm.aspx";
+   // myform.method = "post";
+
+
+    //product = document.createElement("input");
+    //product.value = "value";
+    //product.name = "name";
+
+    //myform.appendChild(product)
+        var tr = tbl.insertRow();
+		var td0 = tr.insertCell();
+		var tx = document.createTextNode(games[i]['name']);
+		//td0.appendChild(tx0);
+		td0.appendChild(document.createElement('br'));
+		td0.appendChild(tx);
+		
+        var td1 = tr.insertCell();
+		//td1.style.block="Inline"
+		//td1.style.vertical-align="center";
+		// var a = document.createElement('a');
+		// a.setAttribute('href','/network/show/'+games[i]['id']);
+		// a.className += "btn btn-xs btn-success";
+		// //a.style.width="300px";
+		// a.innerHTML = "View";
+		// td1.appendChild(a);
+		var myform = document.createElement("form");
+		myform.action = "/showgame";
+		myform.method = "POST";
+		var t0 = document.createElement("input");
+		t0.type = "text";	
+		t0.value = games[i]['id'];
+		t0.style.visibility="hidden";
+		t0.style.height="0px";
+		t0.name = "nid";
+		myform.appendChild(t0);
+		
+		var a0 = document.createElement("input");
+		a0.id = "f"+i;
+		a0.type="submit"; 
+		a0.value = "View game";
+		a0.className+="btn btn-sm btn-success"
+		myform.appendChild(a0);
+		if (games[i]['is_on']==false){
+			a0.className += "disabled";
+			//a0.style.pointerEvents = "none";
+			//$('#f'+i).prop('disabled', true);
+		}
+		var a1 = document.createElement("input");
+		a1.name="_csrf";
+		a1.type="hidden"; 
+		a1.style.height="0px";
+		a1.value = window.SAILS_LOCALS._csrf;
+		
+		td1.appendChild(myform);
+		myform.appendChild(a1);
+		
+		
+		var td12 = tr.insertCell();
+		//td1.style.block="Inline"
+		//td1.style.vertical-align="center";
+		// var a = document.createElement('a');
+		// a.setAttribute('href','/network/show/'+games[i]['id']);
+		// a.className += "btn btn-xs btn-success";
+		// //a.style.width="300px";
+		// a.innerHTML = "View";
+		// td1.appendChild(a);
+		var myform12 = document.createElement("form");
+		myform12.action = "/editgame";
+		myform12.method = "POST";
+		var t012 = document.createElement("input");
+		t012.type = "text";	
+		t012.value = games[i]['id'];
+		t012.style.visibility="hidden";
+		t012.style.height="0px";
+		t012.name = "nid";
+		myform12.appendChild(t012);
+		
+		var a012 = document.createElement("input");
+		a012.id = "f"+i;
+		a012.type="submit"; 
+		a012.value = "Settings";
+		a012.className+="btn btn-sm btn-info"
+		myform12.appendChild(a012);
+		var a12 = document.createElement("input");
+		a12.name="_csrf";
+		a12.type="hidden"; 
+		a12.style.height="0px";
+		a12.value = window.SAILS_LOCALS._csrf;
+		
+		td12.appendChild(myform12);
+		myform12.appendChild(a12);
+		
+		
+        var td2 = tr.insertCell();
+		
+		var myform2 = document.createElement("form");
+		myform2.action = "/deletegame";
+		myform2.method = "POST";
+		var t2 = document.createElement("input");
+		t2.type = "text";
+		t2.value = games[i]['id'];
+		t2.style.visibility="hidden";
+		t2.name = "nid";
+		t2.style.height="0px";
+		myform2.appendChild(t2);
+		// var a2 = document.createElement('a');
+		// a2.setAttribute('href','/network/delete/'+games[i]['id']);
+		// a2.className += "btn btn-xs btn-danger";
+		// //a.style.width="300px";
+		// a2.innerHTML = "Delete";
+		var a2 = document.createElement("input");
+		a2.id = "f"+i;
+		a2.type="submit"; 
+		a2.value = "Delete";
+		a2.className+="btn btn-sm btn-danger"
+		myform2.appendChild(a2);
+		var a3 = document.createElement("input");
+		a3.name="_csrf";
+		a3.type="hidden"; 
+		a3.value = window.SAILS_LOCALS._csrf;
+		
+		
+		
+		td2.appendChild(myform2);
+         myform2.appendChild(a3);   
+        
+    }
+	</script>
+  
+  
+  </body>
+</html>

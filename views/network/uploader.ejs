@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SeGWADE | Welcome back, <%= me.name %>!</title>
+    <!-- Viewport mobile tag for sensible mobile support -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    
+    <link rel="stylesheet" href="/styles/bootstrap.3.1.1.css">
+    <link rel="stylesheet" href="/styles/importer.css">
+    
+	<link rel="stylesheet" href="/styles/handsontable.full.min.css">
+    <!--Added this so the client has access to the csrf tag and it's grabbed first service side on every page -->
+    <script type="text/javascript">
+    window.SAILS_LOCALS = {
+      _csrf: '<%= _csrf %>',
+      me: <%- JSON.stringify(me) %>
+    };
+    var myuser = <%-JSON.stringify(me)%>
+	//var input=[];
+	console.log(myuser);
+    </script>
+	
+	<style>
+	.handsontable col.rowHeader {
+		width: 100px;
+	}
+	</style>
+	
+  </head>
+  <body ng-app="DashboardModule" ng-controller="DashboardController">
+	
+    <!-- container = Fixed-width container container-fluid = full-width -->
+    <div id="big-container" >
+      <!-- Creates the navbar -->
+      <nav id ="mynav" class="navbar navbar-default navbar-inverse" style="margin-left:15px;margin-right:15px;height:50px">
+        <!-- This creates the mechanism for collapse button -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" ng-init="navCollapsed = true" ng-click="navCollapsed = !navCollapsed">
+        <!-- This controls the number of lines in the image when the nav collapse -->
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        </button>
+        <!-- This is the brand on the left-hand side. -->
+        <a class="navbar-brand" href="/#/"> SeGWADE</a>
+        <!-- This is what is the above collapse button points to when the mark-up below is collapsed -->
+        <div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'">
+          <!-- This is what "styles" the li's as navbar items -->
+          <ul class="nav navbar-nav navbar-right">
+            <!-- navbar-right pulls this element right -->
+            <!-- Using ng-show instead of ng-if because we need this mark-up to be in the dom when signup controller
+            fires.  If it's not there (which it wouldn't be in the case of ng-if) then the scope of the signup
+            controller will not be tied to this element. -->
+			<li>
+              <a id="gameaccess" href="/seegames" style="">games</a>
+            </li>
+			<li>
+              <a id="netaccess" href="/seenetworks">networks</a>
+            </li>
+            <li>
+              <a href="/logout">sign-out</a>
+            </li>
+            <!-- <a ng-controller="signinController" class="btn btn-default navbar-btn navbar-right" href="#" ng-if="!isAuthenticated">sign-in</a> -->
+            <!-- Using ng-show instead of ng-if because we need this mark-up to be in the dom when signup controller
+            fires.  If it's not there (which it wouldn't be in the case of ng-if) then the scope of the signup
+            controller will not be tied to this element. -->
+          </ul>
+        </div>
+      </nav>
+
+      <h1 id="maintitle" align="center" style="height:39px;">EPANET network uploader</h1>
+	  <form action="uploadnetwork" enctype="multipart/form-data" method="post">
+		  <div style="width:100%; text-align:center;" align="center">
+		  <br><br>
+		  <input type="text" name="network-junctions" id ="network-junctions" style="visibility: hidden;" value="">
+		  <input type="text" name="network-reservoirs" id ="network-reservoirs" style="visibility: hidden;" value="">
+		  <input type="text" name="network-tanks" id ="network-tanks" style="visibility: hidden;" value="">
+		  <input type="text" name="network-pumps" id ="network-pumps" style="visibility: hidden;" value="">
+		  <input type="text" name="pump-curves" id ="pump-curves" style="visibility: hidden;" value="">
+		  <input type="text" name="network-valves" id ="network-valves" style="visibility: hidden;" value="">
+		  <input type="text" name="network-pipes" id ="network-pipes" style="visibility: hidden;" value="">
+		  <input type="text" name="network-backdrop" id ="network-backdrop" style="visibility: hidden;" value="">
+		  <input type="text" name="pipe-diameters" id ="pipe-diameters" style="visibility: hidden;" value="">
+		  <input type="text" name="pipe-diameters-costs" id ="pipe-diameters-costs" style="visibility: hidden;" value="">
+		  <input type="text" name="min-max-diff-pressure" id ="min-max-diff-pressure" style="visibility: hidden;" value="">
+		  <input type="text" name="min-max-age" id ="min-max-age" style="visibility: hidden;" value="">
+		  <input type="text" name="min-max-leakage" id ="min-max-leakage" style="visibility: hidden;" value="">
+		  <br>
+		  <strong>Network name :</strong><input type="text" name="network-name" id ="network-name" placeholder="Enter a unique name">
+		  <div align="center"><input type="file" id="inputFileUpload" name="epanetfile" onchange="readSingleFile(this);" size="25"></div><br>
+		  <div id="title-junctions"></div>
+		  <div style="width:30%;" >
+		  <div id=""><strong>Mininum pressure for junctions</strong></div>
+		  <div id="tablemp" style="height:400px;overflow:auto;"></div>
+		  </div>
+		  <div style="width:100%;" >
+		  <div><strong>Pipe diameters</strong></div>
+		  <div id="table0" style="height:50px;overflow:auto;"></div>
+		  </div>
+		  <div><strong>Pipe diameters costs</strong></div>
+		  <div id="table0c" style="height:50px;overflow:auto;"></div>
+		  </div>
+		  <div style="width:100%;" >
+		  <div><strong>Min/Max of differential pressure</strong></div>
+		  <div id="tablemm" style="height:50px;overflow:auto;"></div>
+		  </div>
+		  <div style="width:100%;" >
+		  <div><strong>Min/Max of water age</strong></div>
+		  <div id="tablemm2" style="height:50px;overflow:auto;"></div>
+		  </div>
+		  <div style="width:100%;" >
+		  <div><strong>Min/Max of leakage</strong></div>
+		  <div id="tablemm3" style="height:50px;overflow:auto;"></div>
+		  </div>
+		  <div style="width:30%;float:left;" >
+		  <div id="nb_pumps"><strong>Pumps</strong></div>
+		  <div id="table1" style="height:400px;overflow:auto;"></div>
+		  </div>
+		  <div style="width:40%;float:left;" >
+		  <div id="nb_valves"><strong>Valves</strong></div>
+		  <div id="table2" style="height:400px;overflow:auto;"></div>
+		  </div>
+		  <div style="width:30%;float:left;" >
+		  <div id="nb_pipes"><strong>Pipes</strong></div>
+		  <div id="table3" style="height:400px;overflow:auto;"></div>
+		  </div>
+		  <!-- 
+		  <br>
+		  <div id="title-reservoirs">Reservoirs</div>
+		  <div id="table2" style="height:150px;overflow:auto;"></div>
+		  <div id="title-tanks">Tanks</div>
+		  <div id="table3" style="height:150px;overflow:auto;"></div> -->	  				
+		  </div>
+		  
+		  <br><br>
+		  <input type="submit" id="ub" style="visibility:hidden" class="btn btn-lg btn-primary btn-block" value="Upload"/>
+		  <input type="hidden" name="_csrf" value="<%= _csrf %>" />
+		</form>	  
+    </div>
+	
+   
+    <script src="/js/dependencies/sails.io.js"></script>
+    <script src="/js/dependencies/jquery-2.2.3.min.js"></script>
+    <script src="/js/dependencies/Underscore.1.8.3.min.js"></script>
+   
+   
+	  
+    
+    
+	<script src="/js/dependencies/handsontable.full.min.js"></script>
+	<script>
+	function readSingleFile(evt) {
+		//Retrieve the first (and only!) File from the FileList object
+		//console.log(evt.files[0])
+		var f = evt.files[0]; 
+		if (f) {
+			var r = new FileReader();
+			r.readAsText(f);
+			r.onload = function(e) { 
+				var contents = e.target.result;
+				// alert( "Got the file.n" 
+				// +"name: " + f.name + "n"
+				// +"type: " + f.type + "n"
+				// +"size: " + f.size + " bytesn"
+				// + "starts with: " + contents //contents.substr(1, contents.indexOf("n"))
+				// ); 
+				//console.log("type: " + f.type)
+				//console.log("size: " + f.size)
+				//console.log("content: " + contents.substr(0, 2000))
+				
+				// read text file to get 
+				// list of junctions, reservoirs, and tanks.
+				
+				var index_lines={'junctions':[], 'tanks':[], 'reservoirs':[], 'coordinates':[], 'pipes':[], 'pumps':[],'valves':[],'vertices':[],'curves':[],'backdrop':[]};
+				var list_pump_curves=[];
+				
+				if(f.size > 10485760) {
+					alert('File size Greater then 10MB!');
+				}
+				else{
+					var all_lines=contents.split("\n");
+					for (var i=0, j=all_lines.length;i<j;i++){
+						if (all_lines[i].substr(0, 11)=="[JUNCTIONS]"){
+							index_lines['junctions'].push(i+1);
+							//console.log("reading list of junctions")
+						}
+						else {
+							if (index_lines['junctions'].length==1 && all_lines[i][0]=="["){
+								index_lines['junctions'].push(i-1);
+							}
+						}
+						
+						if (all_lines[i].substr(0, 12)=="[RESERVOIRS]"){
+							index_lines['reservoirs'].push(i+1);
+							//console.log("reading list of junctions")
+						}
+						else {
+							if (index_lines['reservoirs'].length==1 && all_lines[i][0]=="["){
+								index_lines['reservoirs'].push(i-1);
+							}
+						}
+						
+						if (all_lines[i].substr(0, 7)=="[TANKS]"){
+							index_lines['tanks'].push(i+1);
+							//console.log("reading list of junctions")
+						}
+						else {
+							if (index_lines['tanks'].length==1 && all_lines[i][0]=="["){
+								index_lines['tanks'].push(i-1);
+							}
+						}
+						
+						if (all_lines[i].substr(0, 13)=="[COORDINATES]"){
+							index_lines['coordinates'].push(i+1);
+							//console.log("reading list of junctions")
+						}
+						else {
+							if (index_lines['coordinates'].length==1 && all_lines[i][0]=="["){
+								index_lines['coordinates'].push(i-1);
+							}
+						}
+						if (all_lines[i].substr(0, 7)=="[PIPES]"){
+							index_lines['pipes'].push(i+1);
+							//console.log("reading list of junctions")
+						}
+						else {
+							if (index_lines['pipes'].length==1 && all_lines[i][0]=="["){
+								index_lines['pipes'].push(i-1);
+							}
+						}
+						if (all_lines[i].substr(0, 7)=="[PUMPS]"){
+							index_lines['pumps'].push(i+1);
+							//console.log("reading list of junctions")
+						}
+						else {
+							if (index_lines['pumps'].length==1 && all_lines[i][0]=="["){
+								index_lines['pumps'].push(i-1);
+							}
+						}
+						if (all_lines[i].substr(0, 8)=="[VALVES]"){
+							index_lines['valves'].push(i+1);
+							//console.log("reading list of junctions")
+						}
+						else {
+							if (index_lines['valves'].length==1 && all_lines[i][0]=="["){
+								index_lines['valves'].push(i-1);
+							}
+						}
+						if (all_lines[i].substr(0, 10)=="[VERTICES]"){
+							index_lines['vertices'].push(i+1);
+							//console.log("reading list of junctions")
+						}
+						else {
+							if (index_lines['vertices'].length==1 && all_lines[i][0]=="["){
+								index_lines['vertices'].push(i-1);
+							}
+						}
+						if (all_lines[i].substr(0, 8)=="[CURVES]"){
+							index_lines['curves'].push(i+1);
+							//console.log("reading list of junctions")
+						}
+						else {
+							if (index_lines['curves'].length==1 && all_lines[i][0]=="["){
+								index_lines['curves'].push(i-1);
+							}
+						}
+						if (all_lines[i].substr(0, 10)=="[BACKDROP]"){
+							index_lines['backdrop'].push(i+1);
+							//console.log("reading list of junctions")
+						}
+						else {
+							if (index_lines['backdrop'].length==1 && all_lines[i][0]=="["){
+								index_lines['backdrop'].push(i-1);
+							}
+						}
+					}
+					//console.log(index_lines)
+					
+					var obj_junctions={};
+					var junction_data={};
+					var obj_reservoirs={};
+					var reservoir_data={};
+					var obj_tanks={};
+					var tank_data={};
+					var coord_data=[];
+					var backdrop_data=[];
+					var pipe_diameters=[50,100,125,150,175,200,225,250,300,325,350,400,475];//var pipe_diameters=[36,48,60,72,84,96,108,120,132,144,156,168,180,192,204];
+					document.getElementById("pipe-diameters").value=JSON.stringify(pipe_diameters);
+					var pipe_diameters_costs=[5.00,7.48,9.09,10.89,11.66,13.70,14.96,17.47,19.98,22.20,32.12,36.07,38.34];//var pipe_diameters_costs=[93.58, 133.70, 176.31, 221.04, 267.60, 315.79, 365.45, 416.46, 468.71, 522.11, 576.59, 632.08, 688.54, 745.90, 804.14];
+					document.getElementById("pipe-diameters-costs").value=JSON.stringify(pipe_diameters_costs);
+					var min_max_diff_pressure=[-60.0,25.0];
+					document.getElementById("min-max-diff-pressure").value=JSON.stringify(min_max_diff_pressure);
+					var min_max_age=[0.0,168.0];
+					document.getElementById("min-max-age").value=JSON.stringify(min_max_age);
+					
+					var min_max_leakage=[0.0,2900000.0];
+					document.getElementById("min-max-leakage").value=JSON.stringify(min_max_leakage);
+					// find junctions
+					if (index_lines['junctions'].length==2){
+						for (var i=index_lines['junctions'][0], j=index_lines['junctions'][1];i<=j;i++){
+							if (all_lines[i].substr(0, 3)==";ID"){
+								var node_detail=all_lines[i].trim().split(/\t*\s+/);//.split("\\W*");//.trim().split(/\t*\s+/);							
+								for (var i1=0;i1<node_detail.length;i1++){
+									if (node_detail[i1]==";ID" || node_detail[i1]=="Elev" ){
+										//junction_data.push(node_detail[i1]);
+										junction_data[node_detail[i1]]=i1;
+									}
+								}
+								//junction_data[0]="ID";
+								delete junction_data[";ID"];
+								junction_data["ID"]=0;								
+							}
+							if (all_lines[i][0]!=";" && all_lines[i][0]!="\t" && all_lines[i]!=" " && all_lines[i]!=""){
+								var node_detail=all_lines[i].trim().split(/\t*\s+/);//.split("\\W*");//
+								if (node_detail[0]!="" && node_detail[0][0]!=";" && node_detail[0]!="\n"){
+									var tmp_j=node_detail[0];
+									obj_junctions[tmp_j]={};
+									for (elem in junction_data){
+										if (elem!="ID"){
+											obj_junctions[tmp_j][elem]=node_detail[junction_data[elem]];
+										}
+									}
+								}
+								node_detail=null;
+							}
+						}
+					}
+					else{
+						alert('File does nor seem to contain an enumeration of junctions between [JUNCTIONS] and line starting with "[" ');
+					}
+					//console.log(junction_data)
+					// find reservoirs
+					if (index_lines['reservoirs'].length==2){
+						for (var i=index_lines['reservoirs'][0], j=index_lines['reservoirs'][1];i<=j;i++){
+							if (all_lines[i].substr(0, 3)==";ID"){
+								var node_detail=all_lines[i].trim().split(/\t*\s+/);							
+								for (var i1=0;i1<node_detail.length;i1++){
+									if (node_detail[i1]==";ID" || node_detail[i1]=="Head" || node_detail[i1]=="Elevation" || node_detail[i1]=="Elev"){
+										//reservoir_data.push(node_detail[i1]);
+										reservoir_data[node_detail[i1]]=i1;
+									}
+								}
+								//reservoir_data[0]="ID";	
+								delete reservoir_data[";ID"];
+								reservoir_data["ID"]=0;									
+							}
+							if (all_lines[i][0]!=";" && all_lines[i][0]!="\t" && all_lines[i]!=" " && all_lines[i]!=""){
+								var node_detail=all_lines[i].trim().split(/\t*\s+/);
+								if (node_detail[0]!="" && node_detail[0][0]!=";" && node_detail[0]!="\n"){
+									//if (node_detail[0].startsWith("Pump_PRV_54WD65Y8EE")){
+									//	console.log(node_detail[0].split('\t'))
+									//}
+									var tmp_j=node_detail[0];
+									obj_reservoirs[tmp_j]={};
+									for (elem in reservoir_data){
+										if (elem!="ID"){
+											obj_reservoirs[tmp_j][elem]=node_detail[reservoir_data[elem]];
+										}
+									}
+								}
+								node_detail=null;
+							}
+						}
+					}
+					// find tanks
+					if (index_lines['tanks'].length==2){
+						for (var i=index_lines['tanks'][0], j=index_lines['tanks'][1];i<=j;i++){
+							if (all_lines[i].substr(0, 3)==";ID"){
+								var node_detail=all_lines[i].trim().split(/\t*\s+/);							
+								for (var i1=0;i1<node_detail.length;i1++){
+									if (node_detail[i1]==";ID" || node_detail[i1]=="Diameter"|| node_detail[i1]=="Elevation" || node_detail[i1]=="Elev" || node_detail[i1]=="InitLevel" || node_detail[i1]=="MaxLevel" || node_detail[i1]=="MinLevel"){
+										//tank_data.push(node_detail[i1]);
+										tank_data[node_detail[i1]]=i1;
+									}
+								}
+								//tank_data[0]="ID";
+								delete tank_data[";ID"];
+								tank_data["ID"]=0;								
+							}
+							if (all_lines[i][0]!=";" && all_lines[i][0]!="\t" && all_lines[i]!=" " && all_lines[i]!=""){
+								var node_detail=all_lines[i].trim().split(/\t*\s+/);
+								if (node_detail[0]!="" && node_detail[0][0]!=";" && node_detail[0]!="\n"){
+									//if (node_detail[0].startsWith("Pump_PRV_54WD65Y8EE")){
+									//	console.log(node_detail[0].split('\t'))
+									//}
+									var tmp_j=node_detail[0];
+									obj_tanks[tmp_j]={};
+									for (elem in tank_data){
+										if (elem!="ID"){
+											obj_tanks[tmp_j][elem]=node_detail[tank_data[elem]];
+										}
+									}
+								}
+								node_detail=null;
+							}
+						}
+					}
+				
+					
+					if ((index_lines['reservoirs'].length<2) && (index_lines['tanks'].length<2)){
+						alert('File does nor seem to contain any reservoir or tank');
+					}
+					
+					if (index_lines['coordinates'].length==2){
+						for (var i=index_lines['coordinates'][0], j=index_lines['coordinates'][1];i<=j;i++){
+							if (all_lines[i].substr(0, 5)==";Node"){
+								var node_detail=all_lines[i].trim().split(/\t*\s+/);
+								for (var i1=0;i1<node_detail.length;i1++){
+									if (node_detail[i1]==";Node" || node_detail[i1]=="X-Coord" || node_detail[i1]=="Y-Coord"){
+										coord_data.push(node_detail[i1]);
+									}
+								}
+								coord_data[0]="Node";
+							}
+							if (all_lines[i][0]!=";" && all_lines[i][0]!="\t" && all_lines[i]!=" " && all_lines[i]!=""){
+								var node_detail=all_lines[i].trim().split(/\t*\s+/);
+								if ((node_detail[0]!="" && node_detail[0][0]!=";" && coord_data.length==3) ){																
+									var tmp_c=node_detail[0];																
+									if (obj_junctions.hasOwnProperty(tmp_c)){																	
+										obj_junctions[tmp_c]['X-Coord']=node_detail[1];
+										obj_junctions[tmp_c]['Y-Coord']=node_detail[2];
+									}
+									else if (obj_reservoirs.hasOwnProperty(tmp_c)){																	
+										obj_reservoirs[tmp_c]['X-Coord']=node_detail[1];
+										obj_reservoirs[tmp_c]['Y-Coord']=node_detail[2];
+									}
+									else if (obj_tanks.hasOwnProperty(tmp_c)){																	
+										obj_tanks[tmp_c]['X-Coord']=node_detail[1];
+										obj_tanks[tmp_c]['Y-Coord']=node_detail[2];
+									}
+								}
+								node_detail=null;
+							}
+						}
+					}
+					else{
+						alert('File does nor seem to contain an enumeration of coordinates between [COORDINATES] and line starting with "[" ');
+					}
+					
+					if (index_lines['curves'].length==2){
+						
+						for (var i=index_lines['curves'][0], j=index_lines['curves'][1];i<=j;i++){
+							if (all_lines[i].substr(0, 6)==";PUMP:"){
+								var node_detail=all_lines[i+1].trim().split(/\t*\s+/);
+								list_pump_curves.push(node_detail[0])
+							}
+						}
+					}
+					document.getElementById("pump-curves").value=JSON.stringify(list_pump_curves);
+					
+					
+					// display pipes
+					var obj_pipes={};
+					var pipe_data={};
+					var obj_pumps={};
+					var pump_data={};
+					var obj_valves={};
+					var valve_data={};
+					var vertex_data=[];
+					
+					// find pipes
+					if (index_lines['pipes'].length==2){
+						for (var i=index_lines['pipes'][0], j=index_lines['pipes'][1];i<=j;i++){
+							if (all_lines[i].substr(0, 3)==";ID"){
+								var node_detail=all_lines[i].trim().split(/\t*\s+/);							
+								for (var i1=0;i1<node_detail.length;i1++){
+									if (node_detail[i1]==";ID" || node_detail[i1]=="Node1"  || node_detail[i1]=="Node2"  || node_detail[i1]=="Length"      	|| node_detail[i1]=="Diameter"  || node_detail[i1]=="Status" ){									
+										pipe_data[node_detail[i1]]=i1;
+									}
+								}
+								delete pipe_data[";ID"];
+								pipe_data["ID"]=0;										
+							}
+							if (all_lines[i][0]!=";" && all_lines[i][0]!="\t" && all_lines[i]!=" " && all_lines[i]!=""){
+								var node_detail=all_lines[i].trim().split(/\t*\s+/);
+								if (node_detail[0]!="" && node_detail[0][0]!=";" && node_detail[0]!="\n"){
+									var tmp_j=node_detail[0];
+									obj_pipes[tmp_j]={};								
+									for (elem in pipe_data){
+										if (elem!="ID"){
+											obj_pipes[tmp_j][elem]=node_detail[pipe_data[elem]];
+										}
+									}
+									if (obj_pipes[tmp_j].hasOwnProperty('Status')==false){
+										obj_pipes[tmp_j]['Status']='Open';
+									}
+								}
+								node_detail=null;
+							}
+						}
+					}
+					else{
+						alert('File does nor seem to contain an enumeration of pipes between [PIPES] and line starting with "[" ');
+					}
+					
+					// find pumps
+					if (index_lines['pumps'].length==2){
+						for (var i=index_lines['pumps'][0], j=index_lines['pumps'][1];i<=j;i++){
+							if (all_lines[i].substr(0, 3)==";ID"){
+								var node_detail=all_lines[i].trim().split(/\t*\s+/);							
+								for (var i1=0;i1<node_detail.length;i1++){
+									if (node_detail[i1]==";ID" || node_detail[i1]=="Node1"  || node_detail[i1]=="Node2" || node_detail[i1]=="Status" || node_detail[i1]=="Parameters"){
+										//pump_data.push(node_detail[i1]);
+										pump_data[node_detail[i1]]=i1;
+									}
+								}	
+								delete pump_data[";ID"];
+								pump_data["ID"]=0;								
+							}
+							if (all_lines[i][0]!=";" && all_lines[i][0]!="\t" && all_lines[i]!=" " && all_lines[i]!=""){
+								var node_detail=all_lines[i].trim().split(/\t*\s+/);
+								if (node_detail[0]!="" && node_detail[0][0]!=";" && node_detail[0]!="\n"){
+									var tmp_j=node_detail[0];
+									obj_pumps[tmp_j]={};
+									for (elem in pump_data){
+										if (elem!="ID"){
+											if (elem=="Parameters"){
+												obj_pumps[tmp_j][elem]=[node_detail[pump_data[elem]],node_detail[pump_data[elem]+1]];
+											}
+											else{
+												obj_pumps[tmp_j][elem]=node_detail[pump_data[elem]];
+											}
+										}
+									}
+									if (obj_pumps[tmp_j].hasOwnProperty('Status')==false){
+										obj_pumps[tmp_j]['Status']='Open';
+									}
+								}
+								node_detail=null;
+							}
+						}
+					}
+					
+					// find valves
+					if (index_lines['valves'].length==2){
+						for (var i=index_lines['valves'][0], j=index_lines['valves'][1];i<=j;i++){
+							if (all_lines[i].substr(0, 3)==";ID"){
+								var node_detail=all_lines[i].trim().split(/\t*\s+/);							
+								for (var i1=0;i1<node_detail.length;i1++){
+									if (node_detail[i1]==";ID" || node_detail[i1]=="Node1"  || node_detail[i1]=="Node2" || node_detail[i1]=="Diameter"  || node_detail[i1]=="Type" || node_detail[i1]=="Setting" || node_detail[i1]=="Status"){
+										valve_data[node_detail[i1]]=i1;
+									}
+								}
+								delete valve_data[";ID"];
+								valve_data["ID"]=0;								
+							}
+							if (all_lines[i][0]!=";" && all_lines[i][0]!="\t" && all_lines[i]!=" " && all_lines[i]!=""){
+								var node_detail=all_lines[i].trim().split(/\t*\s+/);
+								if (node_detail[0]!="" && node_detail[0][0]!=";" && node_detail[0]!="\n"){
+									var tmp_j=node_detail[0];
+									obj_valves[tmp_j]={};
+									for (elem in valve_data){
+										if (elem!="ID"){
+											obj_valves[tmp_j][elem]=node_detail[valve_data[elem]];
+										}
+									}
+									if (obj_valves[tmp_j].hasOwnProperty('Status')==false){
+										obj_valves[tmp_j]['Status']='Open';
+									}
+								}
+								node_detail=null;
+							}
+						}
+					}
+					
+					if (index_lines['vertices'].length==2){
+						for (var i=index_lines['vertices'][0], j=index_lines['vertices'][1];i<=j;i++){
+							if (all_lines[i].substr(0, 5)==";Link"){
+								var node_detail=all_lines[i].trim().split(/\t*\s+/);
+								for (var i1=0;i1<node_detail.length;i1++){
+									if (node_detail[i1]==";Link" || node_detail[i1]=="X-Coord" || node_detail[i1]=="Y-Coord"){
+										vertex_data.push(node_detail[i1]);
+									}
+								}
+								vertex_data[0]="Link";
+							}
+							if (all_lines[i][0]!=";" && all_lines[i][0]!="\t" && all_lines[i]!=" " && all_lines[i]!=""){
+								var node_detail=all_lines[i].trim().split(/\t*\s+/);
+								if ((node_detail[0]!="" && node_detail[0][0]!=";" && vertex_data.length==3) ){																
+									var tmp_c=node_detail[0];																
+									if (obj_pipes.hasOwnProperty(tmp_c)){	
+										if (obj_pipes[tmp_c].hasOwnProperty('Vertices')){
+											obj_pipes[tmp_c]['Vertices'].push([node_detail[1],node_detail[2]]);
+										}
+										else{
+											obj_pipes[tmp_c]['Vertices']=[];
+											obj_pipes[tmp_c]['Vertices'].push([node_detail[1],node_detail[2]]);
+										}
+									}
+									else if (obj_pumps.hasOwnProperty(tmp_c)){																	
+										if (obj_pumps[tmp_c].hasOwnProperty('Vertices')){
+											obj_pumps[tmp_c]['Vertices'].push([node_detail[1],node_detail[2]]);
+										}
+										else{
+											obj_pumps[tmp_c]['Vertices']=[];
+											obj_pumps[tmp_c]['Vertices'].push([node_detail[1],node_detail[2]]);
+										}
+									}
+									else if (obj_valves.hasOwnProperty(tmp_c)){																	
+										if (obj_valves[tmp_c].hasOwnProperty('Vertices')){
+											obj_valves[tmp_c]['Vertices'].push([node_detail[1],node_detail[2]]);
+										}
+										else{
+											obj_valves[tmp_c]['Vertices']=[];
+											obj_valves[tmp_c]['Vertices'].push([node_detail[1],node_detail[2]]);
+										}
+									}
+								}
+								node_detail=null;
+							}
+						}
+					}
+					else{
+						alert('File does nor seem to contain an enumeration of vertices coordinates between [VERTICES] and line starting with "[" ');
+					}
+					
+					
+					document.getElementById("network-junctions").value=JSON.stringify(obj_junctions);
+					document.getElementById("network-reservoirs").value=JSON.stringify(obj_reservoirs);
+					document.getElementById("network-tanks").value=JSON.stringify(obj_tanks);
+					
+					// find backdrop dimensions
+					if (index_lines['backdrop'].length==2){
+						for (var i=index_lines['backdrop'][0], j=index_lines['backdrop'][1];i<=j;i++){							
+								var node_detail=all_lines[i].trim().split(/\t*\s+/);
+								if (node_detail[0]=="DIMENSIONS" && node_detail.length==5){			
+									for (var i1=1;i1<node_detail.length;i1++){										
+										backdrop_data.push(node_detail[i1]);										
+									}
+								}							
+						}
+					}
+					document.getElementById("network-backdrop").value=JSON.stringify(backdrop_data);
+					//console.log(backdrop_data)
+					// add start/end nodes coordinates to links vertices
+					for (elem in obj_pipes){
+						var start_node= obj_pipes[elem]['Node1'];
+						var end_node= obj_pipes[elem]['Node2'];
+						if (obj_pipes[elem].hasOwnProperty('Vertices')){
+							if (obj_junctions.hasOwnProperty(start_node)){	
+								obj_pipes[elem]['Vertices'].unshift([obj_junctions[start_node]['X-Coord'], obj_junctions[start_node]['Y-Coord']]);
+								
+							}
+							else if (obj_reservoirs.hasOwnProperty(start_node)){																	
+								obj_pipes[elem]['Vertices'].unshift([obj_reservoirs[start_node]['X-Coord'], obj_reservoirs[start_node]['Y-Coord']]);
+							}
+							else if (obj_tanks.hasOwnProperty(start_node)){																	
+								obj_pipes[elem]['Vertices'].unshift([obj_tanks[start_node]['X-Coord'], obj_tanks[start_node]['Y-Coord']]);
+							}
+							if (obj_junctions.hasOwnProperty(end_node)){																	
+								obj_pipes[elem]['Vertices'].push([obj_junctions[end_node]['X-Coord'], obj_junctions[end_node]['Y-Coord']]);
+								
+							}
+							else if (obj_reservoirs.hasOwnProperty(end_node)){																	
+								obj_pipes[elem]['Vertices'].push([obj_reservoirs[end_node]['X-Coord'], obj_reservoirs[end_node]['Y-Coord']]);
+							}
+							else if (obj_tanks.hasOwnProperty(end_node)){																	
+								obj_pipes[elem]['Vertices'].push([obj_tanks[end_node]['X-Coord'], obj_tanks[end_node]['Y-Coord']]);
+							}
+						}
+						else{
+							if (obj_junctions.hasOwnProperty(start_node)){		
+								obj_pipes[elem]['Vertices']=[];
+								obj_pipes[elem]['Vertices'].push([obj_junctions[start_node]['X-Coord'], obj_junctions[start_node]['Y-Coord']]);
+								
+							}
+							else if (obj_reservoirs.hasOwnProperty(start_node)){
+								obj_pipes[elem]['Vertices']=[];							
+								obj_pipes[elem]['Vertices'].push([obj_reservoirs[start_node]['X-Coord'], obj_reservoirs[start_node]['Y-Coord']]);
+							}
+							else if (obj_tanks.hasOwnProperty(start_node)){	
+								obj_pipes[elem]['Vertices']=[];		
+								obj_pipes[elem]['Vertices'].push([obj_tanks[start_node]['X-Coord'], obj_tanks[start_node]['Y-Coord']]);
+							}
+							if (obj_junctions.hasOwnProperty(end_node)){	
+								obj_pipes[elem]['Vertices'].push([obj_junctions[end_node]['X-Coord'], obj_junctions[end_node]['Y-Coord']]);
+								
+							}
+							else if (obj_reservoirs.hasOwnProperty(end_node)){																	
+								obj_pipes[elem]['Vertices'].push([obj_reservoirs[end_node]['X-Coord'], obj_reservoirs[end_node]['Y-Coord']]);
+							}
+							else if (obj_tanks.hasOwnProperty(end_node)){																	
+								obj_pipes[elem]['Vertices'].push([obj_tanks[end_node]['X-Coord'], obj_tanks[end_node]['Y-Coord']]);
+							}
+						}
+					}
+					for (elem in obj_pumps){
+						var start_node= obj_pumps[elem]['Node1'];
+						var end_node= obj_pumps[elem]['Node2'];
+						if (obj_pumps[elem].hasOwnProperty('Vertices')){
+							if (obj_junctions.hasOwnProperty(start_node)){	
+								obj_pumps[elem]['Vertices'].unshift([obj_junctions[start_node]['X-Coord'], obj_junctions[start_node]['Y-Coord']]);
+								
+							}
+							else if (obj_reservoirs.hasOwnProperty(start_node)){																	
+								obj_pumps[elem]['Vertices'].unshift([obj_reservoirs[start_node]['X-Coord'], obj_reservoirs[start_node]['Y-Coord']]);
+							}
+							else if (obj_tanks.hasOwnProperty(start_node)){																	
+								obj_pumps[elem]['Vertices'].unshift([obj_tanks[start_node]['X-Coord'], obj_tanks[start_node]['Y-Coord']]);
+							}
+							if (obj_junctions.hasOwnProperty(end_node)){																	
+								obj_pumps[elem]['Vertices'].push([obj_junctions[end_node]['X-Coord'], obj_junctions[end_node]['Y-Coord']]);
+								
+							}
+							else if (obj_reservoirs.hasOwnProperty(end_node)){																	
+								obj_pumps[elem]['Vertices'].push([obj_reservoirs[end_node]['X-Coord'], obj_reservoirs[end_node]['Y-Coord']]);
+							}
+							else if (obj_tanks.hasOwnProperty(end_node)){																	
+								obj_pumps[elem]['Vertices'].push([obj_tanks[end_node]['X-Coord'], obj_tanks[end_node]['Y-Coord']]);
+							}
+						}
+						else{
+							if (obj_junctions.hasOwnProperty(start_node)){		
+								obj_pumps[elem]['Vertices']=[];
+								obj_pumps[elem]['Vertices'].push([obj_junctions[start_node]['X-Coord'], obj_junctions[start_node]['Y-Coord']]);
+								
+							}
+							else if (obj_reservoirs.hasOwnProperty(start_node)){
+								obj_pumps[elem]['Vertices']=[];							
+								obj_pumps[elem]['Vertices'].push([obj_reservoirs[start_node]['X-Coord'], obj_reservoirs[start_node]['Y-Coord']]);
+							}
+							else if (obj_tanks.hasOwnProperty(start_node)){	
+								obj_pumps[elem]['Vertices']=[];		
+								obj_pumps[elem]['Vertices'].push([obj_tanks[start_node]['X-Coord'], obj_tanks[start_node]['Y-Coord']]);
+							}
+							if (obj_junctions.hasOwnProperty(end_node)){	
+								obj_pumps[elem]['Vertices'].push([obj_junctions[end_node]['X-Coord'], obj_junctions[end_node]['Y-Coord']]);
+								
+							}
+							else if (obj_reservoirs.hasOwnProperty(end_node)){																	
+								obj_pumps[elem]['Vertices'].push([obj_reservoirs[end_node]['X-Coord'], obj_reservoirs[end_node]['Y-Coord']]);
+							}
+							else if (obj_tanks.hasOwnProperty(end_node)){																	
+								obj_pumps[elem]['Vertices'].push([obj_tanks[end_node]['X-Coord'], obj_tanks[end_node]['Y-Coord']]);
+							}
+						}
+					}
+					for (elem in obj_valves){
+						var start_node= obj_valves[elem]['Node1'];
+						var end_node= obj_valves[elem]['Node2'];
+						if (obj_valves[elem].hasOwnProperty('Vertices')){
+							if (obj_junctions.hasOwnProperty(start_node)){	
+								obj_valves[elem]['Vertices'].unshift([obj_junctions[start_node]['X-Coord'], obj_junctions[start_node]['Y-Coord']]);
+								
+							}
+							else if (obj_reservoirs.hasOwnProperty(start_node)){																	
+								obj_valves[elem]['Vertices'].unshift([obj_reservoirs[start_node]['X-Coord'], obj_reservoirs[start_node]['Y-Coord']]);
+							}
+							else if (obj_tanks.hasOwnProperty(start_node)){																	
+								obj_valves[elem]['Vertices'].unshift([obj_tanks[start_node]['X-Coord'], obj_tanks[start_node]['Y-Coord']]);
+							}
+							if (obj_junctions.hasOwnProperty(end_node)){																	
+								obj_valves[elem]['Vertices'].push([obj_junctions[end_node]['X-Coord'], obj_junctions[end_node]['Y-Coord']]);
+								
+							}
+							else if (obj_reservoirs.hasOwnProperty(end_node)){																	
+								obj_valves[elem]['Vertices'].push([obj_reservoirs[end_node]['X-Coord'], obj_reservoirs[end_node]['Y-Coord']]);
+							}
+							else if (obj_tanks.hasOwnProperty(end_node)){																	
+								obj_valves[elem]['Vertices'].push([obj_tanks[end_node]['X-Coord'], obj_tanks[end_node]['Y-Coord']]);
+							}
+						}
+						else{
+							if (obj_junctions.hasOwnProperty(start_node)){		
+								obj_valves[elem]['Vertices']=[];
+								obj_valves[elem]['Vertices'].push([obj_junctions[start_node]['X-Coord'], obj_junctions[start_node]['Y-Coord']]);
+								
+							}
+							else if (obj_reservoirs.hasOwnProperty(start_node)){
+								obj_valves[elem]['Vertices']=[];							
+								obj_valves[elem]['Vertices'].push([obj_reservoirs[start_node]['X-Coord'], obj_reservoirs[start_node]['Y-Coord']]);
+							}
+							else if (obj_tanks.hasOwnProperty(start_node)){	
+								obj_valves[elem]['Vertices']=[];		
+								obj_valves[elem]['Vertices'].push([obj_tanks[start_node]['X-Coord'], obj_tanks[start_node]['Y-Coord']]);
+							}
+							if (obj_junctions.hasOwnProperty(end_node)){	
+								obj_valves[elem]['Vertices'].push([obj_junctions[end_node]['X-Coord'], obj_junctions[end_node]['Y-Coord']]);
+								
+							}
+							else if (obj_reservoirs.hasOwnProperty(end_node)){																	
+								obj_valves[elem]['Vertices'].push([obj_reservoirs[end_node]['X-Coord'], obj_reservoirs[end_node]['Y-Coord']]);
+							}
+							else if (obj_tanks.hasOwnProperty(end_node)){																	
+								obj_valves[elem]['Vertices'].push([obj_tanks[end_node]['X-Coord'], obj_tanks[end_node]['Y-Coord']]);
+							}
+						}
+					}
+					var nb_pumps=Object.keys(obj_pumps).length;
+					var nb_valves=Object.keys(obj_valves).length;
+					var nb_pipes=Object.keys(obj_pipes).length;
+					document.getElementById('title-junctions').innerHTML="Node wise, your file has <strong>"+Object.keys(obj_junctions).length+" junctions</strong>, <strong>"+Object.keys(obj_reservoirs).length+" reservoir(s)</strong>, and <strong>"+Object.keys(obj_tanks).length+" tank(s)</strong>."
+					+"<br>The following table contains a list of links. They can be either pipes, pumps or valves. <br>By default all pipes are set to be replaceable. They can be set to not be changed during game time by clicking on the check boxes, or selecting them in group and press space.";
+					//
+					//
+					document.getElementById('nb_pumps').innerHTML="<strong>"+nb_pumps+"</strong> Pumps";
+					document.getElementById('nb_valves').innerHTML="<strong>"+nb_valves+"</strong> Valves";
+					document.getElementById('nb_pipes').innerHTML="<strong>"+nb_pipes+"</strong> Pipes";
+					
+					//console.log(obj_junctions)
+					//console.log(obj_reservoirs)
+					//console.log(obj_tanks)
+					//message.split("\\W+");
+					//console.log(obj_pipes)
+					//console.log(obj_pumps)
+					//console.log(obj_valves)
+					// print list of all different curves parameters applied to pumps
+					//console.log(list_pump_curves)
+					
+					var listPumps=[];//jQuery.makeArray(obj_pumps);
+					for( var elem in obj_pumps) {
+						var tmp={};
+						tmp['ID']=elem;
+						tmp['Mode']=obj_pumps[elem]['Parameters'][0];
+						tmp['Status']=obj_pumps[elem]['Status'];
+						tmp['Param']=obj_pumps[elem]['Parameters'][1];
+						
+						listPumps.push(tmp);
+					}
+					var listValves=[];//jQuery.makeArray(obj_pumps);
+					for( var elem in obj_valves) {
+						var tmp={};
+						tmp['ID']=elem;
+						tmp['Status']=obj_valves[elem]['Status'];
+						tmp['Diameter']=parseInt(obj_valves[elem]['Diameter']);
+						tmp['Type']=obj_valves[elem]['Type'];
+						tmp['Setting']=obj_valves[elem]['Setting'];
+						
+						listValves.push(tmp);
+					}
+					var listPipes=[];//jQuery.makeArray(obj_pumps);
+					for( var elem in obj_pipes) {
+						var tmp={};
+						tmp['ID']=elem;
+						tmp['Status']=obj_pipes[elem]['Status'];
+						tmp['Diameter']=parseInt(obj_pipes[elem]['Diameter']);
+						tmp['Replaceable']=true;					
+						listPipes.push(tmp);
+					}
+					
+					var listJunctions=[];//jQuery.makeArray(obj_pumps);
+					for( var elem in obj_junctions) {
+						var tmp={};
+						tmp['ID']=elem;
+						tmp['MinPressure']="200.0";		
+						listJunctions.push(tmp);
+					}
+					//obj_pumps=null;
+					//console.log(listPumps)
+					
+					
+					var $containermp = $("#tablemp");
+					$containermp.handsontable({
+					  data: listJunctions,
+					  stretchH:"all",
+					  //width: 400,
+					  //height: 400,
+					  startRows: 2,
+					  startCols: 2,
+					  colHeaders: true,
+					  colHeaders: ['ID', 'MinPressure'],
+					  columns: [
+						{data: "ID",editor: false},
+						{data: "MinPressure"}
+					  ],
+					  afterChange: function(changes, source) {
+							var listChanged =this.getData();
+							for (var i=0, j=listChanged.length; i<j; i++){
+								if (obj_junctions.hasOwnProperty(listChanged[i][0])){
+									obj_junctions[listChanged[i][0]]['MinPressure']=listChanged[i][1];
+								}
+							}							
+							document.getElementById("network-junctions").value=JSON.stringify(obj_junctions);
+					  },
+					  minSpareRows: 0
+					});
+					
+					
+					var copy_diameters=[pipe_diameters.slice(0)];
+					var $container0 = $("#table0");
+					$container0.handsontable({
+					  data: copy_diameters,
+					  stretchH: 'all',
+					  //width: 400,
+					  //height: 400,
+					  startRows: 1,
+					  startCols: 16,
+					  rowHeaders: false,
+					  colHeaders: false,
+					  //rowHeaders: ['Diameters'],
+					  //colWidths: [85],
+					  afterChange: function(changes, source) {
+							var listChanged =this.getData();
+							pipe_diameters=[];
+							for (var i=0, j=listChanged[0].length; i<j; i++){
+								if (listChanged[0][i]!=null && listChanged[0][i]!=""){
+									pipe_diameters.push(listChanged[0][i])
+								}
+								//console.log(pipe_diameters)
+							}							
+							document.getElementById("pipe-diameters").value=JSON.stringify(pipe_diameters);
+		 
+		 
+					  },
+					  minSpareRows: 0,
+					  minSpareCols: 1
+					});
+					
+					var copy_diameters_costs=[pipe_diameters_costs.slice(0)];
+					var $container0c = $("#table0c");
+					$container0c.handsontable({
+					  data: copy_diameters_costs,
+					  stretchH: 'all',
+					  //width: 400,
+					  //height: 400,
+					  startRows: 1,
+					  startCols: 16,
+					  rowHeaders: false,
+					  colHeaders: false,
+					  //rowHeaders: ['Diameters'],
+					  //colWidths: [85],
+					  afterChange: function(changes, source) {
+							var listChanged =this.getData();
+							pipe_diameters_costs=[];
+							for (var i=0, j=listChanged[0].length; i<j; i++){
+								if (listChanged[0][i]!=null && listChanged[0][i]!=""){
+									pipe_diameters_costs.push(listChanged[0][i])
+								}
+								//console.log(pipe_diameters)
+							}							
+							document.getElementById("pipe-diameters-costs").value=JSON.stringify(pipe_diameters_costs);
+		 
+		 
+					  },
+					  minSpareRows: 0,
+					  minSpareCols: 1
+					});
+					
+					var copy_min_max_diff_pressure=[min_max_diff_pressure.slice(0)];
+					var $containermm = $("#tablemm");
+					$containermm.handsontable({
+					  data: copy_min_max_diff_pressure,
+					  stretchH: 'all',
+					  //width: 400,
+					  //height: 400,
+					  startRows: 1,
+					  startCols: 2,
+					  rowHeaders: false,
+					  colHeaders: false,
+					  //rowHeaders: ['Diameters'],
+					  //colWidths: [85],
+					  afterChange: function(changes, source) {
+							var listChanged =this.getData();
+							min_max_diff_pressure=[];
+							for (var i=0, j=listChanged[0].length; i<j; i++){
+								if(listChanged[0][i]=="0" || listChanged[0][i]==0){
+									min_max_diff_pressure.push(listChanged[0][i])
+								}
+								else if (listChanged[0][i]!=null && listChanged[0][i]!=""){
+									min_max_diff_pressure.push(listChanged[0][i])
+								}
+							}							
+							document.getElementById("min-max-diff-pressure").value=JSON.stringify(min_max_diff_pressure);
+		 
+		 
+					  },
+					  minSpareRows: 0//,
+					  //minSpareCols: 1
+					});
+					
+					var copy_min_max_age=[min_max_age.slice(0)];
+					var $containermm2 = $("#tablemm2");
+					$containermm2.handsontable({
+					  data: copy_min_max_age,
+					  stretchH: 'all',
+					  //width: 400,
+					  //height: 400,
+					  startRows: 1,
+					  startCols: 2,
+					  rowHeaders: false,
+					  colHeaders: false,
+					  //rowHeaders: ['Diameters'],
+					  //colWidths: [85],
+					  afterChange: function(changes, source) {
+							var listChanged =this.getData();
+							min_max_age=[];
+							for (var i=0, j=listChanged[0].length; i<j; i++){
+								if(listChanged[0][i]=="0" || listChanged[0][i]==0){
+									min_max_age.push(listChanged[0][i])
+								}
+								else if (listChanged[0][i]!=null && listChanged[0][i]!=""){
+									min_max_age.push(listChanged[0][i])
+								}
+							}							
+							document.getElementById("min-max-age").value=JSON.stringify(min_max_age);
+					  },
+					  minSpareRows: 0//,
+					  //minSpareCols: 1
+					});
+					
+					var copy_min_max_leakage=[min_max_leakage.slice(0)];
+					var $containermm3 = $("#tablemm3");
+					$containermm3.handsontable({
+					  data: copy_min_max_leakage,
+					  stretchH: 'all',
+					  //width: 400,
+					  //height: 400,
+					  startRows: 1,
+					  startCols: 2,
+					  rowHeaders: false,
+					  colHeaders: false,
+					  //rowHeaders: ['Diameters'],
+					  //colWidths: [85],
+					  afterChange: function(changes, source) {
+							var listChanged =this.getData();
+							min_max_leakage=[];
+							for (var i=0, j=listChanged[0].length; i<j; i++){
+								if(listChanged[0][i]=="0" || listChanged[0][i]==0){
+									min_max_leakage.push(listChanged[0][i])
+								}
+								else if (listChanged[0][i]!=null && listChanged[0][i]!=""){
+									min_max_leakage.push(listChanged[0][i])
+								}
+							}							
+							document.getElementById("min-max-leakage").value=JSON.stringify(min_max_leakage);		 
+					  },
+					  minSpareRows: 0//,
+					  //minSpareCols: 1
+					});
+					
+					var $container = $("#table1");
+					$container.handsontable({
+					  data: listPumps,
+					  stretchH:"all",
+					  //width: 400,
+					  //height: 400,
+					  startRows: 1,
+					  startCols: 4,
+					  colHeaders: true,
+					  colHeaders: ['ID', 'Status', 'Mode', 'Param'],
+					  columns: [
+						{data: "ID",editor: false},
+						{data: "Status",type: 'checkbox', checkedTemplate: 'Open', uncheckedTemplate: 'Closed',label: {position: 'before',value: 'Open ? '}},
+						{data: "Mode",type: 'dropdown', source: ['HEAD','FLOW']},
+						{data: "Param",  type: 'autocomplete', source: list_pump_curves, strict: false}
+					  ],
+					  afterChange: function(changes, source) {
+							var listChanged =this.getData();
+							for (var i=0, j=listChanged.length; i<j; i++){
+								if (obj_pumps.hasOwnProperty(listChanged[i][0])){
+									obj_pumps[listChanged[i][0]]['Status']=listChanged[i][1];
+									obj_pumps[listChanged[i][0]]['Parameters'][0]=listChanged[i][2];
+									obj_pumps[listChanged[i][0]]['Parameters'][1]=listChanged[i][3];
+								}
+							}							
+							document.getElementById("network-pumps").value=JSON.stringify(obj_pumps);
+		 
+		 
+					  },
+					  minSpareRows: 0
+					});
+					var $container2 = $("#table2");
+					$container2.handsontable({
+					  data: listValves,
+					  stretchH:"all",
+					  //width: 400,
+					  //height: 400,
+					  startRows: 1,
+					  startCols: 5,
+					  colHeaders: true,
+					  colHeaders: ['ID', 'Status', 'Diameter', 'Type','Setting'],
+					  columns: [
+						{data: "ID",editor: false},
+						{data: "Status",type: 'checkbox', checkedTemplate: 'Open', uncheckedTemplate: 'Closed',label: {position: 'before',value: 'Open ? '}},
+						{data: "Diameter", type: 'autocomplete', source: pipe_diameters, strict: false}, 
+						{data: "Type",type: 'dropdown', source: ["PRV","PSV","PBV","FCV","TCV","GPV"]},
+						{data: "Setting"}
+					  ],
+					  afterChange: function(changes, source) {
+							var listChanged =this.getData();
+							//console.log(listChanged)
+							for (var i=0, j=listChanged.length; i<j; i++){
+								if (obj_valves.hasOwnProperty(listChanged[i][0])){
+									obj_valves[listChanged[i][0]]['Status']=listChanged[i][1];
+									obj_valves[listChanged[i][0]]['Diameter']=listChanged[i][2];
+									obj_valves[listChanged[i][0]]['Type']=listChanged[i][3];
+									obj_valves[listChanged[i][0]]['Setting']=listChanged[i][4];
+								}
+							}
+							document.getElementById("network-valves").value=JSON.stringify(obj_valves);
+					  },
+					  minSpareRows: 0
+					});
+					var $container2 = $("#table3");
+					$container2.handsontable({
+					  data: listPipes,
+					  stretchH:"all",
+					  //renderAllRows: true,
+					  //width: 400,
+					  //height: 400,
+					  startRows: 1,
+					  startCols: 3,
+					  colHeaders: true,
+					  colHeaders: ['ID', 'Status', 'Diameter',"Replaceable"],
+					  columns: [
+						{data: "ID",editor: false},
+						{data: "Status",type: 'checkbox', checkedTemplate: 'Open', uncheckedTemplate: 'Closed',label: {position: 'before',value: 'Open ? '}},
+						{data: "Diameter",type: 'autocomplete', source: pipe_diameters, strict: false}, 
+						{data: "Replaceable",type: 'checkbox'},
+					  ],
+					  afterChange: function(changes, source) {
+							var listChanged =this.getData();
+							//console.log(listChanged)
+							for (var i=0, j=listChanged.length; i<j; i++){
+								if (obj_pipes.hasOwnProperty(listChanged[i][0])){
+									obj_pipes[listChanged[i][0]]['Status']=listChanged[i][1];
+									obj_pipes[listChanged[i][0]]['Diameter']=listChanged[i][2];
+									obj_pipes[listChanged[i][0]]['Replaceable']=listChanged[i][3];
+								}
+							}
+							document.getElementById("network-pipes").value=JSON.stringify(obj_pipes);
+					  },
+					  minSpareRows: 0
+					});
+				
+				}
+				if (document.getElementById('network-name').value!=""){
+					
+					document.getElementById("ub").style.visibility="visible";
+				}
+				else {
+					alert('You need to fill in a name for your network. Then try selecting a file again.');
+				}
+				f=null;
+				all_lines=null;
+			}
+			
+			//
+			//all_lines=null;
+			//
+			
+		} else { 
+			alert("Failed to load file");
+		}
+	}
+	</script>
+  </body>
+</html>

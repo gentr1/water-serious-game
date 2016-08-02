@@ -1,0 +1,3582 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SeGWADE | Welcome back, <%= me.name %>!</title>
+    <!-- Viewport mobile tag for sensible mobile support -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <!--STYLES-->
+    <link rel="stylesheet" href="/styles/angular-toastr.css">
+    <link rel="stylesheet" href="/styles/bootstrap.3.1.1.css">
+    <link rel="stylesheet" href="/styles/handsontable.full.min.css">
+    <link rel="stylesheet" href="/styles/importer.css">
+    <!--STYLES END-->
+    <!--Added this so the client has access to the csrf tag and it's grabbed first service side on every page -->
+    <script type="text/javascript">
+    window.SAILS_LOCALS = {
+      _csrf: '<%= _csrf %>',
+      me: <%- JSON.stringify(me) %>
+    };
+    var myuser = <%-JSON.stringify(me)%>
+	//var input=[];
+	console.log(myuser);
+    </script>
+	
+	<style>
+	
+.circular-menu {
+  width: 250px;
+  height: 250px;
+  margin: 0 auto;
+  position: relative;
+  visibility:hidden;
+}
+.show.circular-menu{
+	visibility:visible;
+}
+
+
+.circle {
+  width: 250px;
+  height: 250px;
+  opacity: 0;
+  
+  -webkit-transform: scale(0);
+  -moz-transform: scale(0);
+  transform: scale(0);
+
+  //-webkit-transition: all 0.4s ease-out;
+  //-moz-transition: all 0.4s ease-out;
+  //transition: all 0.4s ease-out;
+}
+
+.open.circle {
+  opacity: 1;
+
+  -webkit-transform: scale(1);
+  -moz-transform: scale(1);
+  transform: scale(1);
+}
+
+.circle a {
+  text-decoration: none;
+  
+  color: #000000;
+  //background: #dddddd;
+  //display: block;
+  //height: 40px;
+  //width: 40px;
+  //line-height: 40px;
+  //margin-left: -20px;
+  //margin-top: -20px;
+  position: absolute;
+  text-align: center;
+
+}
+.circle a:hover { 
+    //background-color: gray;
+	background-image: url("images/c3.png");
+	background-repeat: no-repeat;
+}
+//.fb:hover{
+//color: gray;
+//}
+
+//.li fb:hover { 
+//   color: gray;
+//} 
+
+.menu-button {
+  position: absolute;
+  //top: calc(50% - 200px);
+  //left: calc(50% - 200px);
+  text-decoration: none;
+  text-align: center;
+   
+  border-radius: 80%;
+  display: block;
+  height: 400px;
+  width: 400px;
+  line-height: 40px;
+  padding: 10px;
+  background: #000000;
+  visibility:hidden;
+  -webkit-transform: scale(0);
+  -moz-transform: scale(0);
+  transform: scale(0);
+  opacity: 0.8;
+  //-webkit-transition: all 0.4s ease-out;
+  //-moz-transition: all 0.4s ease-out;
+  //transition: all 0.4s ease-out;
+  //opacity: 0;
+  -moz-box-shadow: -1px 1px 5px #ddd;
+  -webkit-box-shadow: -1px 1px 5px #ddd;
+  -o-box-shadow: -1px 1px 5px #ddd;
+  box-shadow: -1px 1px 5px #ddd;
+}
+.open.menu-button{
+	visibility:visible;
+	//-webkit-transition: all 0.4s ease-out;
+  //-moz-transition: all 0.4s ease-out;
+  //transition: all 0.4s ease-out;
+	-webkit-transform: scale(1);
+  -moz-transform: scale(1);
+  transform: scale(1);
+}
+#x0{
+	visibility:hidden;
+}
+
+
+
+
+
+
+	</style>
+	
+  </head>
+  <body ng-app="DashboardModule" ng-controller="DashboardController">
+	
+    <!-- container = Fixed-width container container-fluid = full-width -->
+    <div id="big-container" >
+      <!-- Creates the navbar -->
+      <nav id ="mynav" class="navbar navbar-default navbar-inverse" style="margin-left:15px;margin-right:15px;height:50px">
+        <!-- This creates the mechanism for collapse button -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" ng-init="navCollapsed = true" ng-click="navCollapsed = !navCollapsed">
+        <!-- This controls the number of lines in the image when the nav collapse -->
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        </button>
+        <!-- This is the brand on the left-hand side. -->
+        <a class="navbar-brand" href="/#/"> SeGWADE</a>
+        <!-- This is what is the above collapse button points to when the mark-up below is collapsed -->
+        <div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'">
+          <!-- This is what "styles" the li's as navbar items -->
+          <ul class="nav navbar-nav navbar-right">
+            <!-- navbar-right pulls this element right -->
+            <!-- Using ng-show instead of ng-if because we need this mark-up to be in the dom when signup controller
+            fires.  If it's not there (which it wouldn't be in the case of ng-if) then the scope of the signup
+            controller will not be tied to this element. -->
+            <li>
+              <a id="gameaccess" href="/seegames" style="">games</a>
+            </li>
+			<li>
+              <a id="netaccess" href="/seenetworks" style="visibility:hidden">networks</a>
+            </li>
+			<li>
+              <a href="/logout">sign-out</a>
+            </li>
+            <!-- <a ng-controller="signinController" class="btn btn-default navbar-btn navbar-right" href="#" ng-if="!isAuthenticated">sign-in</a> -->
+            <!-- Using ng-show instead of ng-if because we need this mark-up to be in the dom when signup controller
+            fires.  If it's not there (which it wouldn't be in the case of ng-if) then the scope of the signup
+            controller will not be tied to this element. -->
+          </ul>
+        </div>
+      </nav>
+
+      <h1 id="maintitle" align="center" style="height:39px;">Serious Game for WDS Analysis, Design & Evaluation</h1>
+
+	  <!-- <div ng-repeat="n in [42, 42, 43, 43] track by $index">
+	    {{n}}
+	  </div>-->
+	  
+
+    </div>
+	<div id="d3-container" style="position:absolute;z-index:10000;pointer-events: none;" ></div>
+	<div id="d3-container2" style="position:absolute;z-index:10000;pointer-events: none;" ></div>
+	<div id="info-win" style="position:absolute;z-index:10000;pointer-events: none;color:#ffffff" ></div>
+	<div id="info-cost" style="position:absolute;z-index:10000;pointer-events: none;color:#ffffff" ></div>
+	<div id="info-top" style="position:absolute;z-index:10000;pointer-events: none;color:#ffffff" ></div>
+	<div id="3d-graph" align="center"></div>
+	
+	
+	<a href="" class="menu-button" style="pointer-events: none;"> </a>
+	<nav id ="mycm" class="circular-menu" style="position:absolute;">
+		<a href="" id ="x0" onclick="activate2(this)" style="position:relative;z-index:33000;" >
+			<span class="fa-stack fa-2x" >
+				<i class="fa fa-circle fa-stack-2x" style="color:#ffffff; opacity:1.0;"></i>
+				<i class="fa fa-times-circle fa-stack-2x" style="color:#ff0000; opacity:1.0;"></i>
+				
+			</span>
+	    </a>
+		<div id="circle-parent" class="circle" style="z-index:32000;">
+		
+		<!-- <a class="btn btn-danger" href="#"  id ="c0"> <i class="fa fa-trash-o fa-lg"></i> Delete</a> -->
+		<!-- <a href="" id ="c0"><i class= "fa fa-ban fa-2x fa-border fa-inverse"></i><br>None</a> -->
+		<!-- <a href="" id ="c0"><span class="fa-stack fa-1x fa-inverse">
+		<i class="fa fa-ban fa-stack-2x "></i>
+	    </a> -->
+		<a href="" id ="c0" onclick="activate(this)" onmouseover="displayCostInfo(this)" onmouseout="clearCostInfo(this)">
+			<span class="fa-stack fa-2x fa-inverse" >
+				<i class="fa fa-ban fa-stack-2x "></i>
+			</span>
+	    </a> 
+		<a href="" id ="c1" onclick="activate(this)" onmouseover="displayCostInfo(this)" onmouseout="clearCostInfo(this)">
+			<span class="fa-stack fa-2x">
+				<i class="fa fa-circle fa-stack-2x" style="color:#993300; opacity:0.6;"></i>
+				<strong class="fa-stack-1x fa-stack-text fa-inverse">36"</strong>
+			</span>
+		</a>
+		<a href="" id ="c2" onclick="activate(this)" onmouseover="displayCostInfo(this)" onmouseout="clearCostInfo(this)">
+			<span class="fa-stack fa-2x">
+				<i class="fa fa-circle fa-stack-2x" style="color:#993300; opacity:0.6;"></i>
+				<strong class="fa-stack-1x fa-stack-text fa-inverse">48"</strong>
+			</span>
+		</a>
+		<a href="" id ="c3" onclick="activate(this)" onmouseover="displayCostInfo(this)" onmouseout="clearCostInfo(this)">
+			<span class="fa-stack fa-2x">
+				<i class="fa fa-circle fa-stack-2x" style="color:#993300; opacity:0.6;"></i>
+				<strong class="fa-stack-1x fa-stack-text fa-inverse">60"</strong>
+			</span>
+		</a>
+		<a href="" id ="c4" onclick="activate(this)" onmouseover="displayCostInfo(this)" onmouseout="clearCostInfo(this)">
+			<span class="fa-stack fa-2x">
+				<i class="fa fa-circle fa-stack-2x" style="color:#993300; opacity:0.6;"></i>
+				<strong class="fa-stack-1x fa-stack-text fa-inverse">72"</strong>
+			</span>
+		</a>
+		<a href="" id ="c5" onclick="activate(this)" onmouseover="displayCostInfo(this)" onmouseout="clearCostInfo(this)">
+			<span class="fa-stack fa-2x">
+				<i class="fa fa-circle fa-stack-2x" style="color:#993300; opacity:0.6;"></i>
+				<strong class="fa-stack-1x fa-stack-text fa-inverse">84"</strong>
+			</span>
+		</a>
+		<a href="" id ="c6" onclick="activate(this)" onmouseover="displayCostInfo(this)" onmouseout="clearCostInfo(this)">
+			<span class="fa-stack fa-2x">
+				<i class="fa fa-circle fa-stack-2x" style="color:#993300; opacity:0.6;"></i>
+				<strong class="fa-stack-1x fa-stack-text fa-inverse">96"</strong>
+			</span>
+		</a>
+		<a href="" id ="c7" onclick="activate(this)" onmouseover="displayCostInfo(this)" onmouseout="clearCostInfo(this)">
+			<span class="fa-stack fa-2x">
+				<i class="fa fa-circle fa-stack-2x" style="color:#993300; opacity:0.6;"></i>
+				<strong class="fa-stack-1x fa-stack-text fa-inverse">108"</strong>
+			</span>
+		</a>
+		<a href="" id ="c8" onclick="activate(this)" onmouseover="displayCostInfo(this)" onmouseout="clearCostInfo(this)">
+			<span class="fa-stack fa-2x">
+				<i class="fa fa-circle fa-stack-2x" style="color:#993300; opacity:0.6;"></i>
+				<strong class="fa-stack-1x fa-stack-text fa-inverse">120"</strong>
+			</span>
+		</a>
+		<a href="" id ="c9" onclick="activate(this)" onmouseover="displayCostInfo(this)" onmouseout="clearCostInfo(this)">
+			<span class="fa-stack fa-2x">
+				<i class="fa fa-circle fa-stack-2x" style="color:#993300; opacity:0.6;"></i>
+				<strong class="fa-stack-1x fa-stack-text fa-inverse">132"</strong>
+			</span>
+		</a>
+		<a href="" id ="c10" onclick="activate(this)" onmouseover="displayCostInfo(this)" onmouseout="clearCostInfo(this)">
+			<span class="fa-stack fa-2x">
+				<i class="fa fa-circle fa-stack-2x" style="color:#993300; opacity:0.6;"></i>
+				<strong class="fa-stack-1x fa-stack-text fa-inverse">144"</strong>
+			</span>
+		</a>
+		<a href="" id ="c11" onclick="activate(this)" onmouseover="displayCostInfo(this)" onmouseout="clearCostInfo(this)">
+			<span class="fa-stack fa-2x">
+				<i class="fa fa-circle fa-stack-2x" style="color:#993300; opacity:0.6;"></i>
+				<strong class="fa-stack-1x fa-stack-text fa-inverse">156"</strong>
+			</span>
+		</a>
+		<a href="" id ="c12" onclick="activate(this)" onmouseover="displayCostInfo(this)" onmouseout="clearCostInfo(this)">
+			<span class="fa-stack fa-2x">
+				<i class="fa fa-circle fa-stack-2x" style="color:#993300; opacity:0.6;"></i>
+				<strong class="fa-stack-1x fa-stack-text fa-inverse">168"</strong>
+			</span>
+		</a>
+		<a href="" id ="c13" onclick="activate(this)" onmouseover="displayCostInfo(this)" onmouseout="clearCostInfo(this)">
+			<span class="fa-stack fa-2x">
+				<i class="fa fa-circle fa-stack-2x" style="color:#993300; opacity:0.6;"></i>
+				<strong class="fa-stack-1x fa-stack-text fa-inverse">180"</strong>
+			</span>
+		</a>
+		<a href="" id ="c14" onclick="activate(this)" onmouseover="displayCostInfo(this)" onmouseout="clearCostInfo(this)">
+			<span class="fa-stack fa-2x">
+				<i class="fa fa-circle fa-stack-2x" style="color:#993300; opacity:0.6;"></i>
+				<strong class="fa-stack-1x fa-stack-text fa-inverse">192"</strong>
+			</span>
+		</a>
+		<a href="" id ="c15" onclick="activate(this)" onmouseover="displayCostInfo(this)" onmouseout="clearCostInfo(this)">
+			<span class="fa-stack fa-2x">
+				<i class="fa fa-circle fa-stack-2x" style="color:#993300; opacity:0.6;"></i>
+				<strong class="fa-stack-1x fa-stack-text fa-inverse">204"</strong>
+			</span>
+		</a>
+		<!-- <a href="" id ="c0" style="font-size:18px;font-weight:bold;">none</a> -->
+		<!-- <a href="" id ="c1" style="font-size:18px;font-weight:bold;">36"</a> -->
+		<!-- <a href="" id ="c2" style="font-size:18px;font-weight:bold;">48"</a>
+		<a href="" id ="c3" style="font-size:18px;font-weight:bold;">60"</a>
+		<a href="" id ="c4" style="font-size:18px;font-weight:bold;">72"</a>
+		<a href="" id ="c5" style="font-size:18px;font-weight:bold;">84"</a>
+		<a href="" id ="c6" style="font-size:18px;font-weight:bold;">96"</a> -->
+		<!-- <a href="" id ="c7" style="font-size:18px;font-weight:bold;">108"</a>
+		<a href="" id ="c8" style="font-size:18px;font-weight:bold;">120"</a>
+		<a href="" id ="c9" style="font-size:18px;font-weight:bold;">132"</a>
+		<a href="" id ="c10" style="font-size:18px;font-weight:bold;">144"</a>
+		<a href="" id ="c11" style="font-size:18px;font-weight:bold;">156"</a>
+		<a href="" id ="c12" style="font-size:18px;font-weight:bold;">168"</a>
+		<a href="" id ="c13" style="font-size:18px;font-weight:bold;">180"</a>
+		<a href="" id ="c14" style="font-size:18px;font-weight:bold;">192"</a>
+		<a href="" id ="c15" style="font-size:18px;font-weight:bold;">204"</a> -->
+		</div>
+		
+	</nav>
+	<div align="center">
+	<input class="btn btn-info " id="lowPriceB" type="button" value="Minimum cost" onclick="lowCostReset();"/>
+	<input class="btn btn-warning " id="maxPriceB" type="button" value="Maximum pressure" onclick="maxCostReset();"/>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Load :<select name="mySessionSelect" id="mySessionSelect" style="float:center"></select>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input class="btn btn-success " id="clickMe" type="button" value="Compute new results" onclick="requestComputation();"/>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a id="toupload" href="/network/uploader" class="btn btn-sm btn-success" style="visibility:hidden;z-index:40000">uploader</a>
+	</div>
+    <div align="center">Background color: <input type="radio" name="bcol" id="r1" value="male" checked=true> Black <input type="radio" id="r2" name="bcol" value="female"> White <span id="gds" style="visibility:hidden;">&nbsp;&nbsp;&nbsp;&nbsp; Graphics details: <input type="radio" name="gd" id="rgd1" value="medium" checked=true> Medium <input type="radio" id="rgd2" name="gd" value="high"> High</span></div>
+	<div id ="masterUI" style="position:absolute;visibility:hidden;">
+	<input class="btn btn-xs btn-danger " id="resetWholeGame" type="button" value="Reset scores" onclick="resetWholeGame();"/>	 
+	<input class="btn btn-xs btn-danger " id="endWholeGame" type="button" value="Show scores" onclick="endWholeGame();"/>	
+	</div>
+	<div id="score-message" style="position:absolute;visibility:hidden;z-index:40000"></div>
+	
+	<div id="high-score-table" style="position:absolute;visibility:hidden;z-index:40000" class="alert alert-warning alert-dismissible fade in" role="alert">
+	  <button type="button" class="close" data-dismiss="alert" aria-label="Close" onclick="closeAlert();">
+		<span aria-hidden="true">&times;</span>
+	  </button>
+	  <strong>The best scores</strong><div id="list_hs"></div>
+	</div>
+    <!--SCRIPTS-->
+    <script src="/js/dependencies/sails.io.js"></script>
+    <script src="/js/dependencies/jquery-2.2.3.min.js"></script>
+    <script src="/js/dependencies/angular.min.js"></script>
+    <script src="/js/dependencies/three.min.js"></script>
+    <script src="/js/dependencies/CanvasRenderer.js"></script>
+    <script src="/js/dependencies/CatmullRomCurve3.js"></script>
+    <script src="/js/dependencies/Detector.js"></script>
+    <script src="/js/dependencies/LineCurve3.js"></script>
+    <script src="/js/dependencies/OrbitControls.js"></script>
+    <script src="/js/dependencies/Projector.js"></script>
+    <script src="/js/dependencies/SkyShader.js"></script>
+    <script src="/js/dependencies/THREE.MeshLine.js"></script>
+    <script src="/js/dependencies/Underscore.1.8.3.min.js"></script>
+    <script src="/js/dependencies/angular-toastr.js"></script>
+    <script src="/js/dependencies/bootstrap-select.min.js"></script>
+    <script src="/js/dependencies/compareTo.module.js"></script>
+    <script src="/js/dependencies/d3.min.js"></script>
+    <script src="/js/dependencies/handsontable.full.min.js"></script>
+    <script src="/js/dependencies/stats.min.js"></script>
+    <script src="/js/public/signup/SignupModule.js"></script>
+    <script src="/js/private/dashboard/DashboardModule.js"></script>
+    <script src="/js/public/homepage/HomepageModule.js"></script>
+    <script src="/js/private/dashboard/DashboardController.js"></script>
+    <script src="/js/public/homepage/HomepageController.js"></script>
+    <script src="/js/public/signup/SignupController.js"></script>
+    <!--SCRIPTS END-->
+
+	<script>
+	
+	//$(".alert").alert()
+	
+	var UIColor="black";
+	var widget_color=0xffffff;
+	var mycol="";
+		if (UIColor=="black"){
+			mycol="white";
+		}
+		else if (UIColor=="white"){
+			mycol="black";
+		}
+	//document.getElementById("history-data").value="fofo 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0";
+	var editedPipe = -1;
+	var index_2_diameters = {0:'0"',1:'36"',2:'48"',3:'60"',4:'72"',5:'84"',6:'96"',7:'108"',8:'120"',9:'132"',10:'144"',11:'156"',12:'168"',13:'180"',14:'192"',15:'204"'};
+	var diameters_2_index = {36:1,48:2,60:3,72:4,84:5,96:6,108:7,120:8,132:9,144:10,156:11,168:12,180:13,192:14,204:15};
+	var nytCosts= [0.0, 93.585332157997, 133.70012691107, 176.319455347511, 221.047180992079, 267.607943052113, 315.797737428341, 365.458562780909, 416.463965665326, 468.710151628288, 522.110197162661, 576.590107698535, 632.086033769596, 688.542245411137, 745.909620797842, 804.144494188349];
+	//console.log(myuser['history']['sessions']);
+	var myhistory = myuser['history']['sessions'];
+	var format = d3.format("$.2s");
+	var formatDiff = d3.format("+$.2s");
+	var totalcost=0;
+	var total_deficit=0;
+	var nb_deficit_nodes=0;
+	var detailLevel=1;
+	var sky, sunSphere;
+	//var d3_width2=400;
+	//var d3_height2=100;
+	//var d3_svg2 = d3.select("#d3-container2").append("svg")
+	//				.attr("width", d3_width2)
+	//				.attr("height", d3_height2);
+	///var mybars;
+	//var mybarst;
+	//var dataset;
+	//var myselect = document.getElementById("session-select");
+	//	console.log(myhistory)
+	//for(var index =0; index<myhistory.length; index++) {
+	//	myselect.options[myselect.options.length] = new Option("session "+ index, index);
+	//}
+
+	var mySelect = document.getElementById("mySessionSelect")
+	
+	
+	
+	var latest_session;
+	var latest_pressures_raw=[]; 
+	var	latest_pressures =[];
+	var latest_diameters=[];
+	if (myhistory.length>1){
+		latest_session= myhistory[myhistory.length-2];
+		latest_pressures_raw=myhistory[myhistory.length-2];
+		latest_diameters=[]
+		for (var i=1;i<22;i++){
+			latest_diameters.push(parseInt(latest_session[i]));
+		}
+	}
+	else{
+		latest_session= myuser.name+ "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0";
+		latest_diameters=[]
+		for (var i=1;i<22;i++){
+			latest_diameters.push(0);
+		}
+	}
+	
+	
+	var latest_input = "";
+	for (var i=0;i<latest_diameters.length;i++){
+		if (i<latest_diameters.length-1){
+			latest_input+=latest_diameters[i]+" ";
+		}
+		else{
+			latest_input+=latest_diameters[i]
+		}
+		
+	}
+	
+	function requestComputation(){
+		var myparam = '"'+myuser['name']+'"'+' '+latest_input;
+		//console.log(myparam)
+		io.socket.put('/dashboard', {history: myparam },function gotResponse(body, response) {
+		  //console.log('Server sending request ot server ');
+		});
+	}
+	
+	
+	//document.getElementById("history-data").value=myuser['name']+' '+latest_input;
+	
+	//console.log(latest_diameters);
+	
+	var items = document.querySelectorAll('.circle a');
+
+	for(var i = 0, l = items.length; i < l; i++) {
+		
+	  items[i].style.left = (50 - 65*Math.cos(-0.5 * Math.PI - 2*(1/l)*i*Math.PI)).toFixed(4) + "%";
+	  
+	  items[i].style.top = (50 + 65*Math.sin(-0.5 * Math.PI - 2*(1/l)*i*Math.PI)).toFixed(4) + "%";
+	}
+
+	//document.querySelector('.menu-button').onclick = function(e) {
+	//   e.preventDefault(); document.querySelector('.circle').classList.toggle('open');
+	//}
+	$('#x0').bind('contextmenu', function(e) {
+		return false;
+	});
+	
+	
+	//window['input']=0;
+	//var myhistory=[];
+	// Use .get() to contact the server
+	io.socket.put('/update', {history:[]},function gotResponse(body, response) {
+	  console.log('Server sending request ot server ');
+	})
+	io.socket.on('betterscore', function gotHelloMessage (data) {
+		document.getElementById('score-message').style.visibility="visible";
+		console.log(data['score'].toFixed(0))
+		document.getElementById('score-message').innerHTML='<span style="color:white">User <strong>'+ data['user']+'</strong> found lowest present total cost at: <strong>$' +d3.format(",.0f")(data['score'].toFixed(0))+'</strong></span>';
+		//$("#score-message").delay().hide(10000);
+		//console.log("User "+ data['user']+" found lowest present total cost at :" +data['score'])
+	});
+	
+	io.socket.on('hello', function gotHelloMessage (data) {
+		console.log('User `' + data.name + '` changed his history');
+		if (data.name==myuser.name){
+			//console.log(myhistory );
+			//myhistory.pop();
+			myhistory[myhistory.length-1]=data.history[1];
+			myhistory.push([""]);
+			//console.log(myhistory );
+			myuser['history']['sessions']=myhistory;
+			latest_session=[];
+			if (myhistory.length>1){
+				latest_session= myhistory[myhistory.length-2];
+			}
+			latest_diameters=[];
+			for (var i=1;i<22;i++){
+				latest_diameters.push(parseInt(latest_session[i]));
+			}
+			
+			var mcnt=1;
+			for (var i=22;i<latest_session.length-1;i++){	
+				if (listNodes[mcnt] && listNodes[mcnt].hasOwnProperty('initialPressure')){		
+					//listNodes[mcnt]['initialPressure']=parseFloat(latest_pressures_raw[i]);
+					latest_pressures.push((parseFloat(latest_session[i])-listNodes[mcnt]['minimumPressure']))
+				}
+				mcnt+=1;
+			}
+			//console.log(latest_diameters);
+			//console.log(latest_pressures);
+			updatePressureNodesColors()
+			var ind = myhistory.length-1;
+			var opt = document.createElement('option');
+			opt.value = ind-1;
+			var my_tmp_info= getAllInfo(myhistory[myhistory.length-2]);
+			//console.log(my_tmp_info[0])
+			//console.log(my_tmp_info[2])
+			opt.innerHTML = "result "+(ind-1)+" "+format(my_tmp_info[0])+" - PSI deficit "+my_tmp_info[2].toFixed(2)+"- deficit nodes "+my_tmp_info[1];
+			//opt.innerHTML = "result "+(ind-1);
+			mySelect.appendChild(opt);
+			
+			//$("#s2").find("option").css("color", "#6f828e");
+			mySelect.value = ind-1;
+			
+			totalcost=0;
+			for (var i=0;i<latest_diameters.length;i++){
+				totalcost+= (listVariableLinks[i]['Length']*nytCosts[parseInt(latest_diameters[i])]);
+			}
+
+			total_deficit=0;
+			nb_deficit_nodes=0;
+			for (var i=0;i<latest_pressures.length;i++){
+				if(latest_pressures[i]<0){
+					nb_deficit_nodes+=1;
+					total_deficit+=latest_pressures[i];
+				}
+			}
+			cost_bar0.transition(200)
+			  .attr("y", (((d3_height *0.4)-range_cost(totalcost))+95))//.attr("y", (7))
+			  .attr("height", range_cost(totalcost));
+			diff_bar0.transition(200)
+			  .attr("y", (((d3_height *0.4)-range_diff(total_deficit))+95))//.attr("y", (7))
+			  .attr("height", range_diff(total_deficit));
+			nodes_bar0.transition(200)
+			  .attr("y", (((d3_height *0.4)-range_diff_nodes(nb_deficit_nodes))+95))//.attr("y", (7))
+			  .attr("height", range_diff_nodes(nb_deficit_nodes));
+				
+			}
+			var topinfo = '';
+
+			topinfo +='<table class="table-condensed" style="font-size:16px;border-style: solid;border-color: '+mycol+';border-width: 0px;color:'+mycol+'">';
+			topinfo +='<tr><td>Total Cost: </td><td>$'+d3.format(",.0f")(totalcost)+'</td><td>Total deficit (PSI): </td><td>'+(total_deficit).toFixed(2)+'</td><td>No. deficit nodes: </td><td>'+nb_deficit_nodes+'</td></tr></table>'
+
+			document.getElementById('info-top').innerHTML=topinfo;
+			
+			io.socket.put('/submitscore', {newscore:[totalcost, total_deficit],user:myuser.name},function gotResponse(body, response) {
+			  console.log('Server new score to server ');
+			})
+			
+	});
+	
+	io.socket.on('end', function gotEndMessage (data) {
+		//console.log(data.sessionBests);
+		document.getElementById('high-score-table').style.visibility="visible";
+		document.getElementById('high-score-table').style.width="400px";
+		//document.getElementById('high-score-table').innerHTML=""+data;
+		var hs_values=[];
+		var listnames=[];
+		var hs_object=[];
+		var user_count=1
+		for (var i=0;i<data.sessionBests.length;i++){
+			if (listnames.indexOf(data.sessionBests[i]['user'])==-1){
+				listnames.push(data.sessionBests[i]['user']);
+				hs_object.push("<span><strong>"+user_count+"</strong> - "+data.sessionBests[i]['user']+" : $"+d3.format(",.0f")(data.sessionBests[i]['score'].toFixed(0)))+"</span>";
+				user_count++;
+			}
+		}
+		var final_hs="";
+		var limit = hs_object.length;
+		if (limit>10){
+		limit=10;
+		}
+		for (var i=0;i<hs_object.length;i++){
+			final_hs+=hs_object[i]+"<br>"
+		}
+		document.getElementById('list_hs').innerHTML=final_hs;
+		//high-score-table
+		//console.log(hs_object)
+		//for elem 
+		//alert('High score table: \n'+final_hs)
+		//console.log(data.overallBest)
+		//console.log(data.sessionBests)
+		//console.log('overall optimum '+data.overallBest);
+		//console.log('session high score '+data.sessionBests);
+		
+	});
+	function closeAlert(){
+		document.getElementById('high-score-table').style.visibility="hidden";
+	}
+	
+	function resetWholeGame(){
+		document.getElementById('score-message').style.visibility="hidden";
+		io.socket.get('/reset', function ({}, jwres){
+		  console.log('Sending reset game request to server');
+		  
+		});
+	}
+	function endWholeGame(){
+		io.socket.get('/end', function ({}, jwres){
+		  console.log('Sending end game request to server');
+		});
+	}
+
+	var mouseX = 0, mouseY = 0,
+	targetRotation = 0,
+	targetRotationOnMouseDown = 0,
+	windowHalfX = (window.innerWidth*0.9) / 2,
+	windowHalfY = (window.innerHeight-200) / 2,
+	line, lines, lower_plane,
+	SEPARATION = 200,
+	AMOUNTX = 10,
+	AMOUNTY = 10,
+
+	camera, scene, renderer, controls;
+	//var particle=[];
+	var rotSpeed;
+	var INTERSECTED;
+	var isWebGl=false;
+	
+
+	var PI2 = Math.PI * 2;
+	
+	var programFill, programStroke, programText;
+	
+	//var offsetL = $('#3d-graph').offset().left//document.getElementById('big-container').style.left;
+	//console.log($('#maintitle').offset().left)
+	//console.log($('#maintitle').offset().top)
+	//console.log($('#maintitle').position().left)
+	//console.log($('#maintitle').position().top)
+	//console.log($('#maintitle').width())
+	//console.log($('#maintitle').height())
+	var offSetTop = $('#maintitle').height();
+	//console.log(window.innerHeight)
+	//console.log($('#mynav').height())
+	//console.log($('#big-container').width())
+	//console.log($('#big-container').width())
+	//console.log(document.getElementById('maintitle').style)
+	//console.log(offsetL)
+	//var offsetT = document.getElementById('graph-container').offsetTop-60;
+	var d3_width=400;
+	var d3_height=(window.innerHeight-200)/2;
+	var d3_svg = d3.select("#d3-container").append("svg")
+					.attr("width", d3_width)
+					.attr("height", d3_height);
+	var gradient1 = d3_svg
+		.append("linearGradient")
+		.attr("x1", "100%")
+		.attr("x2","0%")
+		.attr("y1", "0")
+		.attr("y2", "0")
+		.attr("id", "gradient1");
+	gradient1
+		.append("stop")
+		.attr("offset", "0%")
+		.attr("stop-color", "#006622");
+    gradient1
+		.append("stop")
+		.attr("offset", "49%")
+		.attr("stop-color", "#80ffaa");		
+	gradient1
+		.append("stop")
+		.attr("offset", "50%")
+		.attr("stop-color", "#ff8533");
+	gradient1
+		.append("stop")
+		.attr("offset", "75%")
+		.attr("stop-color", "#ff0000");
+	gradient1
+		.append("stop")
+		.attr("offset", "100%")
+		.attr("stop-color", "#800000");
+	var c4gradient="url(#gradient1)";
+	//var range_c4=d3.scale.linear().domain([200,(500*0.49)-300,0, -300]).range(["#006622","#80ffaa","#fee08b","red"]);
+	//var range_c4=d3.scale.linear().domain([200,0,(600*0.51)-300, -300]).range(["#006622","#80ffaa","#fee08b","red"]);
+	var range_c4=d3.scale.linear().domain([100,0,-0.0001,-100, -200]).range(["#006622","#80ffaa","#ff8533","#ff0000","#800000"]);
+	var legend_psi = d3_svg.append("g")
+			.attr("class", "legend_psi")
+			.attr("x", 0)
+			.attr("y", 25)
+			.attr("height", 100)
+			.attr("width", 100);
+	legend_psi.selectAll('g').data(["gdp"])
+	.enter()
+	.append('g')
+	.each(function(d, i) {
+		var g = d3.select(this);
+		//var myx =(d3_width*0.29)-150;
+		//var myy =20;
+		
+		var myx =100
+		var myy =10;
+		g.append("rect")
+		  .attr("x", (window.innerWidth*0.05)+200)
+		  .attr("y", (10))//.attr("y", (7))
+		  .attr("width", (d3_width *0.2))
+		  .attr("height", 15)
+		  //.attr("width", (d3_width *0.05))
+		  //.attr("height", d3_height *0.8)
+		  .style("fill", c4gradient);	
+		g.append("text")
+		  .attr("x",(window.innerWidth*0.05)+5) 
+		  .attr("y", 20)
+		  .attr("height",30)
+		  .attr("width",100)
+		  .style("fill", mycol).style("font-weight", "bold")//.style("font-style", "italic")
+		  .style("font-size","small")
+		  .text("Nodes color scale (PSI)");
+		g.append("text")
+		  .attr("x",(window.innerWidth*0.05)+5) 
+		  .attr("y", 35)
+		  .attr("height",30)
+		  .attr("width",100)
+		  .style("fill", mycol).style("font-weight", "bold")//.style("font-style", "italic")
+		  .style("font-size","small")
+		  .text("Pressure surplus/deficit:");
+		g.append("text")
+		  //.attr("x",(window.innerWidth*0.05)+30) 
+		  //.attr("y", 55+ d3_height *0.0)
+		  .attr("x", (window.innerWidth*0.05)+(d3_width *0.2)+200-10)
+		  .attr("y", (40))//.attr("y", (7))
+		  .attr("height",30)
+		  .attr("width",100)
+		  .style("fill", mycol).style("font-weight", "bold")//.style("font-style", "italic")
+		  .style("font-size","small")
+		  .text("100");
+		g.append("text")
+		  //.attr("x",(window.innerWidth*0.05)+30) 
+		  //.attr("y", 55+ d3_height *0.4)
+		  .attr("x", (window.innerWidth*0.05)+(d3_width *0.1)+200-3)
+		  .attr("y", (40))
+		  .attr("height",30)
+		  .attr("width",100)
+		  .style("fill", mycol).style("font-weight", "bold")//.style("font-style", "italic")
+		  .style("font-size","small")
+		  .text("0"); 
+		g.append("text")
+		  //.attr("x",(window.innerWidth*0.05)+30) 
+		  //.attr("y", 55+ d3_height *0.8)
+		  .attr("x", (window.innerWidth*0.05)+(d3_width *0.0)+200-15)
+		  .attr("y", (40))
+		  .attr("height",30)
+		  .attr("width",100)
+		  .style("fill", mycol).style("font-weight", "bold")//.style("font-style", "italic")
+		  .style("font-size","small")
+		  .text("-200");
+
+	});
+	
+	
+	
+			  
+	document.getElementById('info-win').style.left=((window.innerWidth*0.95)-300)+"px";
+	document.getElementById('info-win').style.top=170+"px";
+	document.getElementById('info-cost').style.left=((window.innerWidth*0.05)+10)+"px";
+	document.getElementById('info-cost').style.top=((window.innerHeight)*0.50)+"px";
+	document.getElementById('info-top').style.left=((window.innerWidth*0.05)+320)+"px";
+	document.getElementById('info-top').style.top=120+"px";
+	document.getElementById('info-top').style.width=((window.innerWidth*0.9*0.6))+"px";
+	
+	document.getElementById('masterUI').style.top=15+"px";
+	document.getElementById('masterUI').style.left=150+"px";
+	document.getElementById('score-message').style.top=15+"px";
+	document.getElementById('score-message').style.left=350+"px";
+	document.getElementById('high-score-table').style.top=100+"px";
+	document.getElementById('high-score-table').style.left=100+"px";
+	if (myuser.admin==true){
+		document.getElementById('masterUI').style.visibility="visible";
+		//document.getElementById('toupload').style.visibility="visible";
+		document.getElementById('netaccess').style.visibility="visible";
+	}
+	
+	var textureLoader = new THREE.TextureLoader();
+	var mapA = textureLoader.load( "images/circle.png" );
+	var mapB = textureLoader.load( "images/circle2.png" );
+	//if(Detector.webgl){ 
+	//	console.log("WebGL is supported on your machine")
+	//}
+         //  renderer = new THREE.WebGLRenderer({antialias:true}); 
+		// If its not supported, instantiate the canvas renderer to support all non WebGL browsers 
+	//} else { 
+	//	renderer = new THREE.CanvasRenderer(); 
+	//} 
+var target;
+	// make a network data structure with coordinates
+var listNodes=[
+ {id: 1, x: 610.00, y: 2716.00},      
+ {id: 2, x:528.00, y: 2468.00, minimumPressure:255, initialPressure:294.434},                             
+ {id: 3, x:496.00, y: 2240.00, minimumPressure:255, initialPressure:286.729},        
+ {id: 4, x:431.00, y: 2000.00, minimumPressure:255, initialPressure:284.485},           
+ {id: 5, x:427.00, y: 1793.00, minimumPressure:255, initialPressure:282.513},           
+ {id: 6, x:443.00, y: 1582.00, minimumPressure:255, initialPressure:280.998},         
+ {id: 7, x:455.00, y: 1395.00, minimumPressure:255, initialPressure:278.643},         
+ {id: 8, x:533.00, y: 1224.00, minimumPressure:255, initialPressure:275.2},            
+ {id: 9, x:642.00, y: 1074.00, minimumPressure:255, initialPressure:272.696},     
+ {id: 10, x:553.00, y: 915.00, minimumPressure:255, initialPressure:272.664},           
+ {id: 11, x:732.00, y: 1334.00, minimumPressure:255, initialPressure:272.842},           
+ {id: 12, x:748.00, y: 1570.00, minimumPressure:255, initialPressure:274.214},           
+ {id: 13, x:780.00, y: 1781.00, minimumPressure:255, initialPressure:277.308},        
+ {id: 14, x:695.00, y: 2122.00, minimumPressure:255, initialPressure:285.065},            
+ {id: 15, x:687.00, y: 2403.00, minimumPressure:255, initialPressure:293.106},          
+ {id: 16, x:963.00, y: 716.00, minimumPressure:260, initialPressure:211.476},            
+ {id: 17, x:317.00, y: 505.00, minimumPressure:272.80, initialPressure:265.401},         
+ {id: 18, x:1110.00, y: 1574.00, minimumPressure:255, initialPressure:158.564},          
+ {id: 19, x:1419.00, y: 1594.00, minimumPressure:255, initialPressure:98.6693},            
+ {id: 20, x:1061.00, y: 1131.00, minimumPressure:255, initialPressure:210.109},        
+ ];  
+//var particleText=[];
+//for (var i =0; i<listNodes.length; i++ ){
+//	particleText.push(1);
+//}
+	
+ var listFixedLinks=[
+ {id:1 , Node1:1  , Node2:2  , Length: 11600 , Diameter: 180 , Roughness: 100 , MinorLoss: 0 ,	Status: "Open" , Midpoints: [] },
+ {id:2 , Node1:2  , Node2:3  , Length: 	19800 , Diameter: 180  , Roughness:	100   , MinorLoss:      	0           	,	Status: "Open"  },
+ {id:3 , Node1:3  , Node2:4  , Length: 	7300 , Diameter:       	180  , Roughness:	100    , MinorLoss:     	0       ,	Status: "Open"  },
+ {id:4 , Node1:4  , Node2:5  , Length: 	8300  , Diameter:      	180  , Roughness:	100    , MinorLoss:     	0        ,	Status: "Open"  },
+ {id:5 , Node1:5  , Node2:6  , Length: 	8600  , Diameter:      	180   , Roughness:	100    , MinorLoss:     	0        ,	Status: "Open"  },
+ {id:6 , Node1:6  , Node2:7  , Length: 	19100  , Diameter:     	180  , Roughness:	100    , MinorLoss:     	0        ,	Status: "Open"  },
+ {id:7 , Node1:7  , Node2:8  , Length:  9600   , Diameter:     	132   , Roughness:	100    , MinorLoss:     	0        ,	Status: "Open"  },
+ {id:8 , Node1:8  , Node2:9  , Length:  12500  , Diameter:     	132   , Roughness:	100    , MinorLoss:     	0        ,	Status: "Open"  },
+ {id:9 , Node1:9  , Node2:10 , Length: 	9600   , Diameter:     	180   , Roughness:	100     , MinorLoss:    	0        ,	Status: "Open"  },
+ {id:10 , Node1:11   , Node2:9   , Length:  11200  , Diameter:     	204  , Roughness: 	100    , MinorLoss:     	0        ,	Status: "Open"  },
+ {id:11 , Node1:12   , Node2:11  , Length: 	14500  , Diameter:     	204   , Roughness:	100    , MinorLoss:     	0         ,	Status: "Open"  },
+ {id:12 , Node1:13   , Node2:12  , Length:	12200  , Diameter:     	204   , Roughness:	100    , MinorLoss:     	0         ,	Status: "Open"  },
+ {id:13 , Node1:14   , Node2:13  , Length:  24100  , Diameter:     	204   , Roughness:	100    , MinorLoss:     	0         ,	Status: "Open"  },
+ {id:14 , Node1:15   , Node2:14  , Length:  21100  , Diameter:     	204   , Roughness:	100    , MinorLoss:     	0         ,	Status: "Open"  },
+ {id:15 , Node1:1    , Node2:15  , Length: 	15500  , Diameter:     	204   , Roughness:	100    , MinorLoss:     	0         ,	Status: "Open"  },
+ {id:16 , Node1:10   , Node2:17  , Length:  26400  , Diameter:     	72    , Roughness:	100    , MinorLoss:     	0         ,	Status: "Open"  },
+ {id:17 , Node1:12   , Node2:18  , Length: 	31200   , Diameter:    	72   , Roughness:	100    , MinorLoss:     	0          ,	Status: "Open"  },
+ {id:18 , Node1:18   , Node2:19  , Length:	24000   , Diameter:    	60   , Roughness:	100    , MinorLoss:     	0          ,	Status: "Open"  },
+ {id:19 , Node1:11   , Node2:20  , Length: 	14400  , Diameter:     	60    , Roughness: 	100    , MinorLoss:     	0          ,	Status: "Open"  },
+ {id:20 , Node1:20   , Node2:16  , Length:  38400  , Diameter:     	60   , Roughness:	100    , MinorLoss:     	0          ,	Status: "Open"  },
+ {id:21 , Node1:9    , Node2:16  , Length: 	26400   , Diameter:    	72   , Roughness:	100     , MinorLoss:    	0          ,	Status: "Open"  }
+ ];
+ 
+var listVariableLinks=[
+ {id:101   , Node1: 1   , Node2:	2     , Length:     11600    , Diameter:	0.0001  , Roughness:	100    , MinorLoss:     	0        ,	Status: "Open"  , verticesX: [510.27] , verticesY: [2609.39 ]    },
+ {id:102   , Node1:	2   , Node2: 	3     , Length: 	19800    , Diameter:	0.0001  , Roughness: 	100    , MinorLoss:     	0        ,	Status: "Open"  , verticesX: [450.11] , verticesY: [2355.88 ]    },
+ {id:103   , Node1:	3   , Node2:  	4     , Length:   	7300     , Diameter: 	0.0001  , Roughness:	100    , MinorLoss:     	0        ,	Status: "Open"  , verticesX: [395.69] , verticesY: [2131.02 ]    },
+ {id:104   , Node1:	4   , Node2: 	5     , Length:   	8300     , Diameter: 	0.0001  , Roughness:	100    , MinorLoss:     	0        ,	Status: "Open"  , verticesX: [358.45] , verticesY: [1893.27 ]    },
+ {id:105   , Node1:	5   , Node2: 	6     , Length:   	8600     , Diameter: 	0.0001  , Roughness:	100    , MinorLoss:     	0        ,	Status: "Open"  , verticesX: [358.45] , verticesY: [1672.71 ]    },
+ {id:106   , Node1:	6   , Node2:	7     , Length:    	19100    , Diameter: 	0.0001  , Roughness:	100    , MinorLoss:     	0        ,	Status: "Open"  , verticesX: [372.77] , verticesY: [1476.49 ]    },
+ {id:107   , Node1:	7   , Node2:  	8     , Length:    	9600     , Diameter:	0.0001  , Roughness:	100    , MinorLoss:     	0        ,	Status: "Open"  , verticesX: [412.87] , verticesY: [1261.66 ]    },
+ {id:108   , Node1:	8   , Node2:  	9     , Length:   	12500    , Diameter:	0.0001  , Roughness: 	100    , MinorLoss:     	0        ,	Status: "Open"  , verticesX: [528.88] , verticesY: [1102.68 ]    },
+ {id:109   , Node1:	9   , Node2:   	10    , Length:     9600     , Diameter:	0.0001  , Roughness: 	100    , MinorLoss:     	0        ,	Status: "Open"  , verticesX: [660.65] , verticesY: [942.27 ]    },
+ {id:110   , Node1:	11  , Node2:  	9     , Length:     11200    , Diameter:	0.0001  , Roughness: 	100    , MinorLoss:     	0        ,	Status: "Open"  , verticesX: [621.98] , verticesY: [1248.77 ]    },
+ {id:111   , Node1: 12  , Node2:	11    , Length:    	14500    , Diameter:	0.0001  , Roughness:  	100    , MinorLoss:     	0        ,	Status: "Open"  , verticesX: [663.51] , verticesY: [1456.44 ]    },
+ {id:112   , Node1:	13  , Node2: 	12    , Length:  	12200    , Diameter: 	0.0001  , Roughness:  	100    , MinorLoss:     	0        ,	Status: "Open"  , verticesX: [836.82] , verticesY: [1655.52 ]    },
+ {id:113   , Node1:	14  , Node2:	13    , Length:  	24100    , Diameter: 	0.0001  , Roughness: 	100    , MinorLoss:     	0        ,	Status: "Open"  , verticesX: [809.60] , verticesY: [1962.02 ]    },
+ {id:114   , Node1:	15  , Node2: 	14    , Length:    	21100    , Diameter: 	0.0001  , Roughness:	100    , MinorLoss:     	0        ,	Status: "Open"  , verticesX: [763.77] , verticesY: [2254.20 ]    },
+ {id:115   , Node1: 1   , Node2:	15    , Length:     15500    , Diameter: 	0.0001  , Roughness: 	100    , MinorLoss:     	0        ,	Status: "Open"  , verticesX: [719.37] , verticesY: [2577.88 ]    },
+ {id:116   , Node1: 10  , Node2:  	17    , Length:    	26400    , Diameter:	0.0001  , Roughness: 	100    , MinorLoss:     	0        ,	Status: "Open"  , verticesX: [520.29] , verticesY: [670.14 ]    },
+ {id:117   , Node1:	12  , Node2:   	18    , Length:    	31200    , Diameter:	0.0001  , Roughness:	100    , MinorLoss:     	0        ,	Status: "Open"  , verticesX: [938.50] , verticesY: [1495.11 ]    },
+ {id:118   , Node1: 18  , Node2:    19    , Length:    	24000    , Diameter: 	0.0001  , Roughness:	100    , MinorLoss:     	0        ,	Status: "Open"  , verticesX: [1269.35] , verticesY: [1500.84 ]    },
+ {id:119   , Node1: 11  , Node2:  	20    , Length:   	14400    , Diameter:	0.0001  , Roughness:	100    , MinorLoss:     	0        ,	Status: "Open"  , verticesX: [942.80] , verticesY: [1290.30 ]    },
+ {id:120   , Node1: 20  , Node2:  	16    , Length:   	38400    , Diameter:	0.0001  , Roughness:	100    , MinorLoss:     	0        ,	Status: "Open"  , verticesX: [1106.08] , verticesY: [890.71 ]    },
+ {id:121   , Node1: 9   , Node2:    16    , Length:    	26400    , Diameter: 	0.0001  , Roughness:	100    , MinorLoss:     	0        ,	Status: "Open"  , verticesX: [866.89] , verticesY: [952.29 ]    }
+]
+
+if (myhistory.length>1){
+	// initialise pressure values
+	var mcnt=1;
+	for (var i=22;i<latest_pressures_raw.length-1;i++){	
+		if (listNodes[mcnt] && listNodes[mcnt].hasOwnProperty('initialPressure')){		
+			listNodes[mcnt]['initialPressure']=parseFloat(latest_pressures_raw[i]);
+			latest_pressures.push((listNodes[mcnt]['initialPressure']-listNodes[mcnt]['minimumPressure']))
+		}
+		mcnt+=1;
+	}
+}
+else{
+	for (var i=0;i<listNodes.length;i++){	
+		if (listNodes[i] && listNodes[i].hasOwnProperty('initialPressure')){		
+			latest_pressures.push((listNodes[i]['initialPressure']-listNodes[i]['minimumPressure']))
+		}
+	}
+}
+//console.log(latest_pressures)
+
+
+//console.log(myhistory.length)
+if (myhistory.length>1){
+	for (var i = 0; i<myhistory.length-1; i++){
+		var opt = document.createElement('option');
+		opt.value = i;
+		var my_tmp_info= getAllInfo(myhistory[i]);
+		opt.innerHTML = "result "+i+" "+format(my_tmp_info[0])+" - PSI deficit "+my_tmp_info[2].toFixed(1)+"- deficit nodes "+my_tmp_info[1];
+		mySelect.appendChild(opt);
+	}
+	//$("#s2").find("option").css("color", "#6f828e");
+	mySelect.value = myhistory.length-2;
+}
+
+
+var legend_bars = d3_svg.append("g")
+			.attr("class", "legend_bars")
+			.attr("x", 0)
+			.attr("y", 25)
+			.attr("height", 100)
+			.attr("width", 100);
+var range_cost=d3.scale.linear().domain([0,294156056]).range([0,(d3_height *0.4)]);
+var range_diff=d3.scale.linear().domain([0,-353.5807]).range([0,(d3_height *0.4)]);
+//var range_diff_nodes=d3.scale.linear().domain([0,listNodes.length-1]).range([0,(d3_height *0.4)]);
+// caped to 5
+var range_diff_nodes=d3.scale.linear().domain([0,5]).range([0,(d3_height *0.4)]);
+
+totalcost=0;
+for (var i=0;i<latest_diameters.length;i++){
+	totalcost+= (listVariableLinks[i]['Length']*nytCosts[parseInt(latest_diameters[i])]);
+}
+
+total_deficit=0;
+nb_deficit_nodes=0;
+for (var i=0;i<latest_pressures.length;i++){
+	if(latest_pressures[i]<0){
+		nb_deficit_nodes+=1;
+		total_deficit+=latest_pressures[i];
+	}
+}
+
+	
+var myx =100
+var myy =10;
+var cost_bar0= legend_bars.append("rect")
+  .attr("x", (window.innerWidth*0.05)+15)
+  .attr("y", (((d3_height *0.4)-range_cost(totalcost))+95))//.attr("y", (7))
+  .attr("width", (d3_width *0.03))
+  .attr("height", range_cost(totalcost))
+  .style("fill", "red");
+var cost_bar= legend_bars.append("rect")
+  .attr("x", (window.innerWidth*0.05)+15)
+  .attr("y", 95)//.attr("y", (7))
+  .attr("width", (d3_width *0.03))
+  .attr("height", (d3_height *0.4))
+  .style("fill", "none")
+  .style("stroke", mycol)
+  .style("stroke-width", 1);
+legend_bars.append("text")
+		  .attr("x",(window.innerWidth*0.05)+8) 
+		  .attr("y", 88)
+		  .attr("height",30)
+		  .attr("width",100)
+		  .style("fill", mycol).style("font-weight", "bold")//.style("font-style", "italic")
+		  .style("font-size","small")
+		  .text("Cost");
+// var cost_text=legend_bars.append("text")
+		  // .attr("x",(window.innerWidth*0.05)+8) 
+		  // .attr("y", 10)
+		  // .attr("height",30)
+		  // .attr("width",100)
+		  // .style("fill", "white").style("font-weight", "bold")//.style("font-style", "italic")
+		  // .style("font-size","small")
+		  // .text("Total cost: $"+totalcost.toFixed(0));
+
+var diff_bar0= legend_bars.append("rect")
+  .attr("x", (window.innerWidth*0.05)+80)
+  .attr("y", (((d3_height *0.4)-range_diff(total_deficit))+95))//.attr("y", (7))
+  .attr("width", (d3_width *0.03))
+  .attr("height", range_diff(total_deficit))
+  .style("fill", "red");
+var diff_bar= legend_bars.append("rect")
+  .attr("x", (window.innerWidth*0.05)+80)
+  .attr("y", 95)//.attr("y", (7))
+  .attr("width", (d3_width *0.03))
+  .attr("height", (d3_height *0.4))
+  .style("fill", "none")
+  .style("stroke", mycol)
+  .style("stroke-width", 1);
+legend_bars.append("text")
+		  .attr("x",(window.innerWidth*0.05)+73) 
+		  .attr("y", 62)
+		  .attr("height",30)
+		  .attr("width",100)
+		  .style("fill", mycol).style("font-weight", "bold")//.style("font-style", "italic")
+		  .style("font-size","small")
+		  .text("Total");
+legend_bars.append("text")
+		  .attr("x",(window.innerWidth*0.05)+73) 
+		  .attr("y", 75)
+		  .attr("height",30)
+		  .attr("width",100)
+		  .style("fill", mycol).style("font-weight", "bold")//.style("font-style", "italic")
+		  .style("font-size","small")
+		  .text("deficit");
+legend_bars.append("text")
+		  .attr("x",(window.innerWidth*0.05)+73) 
+		  .attr("y", 88)
+		  .attr("height",30)
+		  .attr("width",100)
+		  .style("fill", mycol).style("font-weight", "bold")//.style("font-style", "italic")
+		  .style("font-size","small")
+		  .text("(PSI)");
+  
+// var diff_text=legend_bars.append("text")
+		  // .attr("x",(window.innerWidth*0.05)+70) 
+		  // .attr("y", 88+(d3_height *0.4)+20)
+		  // .attr("height",30)
+		  // .attr("width",100)
+		  // .style("fill", "white").style("font-weight", "bold")//.style("font-style", "italic")
+		  // .style("font-size","small")
+		  // .text((total_deficit).toFixed(1));  
+  
+var nodes_bar0= legend_bars.append("rect")
+  .attr("x", (window.innerWidth*0.05)+145)
+  .attr("y", (((d3_height *0.4)-range_diff_nodes(nb_deficit_nodes))+95))//.attr("y", (7))
+  .attr("width", (d3_width *0.03))
+  .attr("height", range_diff_nodes(nb_deficit_nodes))
+  .style("fill", "red");
+var nodes_bar= legend_bars.append("rect")
+  .attr("x", (window.innerWidth*0.05)+145)
+  .attr("y", 95)//.attr("y", (7))
+  .attr("width", (d3_width *0.03))
+  .attr("height", (d3_height *0.4))
+  .style("fill", "none")
+  .style("stroke", mycol)
+  .style("stroke-width", 1);
+legend_bars.append("text")
+		  .attr("x",(window.innerWidth*0.05)+128) 
+		  .attr("y", 75)
+		  .attr("height",30)
+		  .attr("width",100)
+		  .style("fill", mycol).style("font-weight", "bold")//.style("font-style", "italic")
+		  .style("font-size","small")
+		  .text("No. nodes");
+legend_bars.append("text")
+		  .attr("x",(window.innerWidth*0.05)+128) 
+		  .attr("y", 88)
+		  .attr("height",30)
+		  .attr("width",100)
+		  .style("fill", mycol).style("font-weight", "bold")//.style("font-style", "italic")
+		  .style("font-size","small")
+		  .text("deficit");
+// var nodes_text=legend_bars.append("text")
+		  // .attr("x",(window.innerWidth*0.05)+143) 
+		  // .attr("y", 88+(d3_height *0.4)+20)
+		  // .attr("height",30)
+		  // .attr("width",100)
+		  // .style("fill", "white").style("font-weight", "bold")//.style("font-style", "italic")
+		  // .style("font-size","small")
+		  // .text(nb_deficit_nodes+"/"+(listNodes.length-1)); 
+var topinfo = '';
+var mycol="";
+if (UIColor=="black"){
+	mycol="white";
+}
+else if (UIColor=="white"){
+	mycol="black";
+}
+topinfo +='<table class="table-condensed" style="font-size:16px;border-style: solid;border-color: '+mycol+';border-width: 0px;color:'+mycol+'">';
+topinfo +='<tr><td>Total Cost: </td><td>$'+d3.format(",.0f")(totalcost)+'</td><td>Total deficit (PSI): </td><td>'+(total_deficit).toFixed(2)+'</td><td>No. deficit nodes: </td><td>'+nb_deficit_nodes+'</td></tr></table>'
+
+document.getElementById('info-top').innerHTML=topinfo;
+
+function getTotalCostFromInfo(session_info){
+	//console.log(session_info)
+	var totalCost=0;
+	for (var i=1;i<latest_diameters.length+1;i++){
+		totalCost+= (listVariableLinks[i-1]['Length']*nytCosts[parseInt(session_info[i])]);
+	}
+	//console.log(format(totalCost));
+	return totalCost
+}
+
+function getNegDiffPSIFromInfo(session_info){
+	var nbNegNodes=0;
+	var totalNegPSI=0;
+	var mcnt=1;
+	for (var i=22;i<session_info.length-1;i++){	
+		if (listNodes[mcnt] && listNodes[mcnt].hasOwnProperty('initialPressure')){		
+			//listNodes[mcnt]['initialPressure']=parseFloat(latest_pressures_raw[i]);
+			var tmp =(parseFloat(latest_session[i])-listNodes[mcnt]['minimumPressure']);
+			if (tmp<0){
+				nbNegNodes+=1;
+				totalNegPSI+=tmp;
+			}
+		}
+		mcnt+=1;
+	}
+	return [nbNegNodes, totalNegPSI]
+}
+
+function getAllInfo(session_info){
+	var totalCost=0;
+	for (var i=1;i<latest_diameters.length+1;i++){
+		totalCost+= (listVariableLinks[i-1]['Length']*nytCosts[parseInt(session_info[i])]);
+	}
+	var nbNegNodes=0;
+	var totalNegPSI=0;
+	var mcnt=1;
+	for (var i=22;i<session_info.length-1;i++){	
+		if (listNodes[mcnt] && listNodes[mcnt].hasOwnProperty('initialPressure')){		
+			//listNodes[mcnt]['initialPressure']=parseFloat(latest_pressures_raw[i]);
+			var tmp =(parseFloat(session_info[i])-listNodes[mcnt]['minimumPressure']);
+			if (tmp<0){
+				nbNegNodes+=1;
+				totalNegPSI+=tmp;
+			}
+		}
+		mcnt+=1;
+	}
+	return [totalCost, nbNegNodes, totalNegPSI]
+}
+
+
+
+
+
+	function generateSprite(parameters) {
+		var message=parameters.message || 'label';
+		//console.log(message);
+		var canvas = document.createElement( 'canvas' );
+		var context = canvas.getContext( '2d' );
+		var fontface = parameters.fontface || 'Helvetica';
+		var fontsize = parameters.fontsize || 70;
+		
+		// get size data (height depends only on font size)
+		var metrics = context.measureText(message);
+		var textWidth = metrics.width;
+		canvas.width = textWidth;
+		canvas.height = fontsize;
+		canvas.width = 128;
+		canvas.height = 128;
+		context.font = fontsize + "px " + fontface;
+		
+		// text color
+		if (UIColor=="black"){
+			context.fillStyle = 'rgba(255, 255, 255, 1.0)';
+		}
+		else if (UIColor=="white"){
+			context.fillStyle = 'rgba(0, 0, 0, 1.0)';
+		}
+		//context.fillStyle = 0xffffff;
+		context.fillText(message, 5, 5+fontsize);
+		return canvas;
+
+	}
+	
+	
+ 
+	init();
+	animate();
+	
+	
+	function updatePressureNodesColors(){
+		if (myhistory.length>1){
+			latest_pressures_raw= myhistory[myhistory.length-2];
+			latest_pressures =[];
+			var cnt=1;
+			for (var i=22;i<latest_pressures_raw.length-1;i++){	
+				if (listNodes[cnt] && listNodes[cnt].hasOwnProperty('initialPressure')){		
+					//listNodes[cnt]['initialPressure']=parseFloat(latest_pressures_raw[i]);
+					latest_pressures.push((parseFloat(latest_pressures_raw[i])-listNodes[cnt]['minimumPressure']))
+				}
+				cnt+=1;
+			}
+			//console.log(latest_pressures_raw)
+			//console.log(latest_pressures)
+			if (isWebGl==false){
+				var l_scene = scene.children[0].children.length;	
+					for (var s =0;s<l_scene;s++){
+						if (scene.children[0].children[s].name.startsWith('p')){
+							var nb= parseInt(scene.children[0].children[s].name.split('p')[1]);
+							var string_hex_color;
+							if (listNodes[nb]['minimumPressure']){
+								string_hex_color= range_c4(latest_pressures[nb-1]);
+							}
+							var mycolor = string_hex_color;
+							if (nb==0){
+								mycolor = 0x9966ff;
+							}
+							scene.children[0].children[s].material.color = new THREE.Color( mycolor );					
+						}
+					}	
+			}
+			else{
+				if (detailLevel==1){
+					var l_scene = scene.children[0].children.length;
+				
+					for (var s =0;s<l_scene;s++){
+						if (scene.children[0].children[s].name.startsWith('p')){
+							var nb= parseInt(scene.children[0].children[s].name.split('p')[1]);
+							//console.log(nb)
+							var string_hex_color;
+							if (listNodes[nb]['minimumPressure']){
+								string_hex_color= range_c4(latest_pressures[nb-1]);
+							}
+							var mycolor = string_hex_color;
+							if (nb==0){
+								mycolor = 0x9966ff;
+							}
+							scene.children[0].children[s].material.color=new THREE.Color( mycolor);
+						}
+						
+					}
+				}
+				else{
+					var m_group= scene.children[3].children;
+					var l_scene = m_group.length;
+					//console.log(scene.children[3].children.length)
+					for (var s =0;s<l_scene;s++){
+						if (m_group[s].type=="Mesh" ){
+							if (m_group[s].name && (m_group[s].name.startsWith('p')) ){
+								var nb= parseInt(scene.children[3].children[s].name.split('p')[1]);
+								
+								var string_hex_color;
+								if (listNodes[nb]['minimumPressure']){
+									string_hex_color= range_c4(latest_pressures[nb-1]);
+									//console.log(nb-1+":"+latest_pressures[nb-1])
+								}
+								var mycolor = string_hex_color;
+								if (nb==0){
+									mycolor = 0x9966ff;
+								}
+								m_group[s].material.color=new THREE.Color(mycolor );
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	function activate(elem){
+		//console.log(elem)
+		for (var b=0;b<16;b++){
+			document.getElementById('c'+b).children[0].children[0].style.color="#993300";
+		}
+		//console.log(document.getElementById('c'+latest_diameters[parseInt(INTERSECTED.name.split("vl")[1])]))
+		//console.log(document.getElementById('c'+latest_diameters[parseInt(INTERSECTED.name.split("vl")[1])]).children[0].children[0])
+		elem.children[0].children[0].style.color="#008000";
+		if (editedPipe != -1){
+			
+			//console.log(editedPipe)
+			latest_diameters[editedPipe]=parseInt(elem.id.split("c")[1]);
+		}
+		latest_input = "";
+		for (var i=0;i<latest_diameters.length;i++){
+			if (i<latest_diameters.length-1){
+				latest_input+=latest_diameters[i]+" ";
+			}
+			else{
+				latest_input+=latest_diameters[i]
+			}
+			
+		}
+		//latest_diameters[parseInt(INTERSECTED.name.split("vl")[1])]=parseInt(elem.name.split("c")[1]);
+		//console.log(latest_diameters)
+		if (isWebGl==false){
+			var l_scene = scene.children[0].children.length;		
+			for (var s =0;s<l_scene;s++){
+				//console.log(scene.children[0].children[s])
+				if (scene.children[0].children[s].name.startsWith('p')){							
+					scene.children[0].children[s].material.color = new THREE.Color( 0xdddddd );						
+				}
+				else if (scene.children[0].children[s].name=='vl'+editedPipe){
+					var nb= latest_diameters[editedPipe];
+					//console.log(scene.children[0].children[s].material.lineWidth)
+					//scene.children[0].children[s].material.lineWidth=2+(nb/4);
+					//scene.children[0].children[s].material.needsUpdate=true;
+					//scene.children[0].children[s].geometry.verticesNeedUpdate=true;
+					//console.log(scene.children[0].children[s].material.lineWidth)
+					var default_col = 0xff0000;
+					if (latest_diameters[editedPipe]!=0){
+						default_col= 0x00ff00;
+					}
+					var material = new THREE.LineBasicMaterial( { color : default_col, linewidth:2+(nb/4), opacity: 0.7 } );
+					scene.children[0].children[s].material=material;
+				}
+			}
+		}
+		else{
+			if (detailLevel==1){
+				var l_scene = scene.children[0].children.length;
+				
+				for (var s =0;s<l_scene;s++){
+					if (scene.children[0].children[s].name.startsWith('p')){
+						scene.children[0].children[s].material.color=new THREE.Color( 0x888888);
+					}
+					if (scene.children[0].children[s].name=='mvl'+editedPipe){
+						//var nb= latest_diameters[editedPipe];
+						//console.log((latest_diameters[editedPipe]))
+						scene.children[0].children[s].material.uniforms.lineWidth.value=(0.5+(latest_diameters[editedPipe]/5.0));
+						var default_col = 0xff0000;
+						if (latest_diameters[editedPipe]!=0){
+							default_col= 0x00ff00;
+						}
+						scene.children[0].children[s].material.uniforms.color.value=new THREE.Color( default_col );
+					
+					}
+					
+				}
+			}
+			else{
+				var m_group= scene.children[3].children;
+				var l_scene = m_group.length;
+				//console.log(scene.children[3].children.length)
+				for (var s =0;s<l_scene;s++){
+					if (m_group[s].type=="Mesh" ){
+						if (m_group[s].name && (m_group[s].name=='mvl'+editedPipe)) {
+							var curve = new THREE.CatmullRomCurve3( [
+								new THREE.Vector3( listNodes[listVariableLinks[editedPipe]['Node1']-1]['x']/10-80,0, (listNodes[listVariableLinks[editedPipe]['Node1']-1]['y']/10)-150 ),
+								new THREE.Vector3( listVariableLinks[editedPipe]['verticesX']/10-80,0,listVariableLinks[editedPipe]['verticesY']/10-150 ),
+								new THREE.Vector3( listNodes[listVariableLinks[editedPipe]['Node2']-1]['x']/10-80,0, (listNodes[listVariableLinks[editedPipe]['Node2']-1]['y']/10)-150 ),
+							] );
+							var rad=0.3;
+							if (latest_diameters[editedPipe]!=0){
+								rad = 0.3+(latest_diameters[editedPipe]/6);
+							}
+							var geometry = new THREE.TubeGeometry(
+								curve,  //path
+								12,    //segments
+								rad,     //radius
+								8,     //radiusSegments
+								false  //closed
+							);
+							m_group[s].geometry=geometry;
+							//m_group[s].geometry[3]=rad;
+							
+						}
+						if (m_group[s].name && (m_group[s].name.startsWith('p')) ){
+							m_group[s].material.color=new THREE.Color( 0x888888 );
+						}
+					}
+				}		
+			}
+		}
+		//linewidth:2+(latest_diameters[i]/4)
+	}
+	
+	function activate2(elem){
+		//elem.style.visibility="hidden";
+		document.querySelector('#mycm').classList.remove('show');
+		document.querySelector('.circle').classList.remove('open');
+		editedPipe = -1;
+		document.querySelector('#x0').style.visibility="hidden";
+		document.querySelector('.menu-button').classList.remove('open');
+		//document.querySelector('.menu-button').classList.remove('open');
+	}
+	
+	function lowCostReset(){
+		//console.log(latest_pressures)
+		//console.log(latest_diameters)
+		
+		for (var i=0;i<latest_diameters.length;i++){
+			latest_diameters[i]=0;
+		}
+		//console.log(latest_pressures)
+		//console.log(latest_diameters)
+		//requestComputation();
+		for (var i=0;i<listVariableLinks.length;i++){
+			if (isWebGl==false){
+				var l_scene = scene.children[0].children.length;		
+				for (var s =0;s<l_scene;s++){
+					if (scene.children[0].children[s].name=='vl'+i){
+						var nb= latest_diameters[i];
+						//console.log(scene.children[0].children[s].material.lineWidth)
+						//scene.children[0].children[s].material.lineWidth=2+(nb/4);
+						//scene.children[0].children[s].material.needsUpdate=true;
+						//scene.children[0].children[s].geometry.verticesNeedUpdate=true;
+						//console.log(scene.children[0].children[s].material.lineWidth)
+						var default_col = 0xff0000;
+						if (latest_diameters[i]!=0){
+							default_col= 0x00ff00;
+						}
+						var material = new THREE.LineBasicMaterial( { color : default_col, linewidth:2+(nb/4), opacity: 0.7 } );
+						scene.children[0].children[s].material=material;
+					}
+				}
+			}
+			else{
+				if (detailLevel==1){
+					var l_scene = scene.children[0].children.length;
+					
+					for (var s =0;s<l_scene;s++){
+						if (scene.children[0].children[s].name=='mvl'+i){
+							//var nb= latest_diameters[editedPipe];
+							//console.log((latest_diameters[editedPipe]))
+							scene.children[0].children[s].material.uniforms.lineWidth.value=(0.5+(latest_diameters[i]/5.0));
+							var default_col = 0xff0000;
+							if (latest_diameters[i]!=0){
+								default_col= 0x00ff00;
+							}
+							scene.children[0].children[s].material.uniforms.color.value=new THREE.Color( default_col );
+						
+						}
+						
+					}
+				}
+				else{
+					var m_group= scene.children[3].children;
+					var l_scene = m_group.length;
+					//console.log(scene.children[3].children.length)
+					for (var s =0;s<l_scene;s++){
+						if (m_group[s].type=="Mesh" ){
+							if (m_group[s].name && (m_group[s].name=='mvl'+i)) {
+								var curve = new THREE.CatmullRomCurve3( [
+									new THREE.Vector3( listNodes[listVariableLinks[i]['Node1']-1]['x']/10-80,0, (listNodes[listVariableLinks[i]['Node1']-1]['y']/10)-150 ),
+									new THREE.Vector3( listVariableLinks[i]['verticesX']/10-80,0,listVariableLinks[i]['verticesY']/10-150 ),
+									new THREE.Vector3( listNodes[listVariableLinks[i]['Node2']-1]['x']/10-80,0, (listNodes[listVariableLinks[i]['Node2']-1]['y']/10)-150 ),
+								] );
+								var rad=0.3;
+								if (latest_diameters[i]!=0){
+									rad = 0.3+(latest_diameters[i]/6);
+								}
+								var geometry = new THREE.TubeGeometry(
+									curve,  //path
+									12,    //segments
+									rad,     //radius
+									8,     //radiusSegments
+									false  //closed
+								);
+								m_group[s].geometry=geometry;
+								//m_group[s].geometry[3]=rad;
+								
+							}
+						}
+					}		
+				}
+			}
+		}
+		latest_input = "";
+		for (var i=0;i<latest_diameters.length;i++){
+			if (i<latest_diameters.length-1){
+				latest_input+=latest_diameters[i]+" ";
+			}
+			else{
+				latest_input+=latest_diameters[i]
+			}
+			
+		}
+		requestComputation();
+	}
+	
+	function maxCostReset(){
+		for (var i=0;i<latest_diameters.length;i++){
+			latest_diameters[i]=15;
+		}
+		//console.log(latest_pressures)
+		//console.log(latest_diameters)
+		//requestComputation();
+		for (var i=0;i<listVariableLinks.length;i++){
+			if (isWebGl==false){
+				var l_scene = scene.children[0].children.length;		
+				for (var s =0;s<l_scene;s++){
+					if (scene.children[0].children[s].name=='vl'+i){
+						var nb= latest_diameters[i];
+						//console.log(scene.children[0].children[s].material.lineWidth)
+						//scene.children[0].children[s].material.lineWidth=2+(nb/4);
+						//scene.children[0].children[s].material.needsUpdate=true;
+						//scene.children[0].children[s].geometry.verticesNeedUpdate=true;
+						//console.log(scene.children[0].children[s].material.lineWidth)
+						var default_col = 0xff0000;
+						if (latest_diameters[i]!=0){
+							default_col= 0x00ff00;
+						}
+						var material = new THREE.LineBasicMaterial( { color : default_col, linewidth:2+(nb/4), opacity: 0.7 } );
+						scene.children[0].children[s].material=material;
+					}
+				}
+			}
+			else{
+				if (detailLevel==1){
+					var l_scene = scene.children[0].children.length;
+					
+					for (var s =0;s<l_scene;s++){
+						if (scene.children[0].children[s].name=='mvl'+i){
+							//var nb= latest_diameters[editedPipe];
+							//console.log((latest_diameters[editedPipe]))
+							scene.children[0].children[s].material.uniforms.lineWidth.value=(0.5+(latest_diameters[i]/5.0));
+							var default_col = 0xff0000;
+							if (latest_diameters[i]!=0){
+								default_col= 0x00ff00;
+							}
+							scene.children[0].children[s].material.uniforms.color.value=new THREE.Color( default_col );
+						
+						}
+						
+					}
+				}
+				else{
+					var m_group= scene.children[3].children;
+					var l_scene = m_group.length;
+					//console.log(scene.children[3].children.length)
+					for (var s =0;s<l_scene;s++){
+						if (m_group[s].type=="Mesh" ){
+							if (m_group[s].name && (m_group[s].name=='mvl'+i)) {
+								var curve = new THREE.CatmullRomCurve3( [
+									new THREE.Vector3( listNodes[listVariableLinks[i]['Node1']-1]['x']/10-80,0, (listNodes[listVariableLinks[i]['Node1']-1]['y']/10)-150 ),
+									new THREE.Vector3( listVariableLinks[i]['verticesX']/10-80,0,listVariableLinks[i]['verticesY']/10-150 ),
+									new THREE.Vector3( listNodes[listVariableLinks[i]['Node2']-1]['x']/10-80,0, (listNodes[listVariableLinks[i]['Node2']-1]['y']/10)-150 ),
+								] );
+								var rad=0.3;
+								if (latest_diameters[i]!=0){
+									rad = 0.3+(latest_diameters[i]/6);
+								}
+								var geometry = new THREE.TubeGeometry(
+									curve,  //path
+									12,    //segments
+									rad,     //radius
+									8,     //radiusSegments
+									false  //closed
+								);
+								m_group[s].geometry=geometry;
+								//m_group[s].geometry[3]=rad;
+								
+							}
+						}
+					}		
+				}
+			}
+		}
+		latest_input = "";
+		for (var i=0;i<latest_diameters.length;i++){
+			if (i<latest_diameters.length-1){
+				latest_input+=latest_diameters[i]+" ";
+			}
+			else{
+				latest_input+=latest_diameters[i]
+			}
+			
+		}
+		requestComputation();
+		
+	}
+	
+	d3.select("#r1").on("change", function() {
+		if (this.checked){
+			UIColor="black";			
+			renderer.setClearColor( 0x000000 );
+			widget_color = 0xffffff			
+			mycol="white";
+			//console.log(UIColor)
+			init();
+			var topinfo = '';
+			topinfo +='<table class="table-condensed" style="font-size:16px;border-style: solid;border-color: '+mycol+';border-width: 0px;color:'+mycol+'">';
+			topinfo +='<tr><td>Total Cost: </td><td>$'+d3.format(",.0f")(totalcost)+'</td><td>Total deficit (PSI): </td><td>'+(total_deficit).toFixed(2)+'</td><td>No. deficit nodes: </td><td>'+nb_deficit_nodes+'</td></tr></table>'
+			document.getElementById('info-top').innerHTML=topinfo;
+			onWindowResize();
+		}
+		
+	});
+	d3.select("#r2").on("change", function() {
+		if (this.checked){
+			UIColor="white";
+			renderer.setClearColor( 0xffffff );
+			widget_color = 0x000000;
+			mycol="black";
+			//console.log(UIColor)
+			init();
+			var topinfo = '';
+			topinfo +='<table class="table-condensed" style="font-size:16px;border-style: solid;border-color: '+mycol+';border-width: 0px;color:'+mycol+'">';
+			topinfo +='<tr><td>Total Cost: </td><td>'+d3.format(",.0f")(totalcost)+'</td><td>Total deficit (PSI): </td><td>'+(total_deficit).toFixed(2)+'</td><td>No. deficit nodes: </td><td>'+nb_deficit_nodes+'</td></tr></table>'
+			document.getElementById('info-top').innerHTML=topinfo;
+			onWindowResize();
+		}
+		
+	});
+	
+	d3.select("#rgd1").on("change", function() {
+		if (this.checked){
+			detailLevel=1;
+			init();
+			
+			onWindowResize();
+		}
+		
+	});
+	d3.select("#rgd2").on("change", function() {
+		if (this.checked){
+			detailLevel=2;
+			init();
+			
+			onWindowResize();
+		}
+		
+	});
+	
+	d3.select("#mySessionSelect").on("change", function() {
+		//console.log(this.value);
+		var selected_session=myhistory[this.value];
+		//console.log(selected_session);
+		latest_diameters=[]
+		for (var i=1;i<22;i++){
+			latest_diameters.push(parseInt(selected_session[i]));
+		}
+		//console.log(latest_diameters)
+		latest_pressures =[];
+		var cnt=1;
+		for (var i=22;i<selected_session.length-1;i++){	
+			if (listNodes[cnt] && listNodes[cnt].hasOwnProperty('initialPressure')){		
+				//listNodes[cnt]['initialPressure']=parseFloat(selected_session[i]);
+				latest_pressures.push((parseFloat(selected_session[i])-listNodes[cnt]['minimumPressure']))
+			}
+			cnt+=1;
+		}	
+		totalcost=0;
+		for (var i=0;i<latest_diameters.length;i++){
+			totalcost+= (listVariableLinks[i]['Length']*nytCosts[parseInt(latest_diameters[i])]);
+		}
+
+		total_deficit=0;
+		nb_deficit_nodes=0;
+		for (var i=0;i<latest_pressures.length;i++){
+			if(latest_pressures[i]<0){
+				nb_deficit_nodes+=1;
+				total_deficit+=latest_pressures[i];
+			}
+		}
+		cost_bar0.transition(200)
+		  .attr("y", (((d3_height *0.4)-range_cost(totalcost))+95))//.attr("y", (7))
+		  .attr("height", range_cost(totalcost));
+		diff_bar0.transition(200)
+		  .attr("y", (((d3_height *0.4)-range_diff(total_deficit))+95))//.attr("y", (7))
+		  .attr("height", range_diff(total_deficit));
+		nodes_bar0.transition(200)
+		  .attr("y", (((d3_height *0.4)-range_diff_nodes(nb_deficit_nodes))+95))//.attr("y", (7))
+		  .attr("height", range_diff_nodes(nb_deficit_nodes));
+		var topinfo = '';
+
+topinfo +='<table class="table-condensed" style="font-size:16px;border-style: solid;border-color: '+mycol+';border-width: 0px;color:'+mycol+'">';
+topinfo +='<tr><td>Total Cost: </td><td>$'+d3.format(",.0f")(totalcost)+'</td><td>Total deficit (PSI): </td><td>'+(total_deficit).toFixed(2)+'</td><td>No. deficit nodes: </td><td>'+nb_deficit_nodes+'</td></tr></table>'
+
+document.getElementById('info-top').innerHTML=topinfo;
+		
+		//console.log(latest_diameters)
+		//console.log(latest_pressures)
+		
+		if (isWebGl==false){
+			var l_scene = scene.children[0].children.length;	
+				for (var s =0;s<l_scene;s++){
+					if (scene.children[0].children[s].name.startsWith('p')){
+						var nb= parseInt(scene.children[0].children[s].name.split('p')[1]);
+						var string_hex_color;
+						if (listNodes[nb]['minimumPressure']){
+							string_hex_color= range_c4(latest_pressures[nb-1]);
+						}
+						var mycolor = string_hex_color;
+						if (nb==0){
+							mycolor = 0x9966ff;
+						}
+						scene.children[0].children[s].material.color = new THREE.Color( mycolor );					
+					}
+					else if (scene.children[0].children[s].name.startsWith('vl')){
+						var mnb= parseInt(scene.children[0].children[s].name.split('vl')[1]);
+						var nb= latest_diameters[mnb];
+						var default_col = 0xff0000;
+						if (latest_diameters[mnb]!=0){
+							default_col= 0x00ff00;
+						}
+						var material = new THREE.LineBasicMaterial( { color : default_col, linewidth:2+(nb/4), opacity: 0.7 } );
+						scene.children[0].children[s].material=material;
+					}
+					
+				}	
+		}
+		else{
+			if (detailLevel==1){
+				var l_scene = scene.children[0].children.length;
+			
+				for (var s =0;s<l_scene;s++){
+					if (scene.children[0].children[s].name.startsWith('p')){
+						var nb= parseInt(scene.children[0].children[s].name.split('p')[1]);
+						//console.log(nb)
+						var string_hex_color;
+						if (listNodes[nb]['minimumPressure']){
+							string_hex_color= range_c4(latest_pressures[nb-1]);
+						}
+						var mycolor = string_hex_color;
+						if (nb==0){
+							mycolor = 0x9966ff;
+						}
+						scene.children[0].children[s].material.color=new THREE.Color( mycolor);
+					}
+					else if (scene.children[0].children[s].name.startsWith('mvl')){
+							var nb= parseInt(scene.children[0].children[s].name.split('mvl')[1]);
+							//console.log((latest_diameters[editedPipe]))
+							scene.children[0].children[s].material.uniforms.lineWidth.value=(0.5+(latest_diameters[nb]/5.0));
+							var default_col = 0xff0000;
+							if (latest_diameters[nb]!=0){
+								default_col= 0x00ff00;
+							}
+							scene.children[0].children[s].material.uniforms.color.value=new THREE.Color( default_col );
+						
+						}
+					
+				}
+			}
+			else{
+				var m_group= scene.children[3].children;
+				var l_scene = m_group.length;
+				//console.log(scene.children[3].children.length)
+				for (var s =0;s<l_scene;s++){
+					if (m_group[s].type=="Mesh" ){
+						if (m_group[s].name && (m_group[s].name.startsWith('p')) ){
+							var nb= parseInt(scene.children[3].children[s].name.split('p')[1]);
+							
+							var string_hex_color;
+							if (listNodes[nb]['minimumPressure']){
+								string_hex_color= range_c4(latest_pressures[nb-1]);
+								//console.log(nb-1+":"+latest_pressures[nb-1])
+							}
+							var mycolor = string_hex_color;
+							if (nb==0){
+								mycolor = 0x9966ff;
+							}
+							m_group[s].material.color=new THREE.Color(mycolor );
+						}
+						else if (m_group[s].name && (m_group[s].name.startsWith('mvl'))) {
+							var nb= parseInt(scene.children[3].children[s].name.split('mvl')[1]);
+							var curve = new THREE.CatmullRomCurve3( [
+								new THREE.Vector3( listNodes[listVariableLinks[nb]['Node1']-1]['x']/10-80,0, (listNodes[listVariableLinks[nb]['Node1']-1]['y']/10)-150 ),
+								new THREE.Vector3( listVariableLinks[nb]['verticesX']/10-80,0,listVariableLinks[nb]['verticesY']/10-150 ),
+								new THREE.Vector3( listNodes[listVariableLinks[nb]['Node2']-1]['x']/10-80,0, (listNodes[listVariableLinks[nb]['Node2']-1]['y']/10)-150 ),
+							] );
+							var rad=0.3;
+							if (latest_diameters[nb]!=0){
+								rad = 0.3+(latest_diameters[nb]/6);
+							}
+							var geometry = new THREE.TubeGeometry(
+								curve,  //path
+								12,    //segments
+								rad,     //radius
+								8,     //radiusSegments
+								false  //closed
+							);
+							m_group[s].geometry=geometry;
+							//m_group[s].geometry[3]=rad;
+							
+						}
+					}
+				}
+			}
+		}
+		
+		latest_input = "";
+		for (var i=0;i<latest_diameters.length;i++){
+			if (i<latest_diameters.length-1){
+				latest_input+=latest_diameters[i]+" ";
+			}
+			else{
+				latest_input+=latest_diameters[i]
+			}
+			
+		}
+		//console.log(latest_input)
+		//requestComputation();
+		
+		
+	});
+	
+	
+	function displayCostInfo(elem){
+		
+		var nb= parseInt(elem.id.split('c')[1]);
+		//console.log("Cost of rehabilitation for a "+index_2_diameters[nb]+"ft diameter pipe: "+nytCosts[nb]+" $/ft")
+		//console.log("Pipe rehabilitation cost: "+listVariableLinks[editedPipe]['Length']*nytCosts[nb])
+		var totalCost=0;
+		for (var i=0;i<latest_diameters.length;i++){
+			totalCost+= (listVariableLinks[i]['Length']*nytCosts[latest_diameters[i]]);
+		}
+		//console.log("Total rehabilitation cost: "+ (totalCost+(listVariableLinks[editedPipe]['Length']*nytCosts[nb])))
+		var myinfo = '';
+		myinfo +='<div style="border-radius: 10px;border-style: solid;border-color: '+mycol+';">';
+		myinfo +='<table class="table table-condensed" style="font-size:18px;color:'+mycol+'">';
+		var diff =(listVariableLinks[editedPipe]['Length']*nytCosts[nb])-(listVariableLinks[editedPipe]['Length']*nytCosts[latest_diameters[editedPipe]]);
+		var diffcolor="";
+		if (diff>=0){
+			diffcolor="red"
+		}
+		else{
+			diffcolor="green"
+		}
+		myinfo +='<thead><tr><th>Pipe &nbsp; &nbsp;'+listVariableLinks[editedPipe]['id']+'</th><th></th></tr></thead>'
+		myinfo +='<tr><td>Length: </td><td>'+(listVariableLinks[editedPipe]['Length']).toFixed(0)+'</td></tr>'
+		myinfo +='<tr><td>Price/ft: </td><td>'+format(nytCosts[nb])+'/ft</td></tr>'
+		myinfo +='<tr><td>Pipe cost: </td><td>'+format(listVariableLinks[editedPipe]['Length']*nytCosts[nb])+'</td></tr>'
+		var extra_diff="";
+		if(diff!=0){
+			extra_diff='<span style="color:'+diffcolor+';font-weight:bold;"> ('+formatDiff(diff)+')</span>'
+		}
+		myinfo +='<tr><td>Total cost: </td><td>'+format(totalCost+(listVariableLinks[editedPipe]['Length']*nytCosts[nb])-((listVariableLinks[editedPipe]['Length']*nytCosts[latest_diameters[editedPipe]])))+''+extra_diff+'</td></tr></table>'
+		myinfo +='</div>';
+		document.getElementById('info-cost').innerHTML=myinfo;
+	}
+	function clearCostInfo(elem){
+		document.getElementById('info-cost').innerHTML="";
+		//console.log(elem.id+ " clear")
+	}
+	
+	
+	// document.getElementById('d3-container2').style.left=((window.innerWidth*0.15)+50)+"px";
+	// document.getElementById('d3-container2').style.top=170+"px";
+	// console.log(latest_pressures)
+	// //dataset = latest_pressures;//[ 5, -10, 13, 19, 21, 25, 22, 18, 15, 13,11, 12, 15, 20, 18, 17, 16, 18, 23, 25, 22 ];
+	
+	// var barPadding = 1;  // <-- New!
+	
+	// var my_y = d3.scale.linear()
+    // .domain([100,-200])
+    // .range([0, d3_height2/2]);
+	
+	
+	// mybars=d3_svg2.selectAll("rect")
+			   // .data(latest_pressures)
+			   // .enter()
+			   // .append("rect")
+			   // .attr("x", function(d, i) {
+			   		// return i * (d3_width2 / (latest_pressures.length));
+			   // })
+			   // .attr("y", function(d, i) {if (d>=0){return 50-my_y(Math.abs(d))} else {return 50}})
+			   // .attr("width", d3_width2 / (latest_pressures.length) - barPadding)
+			   // .attr("height", function(d) { return my_y(d);})
+			   // .attr("fill", function(d, i) {return range_c4(d);});
+	// mybarst=d3_svg2.selectAll("text")
+			   // .data(latest_pressures)
+			   // .enter()
+			   // .append("text")
+			   // .text(function(d,i) {
+			   		// return i+1;
+			   // })
+			   // .attr("text-anchor", "middle")
+			   // .attr("x", function(d, i) {
+			   		// return i * (d3_width2 / latest_pressures.length) + (d3_width2 / latest_pressures.length - barPadding) / 2;
+			   // })
+			   // .attr("y", function(d, i) {if (d>=0){return 60} else {return 48}})
+			   // .attr("font-family", "sans-serif")
+			   // .attr("font-size", "11px")
+			   // .attr("fill", "white");
+	
+	var container, separation = 100, amountX = 50, amountY = 50;
+	function init() {
+		
+		
+
+		container = document.getElementById("3d-graph");//document.createElement('div');
+		//document.body.appendChild(container);
+		//var 3d_height= parseInt(window.innerHeight)
+		camera = new THREE.PerspectiveCamera( 70, (window.innerWidth*0.9) /( window.innerHeight-200), 1, 100000000 );
+		camera.position.z = 160;
+		camera.position.y = 190;
+		scene = new THREE.Scene();
+		//camera.up.set( 0, -1, 0 );
+		if( Detector.webgl ){ 
+			renderer = new THREE.WebGLRenderer({ 
+				antialias : true,	// to get smoother output 
+				//preserveDrawingBuffer : true,	// to allow screenshot ,
+				logarithmicDepthBuffer : true	
+			}); 
+			isWebGl=true;
+		
+		
+		}else{ 
+			//Detector.addGetWebGLMessage(); 
+			renderer	= new THREE.CanvasRenderer(); 
+			isWebGl=false;
+		} 
+		var resolution = new THREE.Vector2( window.innerWidth*0.9, window.innerHeight-200 );
+		//renderer = new THREE.CanvasRenderer();
+		//isWebGl=false;	
+		if (isWebGl==true){
+			document.getElementById("gds").style.visibility="visible";
+		}
+		else{
+			document.getElementById("gds").style.visibility="hidden";
+		}
+		//console.log(renderer.getContext('2d'))
+		
+		renderer.setPixelRatio( window.devicePixelRatio );
+		renderer.setSize( window.innerWidth*0.9, window.innerHeight-200 );
+		if (UIColor=="black"){
+			renderer.setClearColor( 0x000000 );
+			widget_color = 0xffffff
+		}
+		else if (UIColor=="white"){
+			renderer.setClearColor( 0xffffff );
+			widget_color = 0x000000;
+		}
+		container.innerHTML="";
+		container.appendChild( renderer.domElement );
+		
+		stats = new Stats();
+		container.appendChild( stats.dom );
+		stats.dom.style.top = parseInt(window.innerHeight-60 )+"px";
+		stats.dom.style.left = parseInt((window.innerWidth*0.05))+"px";
+		
+		//document.getElementById('mycm').style.left=((window.innerWidth*0.5)-120)+"px";
+		//document.getElementById('mycm').style.top=((window.innerHeight*0.3))+"px";
+		document.getElementById('mycm').style.left=(-600)+"px";
+		document.getElementById('mycm').style.top=(-600)+"px";
+		//document.getElementById('pieSlice1').style.left=(-600)+"px";
+		//document.getElementById('pieSlice1').style.top=(-600)+"px";
+		//document.getElementById('pieSlice2').style.left=(-600)+"px";
+		//document.getElementById('pieSlice2').style.top=(-600)+"px";
+		$('#mycm').bind('contextmenu', function(e) {
+			return false;
+		}); 
+		
+		controls = new THREE.OrbitControls( camera, renderer.domElement );
+		
+		controls.enableDamping = true;
+		controls.dampingFactor = 0.25;
+		controls.enableZoom = true;
+		controls.enablePan = false;
+		controls.maxPolarAngle = Math.PI * 0.495;
+		lower_plane = new THREE.Object3D();
+		lines = new THREE.Object3D();
+		if (isWebGl==true){
+			if (detailLevel==1){
+				var ptgeometry = new THREE.SphereGeometry( 7, 6, 6 );
+				var ptmaterial = new THREE.MeshBasicMaterial( {color:0xffffff, wireframe:true});
+				target = new THREE.Mesh( ptgeometry, ptmaterial );
+				target.name = "target";
+				target.position.x= 10000000;
+				target.position.y=10000000;
+				target.position.z=10000000;
+				lines.add( target );
+			}
+			else{
+			
+				particleLight = new THREE.Mesh( new THREE.SphereGeometry( 4, 8, 8 ), new THREE.MeshBasicMaterial( { color: 0xffffff } ) );
+				particleLight.position.x = 200000;
+				particleLight.position.y = 100000;
+				scene.add( particleLight );
+
+				// Lights
+
+				scene.add( new THREE.AmbientLight( 0xcccccc ) );
+
+				var directionalLight = new THREE.DirectionalLight( /*Math.random() * */ 0xffffff, 0.050 );
+
+				directionalLight.position.x = Math.random() - 0.5;
+				directionalLight.position.y = Math.random() - 0.5;
+				directionalLight.position.z = Math.random() - 0.5;
+
+				directionalLight.position.normalize();
+
+				scene.add( directionalLight );
+
+				var pointLight = new THREE.PointLight( 0xffffff, 1 );
+				particleLight.add( pointLight );
+				
+				
+				var ptgeometry = new THREE.SphereGeometry( 7, 10, 10 );
+				var ptmaterial = new THREE.MeshBasicMaterial( {color:0xffffff, wireframe:true});
+				target = new THREE.Mesh( ptgeometry, ptmaterial );
+				target.name = "target";
+				target.position.x= 10000000;
+				target.position.y=10000000;
+				target.position.z=10000000;
+				lines.add( target );
+			}
+		}
+		else{
+			programFill = function ( context ) {
+				context.beginPath();
+				context.arc( 0, 0, 0.5, 0, PI2, true );
+				context.fill();
+			};
+			programStroke = function ( context ) {
+				context.lineWidth = 0.2;
+				context.beginPath();
+				context.arc( 0, 0, 0.5, 0, PI2, true );
+				context.fill();
+				context.strokeStyle="#FFFFFF";
+				context.arc( 0.0, 0.0, 0.5, 0.0, PI2, true );
+				context.stroke();
+			};
+			
+		}
+		
+		// 
+		//window['input']=0;;
+		// particles
+		for ( var i = 0; i < 20; i ++ ) {
+			renderer.getContext('2d').newnb=i;
+			var particle;
+			if (isWebGl==false){
+				var string_hex_color;
+				if (listNodes[i]['minimumPressure']){
+					//string_hex_color= range_c4((listNodes[i]['initialPressure']-listNodes[i]['minimumPressure']));
+					string_hex_color= range_c4(latest_pressures[i-1]);
+				}
+				var mycolor = string_hex_color;
+				if (i==0){
+					mycolor = 0x9966ff;
+				}
+				particle = new THREE.Sprite(new THREE.SpriteCanvasMaterial( { color: mycolor, program: programFill, opacity: 0.7})) ;
+				
+				particle.position.x = listNodes[i]['x']/10-80;//Math.random() * 2 - 1;
+				particle.position.y = 0;//Math.random() * 2 - 1;
+				particle.position.z = (listNodes[i]['y']/10)-150;//Math.random() * 2 - 1;
+				particle.scale.x = particle.scale.y = 10;
+				particle.name = "p"+i;
+				lines.add(particle);
+				var textmaterial = new THREE.SpriteMaterial( {
+					map: new THREE.CanvasTexture( generateSprite({message:''+(1+i), fontsize:40}) ),
+				} );
+				textmaterial.map.minFilter = THREE.LinearFilter;
+				
+				
+				var particleText = new THREE.Sprite(textmaterial);
+				particleText.position.x = listNodes[i]['x']/10-80;//Math.random() * 2 - 1;
+				particleText.position.y = 0;//Math.random() * 2 - 1;
+				particleText.position.z = (listNodes[i]['y']/10)-150;//Math.random() * 2 - 1;
+				particleText.scale.y=22;
+				particleText.scale.x=22;
+				particleText.name="t"+i;
+				lines.add(particleText);
+				
+				
+			}
+			else{
+				//circle.png
+				if (detailLevel==1){
+					var geometry = new THREE.SphereGeometry( 5, 6, 6 );
+					var string_hex_color;
+					if (listNodes[i]['minimumPressure']){
+						//string_hex_color= range_c4((listNodes[i]['initialPressure']-listNodes[i]['minimumPressure']));
+						string_hex_color= range_c4(latest_pressures[i-1]);
+					}
+					var mycolor = string_hex_color;
+					if (i==0){
+						mycolor = 0x9966ff;
+					}
+					var smaterial = new THREE.MeshBasicMaterial( {color:mycolor});
+					var sphere = new THREE.Mesh( geometry, smaterial );
+					sphere.position.x = listNodes[i]['x']/10-80;//Math.random() * 2 - 1;
+					sphere.position.y = 0;//Math.random() * 2 - 1;
+					sphere.position.z = (listNodes[i]['y']/10)-150;//Math.random() * 2 - 1;
+					sphere.name = "p"+i;
+					lines.add( sphere );
+					var textmaterial = new THREE.SpriteMaterial( {
+						map: new THREE.CanvasTexture( generateSprite({message:''+(1+i), fontsize:40}) ),
+					} );
+					textmaterial.map.minFilter = THREE.LinearFilter;
+					textmaterial.depthWrite = false;
+					textmaterial.depthTest = false;
+					
+					var particleText = new THREE.Sprite(textmaterial);
+					particleText.position.x = listNodes[i]['x']/10-80;//Math.random() * 2 - 1;
+					particleText.position.y = 0;//Math.random() * 2 - 1;
+					particleText.position.z = (listNodes[i]['y']/10)-150;//Math.random() * 2 - 1;
+					particleText.scale.y=22;
+					particleText.scale.x=22;
+					particleText.name="t"+i;
+					lines.add(particleText);
+					}
+				else {
+					var geometry = new THREE.SphereGeometry( 5, 10, 10 );
+					var string_hex_color;
+					if (listNodes[i]['minimumPressure']){
+						//string_hex_color= range_c4((listNodes[i]['initialPressure']-listNodes[i]['minimumPressure']));
+						string_hex_color= range_c4(latest_pressures[i-1]);
+					}
+					var mycolor = string_hex_color;
+					if (i==0){
+						mycolor = 0x9966ff;
+					}
+					var smaterial = new THREE.MeshLambertMaterial( { color: mycolor, shading: THREE.SmoothShading } ) ;//new THREE.MeshPhongMaterial( { color: 0x00ff00, specular: 0xffffff, shininess: 1, shading: THREE.FlatShading } )//new THREE.MeshNormalMaterial( ) ;//new THREE.MeshLambertMaterial( { color: 0xcccccc, shading: THREE.FlatShading } );//new THREE.MeshBasicMaterial( {color:0xff0000});
+					// new THREE.MeshPhongMaterial( { color: 0xffffdd, specular: 0xffffff, shininess: 30, shading: THREE.FlatShading } )//new THREE.MeshLambertMaterial( { color: 0xcccccc, shading: THREE.FlatShading } )
+					//smaterial.wireframe=true;
+					//new THREE.MeshLambertMaterial( { color: 0x666666, emissive: 0xff0000, shading: THREE.SmoothShading } );
+					//new THREE.MeshBasicMaterial( {color: Math.random() * 0x808080 + 0x808080, wireframe:true } );
+					var sphere = new THREE.Mesh( geometry, smaterial );
+					sphere.position.x = listNodes[i]['x']/10-80;//Math.random() * 2 - 1;
+					sphere.position.y = 0;//Math.random() * 2 - 1;
+					sphere.position.z = (listNodes[i]['y']/10)-150;//Math.random() * 2 - 1;
+					sphere.name = "p"+i;
+					lines.add( sphere );
+					var textmaterial = new THREE.SpriteMaterial( {
+						map: new THREE.CanvasTexture( generateSprite({message:''+(1+i), fontsize:40}) ),
+					} );
+					textmaterial.map.minFilter = THREE.LinearFilter;
+					textmaterial.depthWrite = false;
+					textmaterial.depthTest = false;
+					//textmaterial.blending=THREE.AdditiveBlending;//THREE.NormalBlending;
+					
+					var particleText = new THREE.Sprite(textmaterial);
+					particleText.position.x = listNodes[i]['x']/10-80;//Math.random() * 2 - 1;
+					particleText.position.y = 0;//Math.random() * 2 - 1;
+					particleText.position.z = (listNodes[i]['y']/10)-150;//Math.random() * 2 - 1;
+					particleText.scale.y=22;
+					particleText.scale.x=22;
+					
+					particleText.name="t"+i;
+					lines.add(particleText);
+				}
+			}
+		}
+		
+		var def_line_col;
+		// lines
+		if (UIColor=="black"){
+			def_line_col=0xffffff;
+		}
+		else if (UIColor=="white"){
+			def_line_col=0x888888;
+		}
+		for ( var i = 0; i < listFixedLinks.length; i ++ ) {
+			var geometry = new THREE.Geometry();
+			geometry.vertices.push( new THREE.Vector3( listNodes[listFixedLinks[i]['Node1']-1]['x']/10-80, 0, (listNodes[listFixedLinks[i]['Node1']-1]['y']/10)-150 ) );
+			geometry.vertices.push( new THREE.Vector3( listNodes[listFixedLinks[i]['Node2']-1]['x']/10-80, 0, (listNodes[listFixedLinks[i]['Node2']-1]['y']/10)-150 ) );
+			if (isWebGl==false){
+				line = new THREE.Line( geometry, new THREE.LineBasicMaterial( { color: def_line_col, opacity: 1.0, linewidth:2+diameters_2_index[listFixedLinks[i]['Diameter']]/4 } ) );
+				line.name="fl"+i;
+				lines.add(line);
+			}
+			else{
+				if (detailLevel==1){
+					var lmaterial = new THREE.MeshLineMaterial( { 
+						useMap: false,
+						color: new THREE.Color( def_line_col ),
+						opacity: 1.0,
+						resolution: resolution,
+						sizeAttenuation: true,
+						lineWidth: 0.5+diameters_2_index[listFixedLinks[i]['Diameter']]/5,
+						//blending: NoBlending,
+						side: THREE.DoubleSide,
+						near: camera.near,
+						far: camera.far
+					});
+					line = new THREE.MeshLine();
+					line.setGeometry( geometry );
+					var mesh = new THREE.Mesh( line.geometry, lmaterial );
+					//line.geometry.computeFaceNormals();
+					mesh.name="mfl"+i;
+					lines.add(mesh);
+					var mmaterial = new THREE.LineBasicMaterial( { color : def_line_col, opacity: 0.0,linewidth:0.5+diameters_2_index[listFixedLinks[i]['Diameter']]/5, visible: false } );
+					var lineObject = new THREE.Line( geometry, mmaterial );
+					lineObject.name="fl"+i;
+					//lineObject.rotateX(Math.PI/2);
+					lines.add(lineObject);
+				}
+				
+				
+			}
+			//var lmaterial = new THREE.MeshLineMaterial( { color: 0xffffff, opacity: 0.7, linewidth:listFixedLinks[i]['Diameter']/50 });
+			
+			//line = new THREE.Line( geometry, new THREE.LineBasicMaterial( { color: 0xffffff, opacity: 0.7, linewidth:listFixedLinks[i]['Diameter']/50 } ) );
+			//line = new THREE.Line( geometry, new THREE.LineBasicMaterial( { color: 0xffffff, opacity: 0.7, linewidth:listFixedLinks[i]['Diameter']/50 } ) );
+			
+			//scene.add( line );
+		}
+		if (isWebGl==false){
+			for ( var i = 0; i < listVariableLinks.length; i ++ ) {
+				
+				// Create a sine-like wave
+				var curve = new THREE.SplineCurve( [
+					new THREE.Vector2( listNodes[listVariableLinks[i]['Node1']-1]['x']/10-80, (listNodes[listVariableLinks[i]['Node1']-1]['y']/10)-150 ),
+					new THREE.Vector2( listVariableLinks[i]['verticesX']/10-80,listVariableLinks[i]['verticesY']/10-150 ),
+					new THREE.Vector2( listNodes[listVariableLinks[i]['Node2']-1]['x']/10-80, (listNodes[listVariableLinks[i]['Node2']-1]['y']/10)-150 ),
+					//new THREE.Vector2( Math.random() * 50, -5 ),
+					//new THREE.Vector2( Math.random() * 100, 0 )
+				] );
+				
+				var path = new THREE.Path( curve.getPoints( 10 ) );
+
+				var geometry = path.createPointsGeometry( 10 );
+				geometry.dynamic = true
+				var default_col = 0xff0000;
+				if (latest_diameters[i]!=0){
+					default_col= 0x00ff00;
+				}
+				var material = new THREE.LineBasicMaterial( { color : default_col, linewidth:2+(latest_diameters[i]/4), opacity: 1.0 } );
+
+				// Create the final Object3d to add to the scene
+				var splineObject = new THREE.Line( geometry, material );
+				splineObject.rotateX(Math.PI/2);
+				splineObject.name="vl"+i;
+				lines.add(splineObject);
+			}
+			
+			
+		}
+		else{
+		
+			if (detailLevel==1){
+			
+				for ( var i = 0; i < listVariableLinks.length; i ++ ) {
+					
+					// Create a sine-like wave
+					var curve = new THREE.SplineCurve( [
+						new THREE.Vector2( listNodes[listVariableLinks[i]['Node1']-1]['x']/10-80, (listNodes[listVariableLinks[i]['Node1']-1]['y']/10)-150 ),
+						new THREE.Vector2( listVariableLinks[i]['verticesX']/10-80,listVariableLinks[i]['verticesY']/10-150 ),
+						new THREE.Vector2( listNodes[listVariableLinks[i]['Node2']-1]['x']/10-80, (listNodes[listVariableLinks[i]['Node2']-1]['y']/10)-150 ),
+						//new THREE.Vector2( Math.random() * 50, -5 ),
+						//new THREE.Vector2( Math.random() * 100, 0 )
+					] );
+					
+					var path = new THREE.Path( curve.getPoints( 10 ) );
+					var default_col = 0xff0000;
+					if (latest_diameters[i]!=0){
+						default_col= 0x00ff00;
+					}
+					var geometry = path.createPointsGeometry( 10 );
+					var lmaterial = new THREE.MeshLineMaterial( { 
+						useMap: false,
+						color: new THREE.Color( default_col ),
+						opacity: 1.0,
+						resolution: resolution,
+						sizeAttenuation: true,
+						lineWidth: 0.5+(latest_diameters[i]/5),
+						side: THREE.DoubleSide,
+						near: camera.near,
+						far: camera.far
+					});
+					line = new THREE.MeshLine();
+					line.setGeometry( geometry );
+					var mesh = new THREE.Mesh( line.geometry, lmaterial );
+					mesh.rotateX(Math.PI/2);
+					mesh.name="mvl"+i;
+					lines.add(mesh);
+					
+					var mmaterial = new THREE.LineBasicMaterial( { color : default_col, linewidth:0.5+(latest_diameters[i]/5), opacity: 0.0001, visible: false } );
+					var splineObject = new THREE.Line( geometry, mmaterial );
+					splineObject.name="vl"+i;
+					splineObject.rotateX(Math.PI/2);
+					lines.add(splineObject);
+				}
+			}
+			else{
+				for ( var i = 0; i < listFixedLinks.length; i ++ ) {
+					var straightcurve = new THREE.LineCurve3(  new THREE.Vector3( listNodes[listFixedLinks[i]['Node1']-1]['x']/10-80, 0, (listNodes[listFixedLinks[i]['Node1']-1]['y']/10)-150 ), new THREE.Vector3( listNodes[listFixedLinks[i]['Node2']-1]['x']/10-80, 0, (listNodes[listFixedLinks[i]['Node2']-1]['y']/10)-150 ) );
+					
+					var geometry = new THREE.TubeGeometry(
+						straightcurve,  //path
+						1,    //segments
+						0.3+(diameters_2_index[listFixedLinks[i]['Diameter']]/6),     //radius
+						8,     //radiusSegments
+						false  //closed
+					);
+					//var mesh = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { color: 0xcccccc, shading: THREE.FlatShading } ) );
+					//var mesh = new THREE.Mesh( geometry, new THREE.MeshNormalMaterial( { shading: THREE.SmoothShading } ) );
+					//var mesh = new THREE.Mesh( geometry,new THREE.MeshLambertMaterial( { color: 0xbbbbbb, shading: THREE.SmoothShading } ));
+					
+					var smaterial = new THREE.MeshPhongMaterial( { color: 0x2121ce, emissive: 0x0f1e4d, specular: 0x111111, shininess: 30, shading: THREE.SmoothShading } )
+					//smaterial.wireframe=true;
+					var mesh = new THREE.Mesh( geometry,smaterial);
+					mesh.name="mfl"+i;
+					lines.add(mesh);
+					
+				}
+				for ( var i = 0; i < listVariableLinks.length; i ++ ) {
+					var curve = new THREE.CatmullRomCurve3( [
+						new THREE.Vector3( listNodes[listVariableLinks[i]['Node1']-1]['x']/10-80,0, (listNodes[listVariableLinks[i]['Node1']-1]['y']/10)-150 ),
+						new THREE.Vector3( listVariableLinks[i]['verticesX']/10-80,0,listVariableLinks[i]['verticesY']/10-150 ),
+						new THREE.Vector3( listNodes[listVariableLinks[i]['Node2']-1]['x']/10-80,0, (listNodes[listVariableLinks[i]['Node2']-1]['y']/10)-150 ),
+					] );
+					var rad=0.3;
+					if (latest_diameters[i]!=0){
+						rad = 0.3+(latest_diameters[i]/6);
+					}
+					var geometry = new THREE.TubeGeometry(
+						curve,  //path
+						12,    //segments
+						rad,     //radius
+						8,     //radiusSegments
+						false  //closed
+					);
+					geometry.dynamic = true;
+					// later call to update geometry
+					//this.floor.geometry.vertices[idx].y = someNewYVal;
+					//this.floor.geometry.__dirtyVertices = true;geometry.verticesNeedUpdate = true;
+					//var mesh = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { color: 0xff0000, shading: THREE.FlatShading } ) );
+					//var mesh = new THREE.Mesh( geometry, new THREE.MeshNormalMaterial( { shading: THREE.SmoothShading } ) );
+					var default_col = 0xff3333;
+					if (latest_diameters[i]!=0){
+						default_col= 0x00ff00;
+					}
+					var smaterial = new THREE.MeshLambertMaterial( { color: default_col, shading: THREE.SmoothShading } );
+					//smaterial.wireframe=true;
+					var mesh = new THREE.Mesh( geometry,smaterial);
+					
+					//var mesh = new THREE.Mesh( geometry,new THREE.MeshPhongMaterial( { color: 0xff0000, emissive: #0f1e4dspecular: 0xffffff, shininess: 1, shading: THREE.FlatShading } ));
+					//new THREE.MeshPhongMaterial( { color: 0xff0000, specular: 0xffffff, shininess: 1, shading: THREE.FlatShading } ));
+					mesh.name="mvl"+i;
+					lines.add(mesh);
+				}
+				
+				
+			}
+		}
+		lines.rotateX(Math.PI);
+		lines.rotateY(Math.PI*0.15);
+		//line = new THREE.LineSegments( geometry, new THREE.LineBasicMaterial( { color: 0xffffff, opacity: 0.5, linewidth:3.0 } ) );
+		scene.add( lines );
+		
+		
+		// var material = new THREE.SpriteMaterial({color : 0xffffff});
+		// for ( var ix = 0; ix < AMOUNTX; ix++ ) {
+			// for ( var iy = 0; iy < AMOUNTY; iy++ ) {
+				// var mparticle = new THREE.Sprite( material );
+				// mparticle.scale.y = 1;
+				// mparticle.position.y=-30;
+				// mparticle.position.x = ix * SEPARATION - ( ( AMOUNTX * SEPARATION ) / 2 );
+				// mparticle.position.z = iy * SEPARATION - ( ( AMOUNTY * SEPARATION ) / 2 );
+				// lower_plane.add( mparticle );
+			// }
+		// }
+		//var lmaterial = THREE.LineBasicMaterial( { color: 0xffffff, opacity: 0.3 } )
+		
+		if (isWebGl==false){
+			var lgeometry = new THREE.Geometry();
+			var size_plane=280;
+			lgeometry.vertices.push( new THREE.Vector3( -(size_plane/2), 0, (size_plane/2) ) );
+			lgeometry.vertices.push( new THREE.Vector3( (size_plane/2), 0, (size_plane/2) ));
+			
+			lgeometry.vertices.push( new THREE.Vector3( -(size_plane/2), 0, -(size_plane/2) ) );
+			lgeometry.vertices.push( new THREE.Vector3( (size_plane/2), 0, -(size_plane/2) ));
+			
+			lgeometry.vertices.push( new THREE.Vector3( -(size_plane/2), 0, (size_plane/2) ) );
+			lgeometry.vertices.push( new THREE.Vector3( -(size_plane/2), 0, -(size_plane/2) ));
+			
+			lgeometry.vertices.push( new THREE.Vector3( (size_plane/2), 0, (size_plane/2) ) );
+			lgeometry.vertices.push( new THREE.Vector3( (size_plane/2), 0, -(size_plane/2) ));
+				
+			var line = new THREE.LineSegments( lgeometry, new THREE.LineBasicMaterial( { color: widget_color, opacity: 0.3 } ) );
+			lower_plane.add( line );
+			lower_plane.position.x=-25;
+			lower_plane.position.z=0;
+			lower_plane.position.y=-20;
+			scene.add(lower_plane);
+			// create NYC texture + mesh
+			var loader = new THREE.TextureLoader();
+			var pathImage='images/nyc-transparent5-'+UIColor+'.png';
+			loader.load( pathImage, function ( texture ) {
+				var geometry = new THREE.PlaneGeometry( 280, 280, 20, 20 );
+				var material = new THREE.MeshBasicMaterial( { map: texture, overdraw: 0.5, opacity:0.55 , side: THREE.FrontSide, wireframe:false} );
+				textmaterial.map.minFilter = THREE.Nearest;
+				var nyc_mesh = new THREE.Mesh( geometry, material );
+				nyc_mesh.rotateX(-0.5*Math.PI);
+				nyc_mesh.position.y = -20;//Math.random() * 2 - 1;
+				nyc_mesh.position.x = -25;
+				nyc_mesh.position.z = -0;
+				//mesh.rotateX(-Math.PI);
+				scene.add( nyc_mesh );
+			} );
+		}
+		else{
+			if (detailLevel==1){
+				var part_color="";
+				if (UIColor=="black"){
+					
+					part_color= 0xffffff;
+				}
+				else if (UIColor=="white"){
+					
+					part_color= 0x888888;
+				}
+				var lgeometry = new THREE.Geometry();
+				var size_plane=280;
+				lgeometry.vertices.push( new THREE.Vector3( -(size_plane/2), 0, (size_plane/2) ) );
+				lgeometry.vertices.push( new THREE.Vector3( (size_plane/2), 0, (size_plane/2) ));
+				
+				lgeometry.vertices.push( new THREE.Vector3( -(size_plane/2), 0, -(size_plane/2) ) );
+				lgeometry.vertices.push( new THREE.Vector3( (size_plane/2), 0, -(size_plane/2) ));
+				
+				lgeometry.vertices.push( new THREE.Vector3( -(size_plane/2), 0, (size_plane/2) ) );
+				lgeometry.vertices.push( new THREE.Vector3( -(size_plane/2), 0, -(size_plane/2) ));
+				
+				lgeometry.vertices.push( new THREE.Vector3( (size_plane/2), 0, (size_plane/2) ) );
+				lgeometry.vertices.push( new THREE.Vector3( (size_plane/2), 0, -(size_plane/2) ));
+					
+				var line = new THREE.LineSegments( lgeometry, new THREE.LineBasicMaterial( { color: widget_color} ) );
+				lower_plane.add( line );
+				lower_plane.position.x=-25;
+				lower_plane.position.z=0;
+				lower_plane.position.y=-10;
+				var SEPARATION = 100;
+				var AMOUNTX = 15;
+				var AMOUNTY = 15;
+				var material = new THREE.SpriteMaterial({color : part_color});
+				for ( var ix = 0; ix < AMOUNTX; ix++ ) {
+					for ( var iy = 0; iy < AMOUNTY; iy++ ) {
+						var mparticle = new THREE.Sprite( material );
+						mparticle.scale.x = 3;
+						mparticle.scale.y = 3;
+						mparticle.position.y=-30;
+						mparticle.position.x = ix * SEPARATION - ( ( AMOUNTX * SEPARATION ) / 2 );
+						mparticle.position.z = iy * SEPARATION - ( ( AMOUNTY * SEPARATION ) / 2 );
+						lower_plane.add( mparticle );
+					}
+				}
+				var loader = new THREE.TextureLoader();
+				var loader = new THREE.TextureLoader();
+				var pathImage='images/nyc-transparent5-'+UIColor+'.png';
+				loader.load( pathImage, function ( texture ) {
+					var maxAnisotropy = renderer.getMaxAnisotropy();
+					texture.anisotropy = maxAnisotropy;
+					var geometry = new THREE.PlaneGeometry( 280, 280, 20, 20 );
+					var material = new THREE.MeshBasicMaterial( { map: texture, overdraw: 0.5, opacity:0.45 , transparent: true ,side: THREE.FrontSide, wireframe:false} );
+					textmaterial.map.minFilter = THREE.Nearest;
+					if (UIColor=="black"){
+						material.blending=THREE.AdditiveBlending;
+					}
+					else if (UIColor=="white"){
+						material.blending=THREE.SubstractiveBlending;
+					}
+					//var nyc_mesh0 = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { overdraw: 0.5, opacity:0.1 , transparent: true ,side: THREE.OneSide, wireframe:true} ) );
+					//nyc_mesh0.rotateX(-0.5*Math.PI);
+					//nyc_mesh0.position.y = -11;//Math.random() * 2 - 1;
+					//nyc_mesh0.position.x = -25;
+					//nyc_mesh0.position.z = -0;
+					//scene.add( nyc_mesh0 );
+					var nyc_mesh = new THREE.Mesh( geometry, material );
+					nyc_mesh.rotateX(-0.5*Math.PI);
+					nyc_mesh.position.y = -10;//Math.random() * 2 - 1;
+					nyc_mesh.position.x = -25;
+					nyc_mesh.position.z = -0;
+					//mesh.rotateX(-Math.PI);
+					scene.add( nyc_mesh );
+					
+				} );
+				scene.add(lower_plane);
+			}
+			else{
+				var lgeometry = new THREE.Geometry();
+				var size_plane=280;
+				var buid_color="";
+				var part_color="";
+				if (UIColor=="black"){
+					buid_color = "rgb(30%, 30%, 30%)"
+					part_color= 0xffffff;
+				}
+				else if (UIColor=="white"){
+					buid_color = "rgb(70%, 70%, 70%)"
+					part_color= 0x888888;
+				}
+				lgeometry.vertices.push( new THREE.Vector3( -(size_plane/2), 0, (size_plane/2) ) );
+				lgeometry.vertices.push( new THREE.Vector3( (size_plane/2), 0, (size_plane/2) ));
+				
+				lgeometry.vertices.push( new THREE.Vector3( -(size_plane/2), 0, -(size_plane/2) ) );
+				lgeometry.vertices.push( new THREE.Vector3( (size_plane/2), 0, -(size_plane/2) ));
+				
+				lgeometry.vertices.push( new THREE.Vector3( -(size_plane/2), 0, (size_plane/2) ) );
+				lgeometry.vertices.push( new THREE.Vector3( -(size_plane/2), 0, -(size_plane/2) ));
+				
+				lgeometry.vertices.push( new THREE.Vector3( (size_plane/2), 0, (size_plane/2) ) );
+				lgeometry.vertices.push( new THREE.Vector3( (size_plane/2), 0, -(size_plane/2) ));
+					
+				var line = new THREE.LineSegments( lgeometry, new THREE.LineBasicMaterial( { color: widget_color} ) );
+				lower_plane.add( line );
+				lower_plane.position.x=-25;
+				lower_plane.position.z=0;
+				lower_plane.position.y=-25;
+				var SEPARATION = 100;
+				var AMOUNTX = 15;
+				var AMOUNTY = 15;
+				
+				
+				var material = new THREE.SpriteMaterial({color : part_color});
+				for ( var ix = 0; ix < AMOUNTX; ix++ ) {
+					for ( var iy = 0; iy < AMOUNTY; iy++ ) {
+						var mparticle = new THREE.Sprite( material );
+						mparticle.scale.x = 3;
+						mparticle.scale.y = 3;
+						mparticle.position.y=-30;
+						mparticle.position.x = ix * SEPARATION - ( ( AMOUNTX * SEPARATION ) / 2 );
+						mparticle.position.z = iy * SEPARATION - ( ( AMOUNTY * SEPARATION ) / 2 );
+						lower_plane.add( mparticle );
+					}
+				}
+				scene.add(lower_plane);
+				// create NYC texture + mesh
+				var loader = new THREE.TextureLoader();
+				var pathImage='images/nyc-transparent5-'+UIColor+'.png';
+				loader.load( pathImage, function ( texture ) {
+					var maxAnisotropy = renderer.getMaxAnisotropy();
+					texture.anisotropy = maxAnisotropy;
+					var geometry = new THREE.PlaneGeometry( 280, 280, 20, 20 );
+					var material = new THREE.MeshBasicMaterial( { map: texture, overdraw: 0.5, opacity:0.7 , transparent: true ,side: THREE.FrontSide, wireframe:false} );
+					textmaterial.map.minFilter = THREE.Nearest;
+					
+					//var nyc_mesh0 = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { overdraw: 0.5, opacity:0.1 , transparent: true ,side: THREE.FrontSide, wireframe:true} ) );
+					//nyc_mesh0.rotateX(-0.5*Math.PI);
+					//nyc_mesh0.position.y = -11;//Math.random() * 2 - 1;
+					//nyc_mesh0.position.x = -25;
+					//nyc_mesh0.position.z = -0;
+					//scene.add( nyc_mesh0 );
+					var nyc_mesh = new THREE.Mesh( geometry, material );
+					nyc_mesh.rotateX(-0.5*Math.PI);
+					nyc_mesh.position.y = -25;//Math.random() * 2 - 1;
+					nyc_mesh.position.x = -25;
+					nyc_mesh.position.z = -0;
+					//mesh.rotateX(-Math.PI);
+					scene.add( nyc_mesh );
+					
+				} );
+				
+				var img = new Image();
+				img.src = 'images/nyc-128-3.png';
+				img.onload = function() {
+				var elev_data=getHeightData(img);
+					// var tgeometry = new THREE.PlaneBufferGeometry( 270, 270, 128 - 1, 128 - 1 );
+					// tgeometry.rotateX( - Math.PI / 2 );
+
+					// var vertices = tgeometry.attributes.position.array;
+
+					// for ( var i = 0, j = 0, l = vertices.length; i < l; i ++, j += 3 ) {
+
+						// vertices[ j + 1 ] = elev_data[ i ] ;
+
+					// }
+					// var tmesh = new THREE.Mesh( tgeometry, new THREE.MeshBasicMaterial( { color: 0xffffff, wireframe:true } ) );
+					var buidlings_meshes = [], tgeometry, tmaterial, tmesh;
+					
+					var side_coord=265/128;
+					var cnt =0;
+					var nb_pts=0;
+					for ( var i = 0, l = 128; i < l; i ++) {
+						for ( var j = 0, jl = 128; j < jl; j ++) {
+						if (elev_data[ cnt ]!=0) {
+							nb_pts++;
+							tgeometry = new THREE.BoxGeometry(side_coord,elev_data[ cnt ]/3,side_coord);
+							tmaterial = new THREE.MeshLambertMaterial({color: buid_color});
+							tmesh = new THREE.Mesh(tgeometry, tmaterial);
+							tmesh.position.z = i*side_coord;
+							tmesh.position.x = j*side_coord;
+							tmesh.position.y = elev_data[ cnt ]/(3*2);
+							buidlings_meshes.push(tmesh);
+						}
+						cnt++;
+						}
+					}
+					//console.log(nb_pts)
+					tgeometry = mergeMeshes(buidlings_meshes);
+					tmesh = new THREE.Mesh(tgeometry, tmaterial);
+					//scene.add(tmesh);
+					//tmesh.rotateZ(-1*Math.PI);
+					tmesh.position.y = -25;//Math.random() * 2 - 1;
+					tmesh.position.x = -23-(265/2);
+					tmesh.position.z = 5-(265/2);
+					scene.add( tmesh );
+					
+					// Add Sky Mesh
+					sky = new THREE.Sky();
+					scene.add( sky.mesh );
+
+					// Add Sun Helper
+					sunSphere = new THREE.Mesh(
+						new THREE.SphereBufferGeometry( 20000, 16, 8 ),
+						new THREE.MeshBasicMaterial( { color: 0xffffff } )
+					);
+					sunSphere.position.y =  700000;
+					sunSphere.visible = false;
+					scene.add( sunSphere );
+					var effectController  = {
+					turbidity: 20,
+					reileigh: 2,
+					mieCoefficient: 0.005,
+					mieDirectionalG: 0.8,
+					luminance: 1.0,
+					inclination: 0.29, // elevation / inclination
+					azimuth: 0.25, // Facing front,
+					sun: ! true
+				};
+					if (UIColor=="black"){
+						effectController.turbidity= 20;
+						effectController.azimuth= 0.0;
+						effectController.inclination= 0.499;
+						effectController.mieDirectionalG= 0.8;
+						effectController.mieCoefficient= 0.00694;
+						effectController.reileigh= 3.9;
+						effectController.luminance= 1.0;
+					}
+					else if (UIColor=="white"){
+						effectController.turbidity= 20;
+						effectController.inclination= 0.2;
+						effectController.luminance= 0.7;
+					
+				}
+
+				var distance = 400000;
+				var uniforms = sky.uniforms;
+					uniforms.turbidity.value = effectController.turbidity;
+					uniforms.reileigh.value = effectController.reileigh;
+					uniforms.luminance.value = effectController.luminance;
+					uniforms.mieCoefficient.value = effectController.mieCoefficient;
+					uniforms.mieDirectionalG.value = effectController.mieDirectionalG;
+
+					var theta = Math.PI * ( effectController.inclination - 0.5 );
+					var phi = 2 * Math.PI * ( effectController.azimuth - 0.5 );
+
+					sunSphere.position.x = distance * Math.cos( phi );
+					sunSphere.position.y = distance * Math.sin( phi ) * Math.sin( theta );
+					sunSphere.position.z = distance * Math.sin( phi ) * Math.cos( theta );
+
+					sunSphere.visible = effectController.sun;
+
+					sky.uniforms.sunPosition.value.copy( sunSphere.position );
+					}
+				
+			}
+		}
+		
+		document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+		document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+		raycaster = new THREE.Raycaster();
+		mouse = new THREE.Vector2();
+		window.addEventListener( 'resize', onWindowResize, false );
+		//console.log(scene.children)	
+	}
+	
+	function mergeMeshes (meshes) {
+		var combined = new THREE.Geometry();
+
+		for (var i = 0; i < meshes.length; i++) {
+		meshes[i].updateMatrix();
+		combined.merge(meshes[i].geometry, meshes[i].matrix);
+		}
+
+		return combined;
+	}
+	
+	function onDocumentMouseMove( event ) {
+		event.preventDefault();
+		if (isWebGl==false){
+			mouse.x = ( (event.clientX-(window.innerWidth*0.05))/ (window.innerWidth*0.9) ) * 2 - 1;
+			mouse.y = - ( (event.clientY-(167 )+document.body.scrollTop+$("#mynav").height()) / (window.innerHeight-200 )) * 2 + 1;
+		}
+		else{
+			mouse.x = ( (event.clientX-(window.innerWidth*0.05))/ (window.innerWidth*0.9) ) * 2 - 1;
+			mouse.y = - ( (event.clientY-167+document.body.scrollTop+$("#mynav").height()) / (window.innerHeight-200 )) * 2 + 1;
+		}
+		//console.log(document.body.scrollTop);
+	}
+	function onDocumentMouseDown( event ) {
+		//event.preventDefault();
+		switch ( event.button ) {
+			case 0: // left 
+				//if (INTERSECTED==null){
+				//	document.querySelector('#mycm').classList.remove('show');
+				//	document.querySelector('.circle').classList.remove('open');
+				//	document.querySelector('.menu-button').classList.remove('open');
+				//}
+				if (isWebGl==false){
+					//if (INTERSECTED.name){
+					if (INTERSECTED && INTERSECTED.name && INTERSECTED.name.startsWith('v')){
+						if (document.querySelector('#x0').style.visibility=="visible"){
+							document.querySelector('#x0').style.visibility="hidden";
+							// lines.traverse( function( node ) {
+								// if( node.material ) {
+									// node.material.opacity =1.0;
+									// node.material.transparent = true;
+								// }
+							// });
+						}
+						else{
+							document.querySelector('#x0').style.visibility="visible";
+							// lines.traverse( function( node ) {
+								// if( node.material ) {
+									// node.material.opacity *= 0.1;
+									// node.material.transparent = true;
+								// }
+							// });
+						}
+						document.querySelector('.menu-button').style.top=(((window.innerHeight*0.7)*0.50)-90)+"px";
+						document.querySelector('.menu-button').style.left=(((window.innerWidth*0.9)*0.50)-146)+"px";
+						document.querySelector('.menu-button').classList.toggle('open');
+						
+						document.querySelector('#mycm').classList.toggle('show');
+						document.getElementById('mycm').style.top=(((window.innerHeight*0.7)*0.50)-100)+"px";
+						document.getElementById('mycm').style.left=(((window.innerWidth*0.9)*0.50)-100)+"px";
+						//document.getElementById('mycm').style.left=($('3d-graph').Width()/2)
+						document.querySelector('.circle').classList.toggle('open');
+						for (var b=0;b<16;b++){
+							document.getElementById('c'+b).children[0].children[0].style.color="#993300";
+						}
+						editedPipe= parseInt(INTERSECTED.name.split("vl")[1]);
+						document.querySelector('#x0').style.top=185+'px'
+						document.querySelector('#x0').style.left=125+'px'
+						document.getElementById('c'+latest_diameters[parseInt(INTERSECTED.name.split("vl")[1])]).children[0].children[0].style.color="#008000";
+					}
+					else{
+						//document.querySelector('#mycm').classList.remove('show');
+						//document.querySelector('.circle').classList.remove('open');
+						//document.querySelector('.menu-button').classList.remove('open');
+						
+						//document.querySelector('#x0').style.visibility="hidden";
+						
+						//editedPipe=-1;
+					}
+				}
+				else{
+					if (detailLevel==1){
+						if (INTERSECTED && INTERSECTED.name && INTERSECTED.name.startsWith('vl')){
+							if (document.querySelector('#x0').style.visibility=="visible"){
+								document.querySelector('#x0').style.visibility="hidden";
+								//lines.traverse( function( node ) {
+								//	if( node.material ) {
+								//		node.material.opacity = 1.0;
+								//		node.material.transparent = true;
+								//	}
+								//});
+								// lines.traverse( function( node ) {
+									// if( node.material ) {
+										// //node.material.opacity = 0.1;
+										// //node.material.transparent = true;
+										// if (node.name.startsWith('mvl') || node.name.startsWith('mfl')){
+											// console.log(node.name)
+											// node.material.uniforms.opacity.value=0.1;
+										// }
+										// else{
+											// node.material.opacity = 0.1;
+											// node.material.transparent = true;
+										// }
+									// }
+								// });
+								
+							}
+							else{
+								document.querySelector('#x0').style.visibility="visible";
+								
+								//lines.traverse( function( node ) {
+								//	if( node.material ) {
+								//		if (node.name.startsWith('mvl') || node.name.startsWith('mfl')){
+								//			node.material.uniforms.opacity.value=1.0;
+								//		}
+								//		else{
+								//			node.material.opacity = 1.0;
+								//			node.material.transparent = true;
+								//		}
+								//		
+								//	}
+								//});
+							}
+							
+							document.querySelector('#mycm').classList.toggle('show');
+							document.getElementById('mycm').style.top=(((window.innerHeight*0.7)*0.50)-100)+"px";
+							document.getElementById('mycm').style.left=(((window.innerWidth*0.9)*0.50)-100)+"px";
+							document.querySelector('.menu-button').style.top=(((window.innerHeight*0.7)*0.50)-90)+"px";
+							document.querySelector('.menu-button').style.left=(((window.innerWidth*0.9)*0.50)-146)+"px";
+							document.querySelector('.menu-button').classList.toggle('open');
+							//document.getElementById('mycm').style.left=($('3d-graph').Width()/2)
+							document.querySelector('.circle').classList.toggle('open');
+							for (var b=0;b<16;b++){
+								document.getElementById('c'+b).children[0].children[0].style.color="#993300";
+							}
+							editedPipe= parseInt(INTERSECTED.name.split("vl")[1]);
+							document.querySelector('#x0').style.top=185+'px'
+							document.querySelector('#x0').style.left=125+'px'
+							document.getElementById('c'+latest_diameters[parseInt(INTERSECTED.name.split("vl")[1])]).children[0].children[0].style.color="#008000";
+						}
+						else{
+							
+							//document.querySelector('#mycm').classList.remove('show');
+							//document.querySelector('.circle').classList.remove('open');
+							//document.querySelector('.menu-button').classList.remove('open');
+							
+							//document.querySelector('#x0').style.visibility="hidden";
+							//editedPipe=-1;
+						}
+					}
+					else{
+						if (INTERSECTED && INTERSECTED.name && INTERSECTED.name.startsWith('mvl')){
+							
+							if (document.querySelector('#x0').style.visibility=="visible"){
+								document.querySelector('#x0').style.visibility="hidden";
+								// lines.traverse( function( node ) {
+									// if( node.material ) {
+										// node.material.opacity = 1.0;
+										// node.material.transparent = true;
+									// }
+								// });
+							}
+							else{
+								document.querySelector('#x0').style.visibility="visible";
+								// lines.traverse( function( node ) {
+									// if( node.material ) {
+										// node.material.opacity = 0.1;
+										// node.material.transparent = true;
+									// }
+								// });
+							}
+							
+							document.querySelector('#mycm').classList.toggle('show');
+							document.getElementById('mycm').style.top=(((window.innerHeight*0.7)*0.50)-100)+"px";
+							document.getElementById('mycm').style.left=(((window.innerWidth*0.9)*0.50)-100)+"px";
+							document.querySelector('.menu-button').style.top=(((window.innerHeight*0.7)*0.50)-90)+"px";
+							document.querySelector('.menu-button').style.left=(((window.innerWidth*0.9)*0.50)-146)+"px";
+							document.querySelector('.menu-button').classList.toggle('open');
+							//document.getElementById('mycm').style.left=($('3d-graph').Width()/2)
+							document.querySelector('.circle').classList.toggle('open');
+							for (var b=0;b<16;b++){
+								document.getElementById('c'+b).children[0].children[0].style.color="#993300";
+							}
+							editedPipe= parseInt(INTERSECTED.name.split("mvl")[1]);
+							document.querySelector('#x0').style.top=185+'px'
+							document.querySelector('#x0').style.left=125+'px'
+							document.getElementById('c'+latest_diameters[parseInt(INTERSECTED.name.split("mvl")[1])]).children[0].children[0].style.color="#008000";
+						}
+						else{
+							
+							//document.querySelector('#mycm').classList.remove('show');
+							//document.querySelector('.circle').classList.remove('open');
+							//document.querySelector('.menu-button').classList.remove('open');
+							
+							//document.querySelector('#x0').style.visibility="hidden";
+							//editedPipe=-1;
+						}
+					}
+				}
+				break;
+			case 1: // middle
+				break;
+			case 2: // right
+				//console.log(INTERSECTED);
+				//document.getElementById('mycm').style.visibility=true;
+				
+				//document.getElementById('mycm').style.top=((window.innerHeight*0.3))+"px";
+			break;
+		}
+		//if ( INTERSECTED!=null){
+		
+			
+		//}
+		
+		
+	}
+	
+	function onWindowResize() {
+
+		windowHalfX = (window.innerWidth*0.9) / 2;
+		windowHalfY = (window.innerHeight-200);
+
+		camera.aspect = (window.innerWidth*0.9) / (window.innerHeight-200);
+		camera.updateProjectionMatrix();
+
+		renderer.setSize( window.innerWidth*0.9, window.innerHeight-200 );
+		d3_height=(window.innerHeight-200)/2;
+		d3_svg.attr("width", d3_width);
+		d3_svg.attr("height", d3_height+20);
+		
+		legend_psi.remove();
+		legend_psi = d3_svg.append("g")
+			.attr("class", "legend_psi")
+			.attr("x", 0)
+			.attr("y", 25)
+			.attr("height", 100)
+			.attr("width", 100);
+		legend_psi.selectAll('g').data(["gdp"])
+		.enter()
+		.append('g')
+		.each(function(d, i) {
+			var g = d3.select(this);
+			//var myx =(d3_width*0.29)-150;
+			//var myy =20;
+			
+			var myx =100
+			var myy =10;
+			g.append("rect")
+		  .attr("x", (window.innerWidth*0.05)+200)
+		  .attr("y", (10))//.attr("y", (7))
+		  .attr("width", (d3_width *0.2))
+		  .attr("height", 15)
+		  //.attr("width", (d3_width *0.05))
+		  //.attr("height", d3_height *0.8)
+		  .style("fill", c4gradient);	
+		g.append("text")
+		  .attr("x",(window.innerWidth*0.05)+5) 
+		  .attr("y", 20)
+		  .attr("height",30)
+		  .attr("width",100)
+		  .style("fill", mycol).style("font-weight", "bold")//.style("font-style", "italic")
+		  .style("font-size","small")
+		  .text("Nodes color scale (PSI):");
+		g.append("text")
+		  .attr("x",(window.innerWidth*0.05)+5) 
+		  .attr("y", 35)
+		  .attr("height",30)
+		  .attr("width",100)
+		  .style("fill", mycol).style("font-weight", "bold")//.style("font-style", "italic")
+		  .style("font-size","small")
+		  .text("Pressure surplus/deficit");
+		g.append("text")
+		  //.attr("x",(window.innerWidth*0.05)+30) 
+		  //.attr("y", 55+ d3_height *0.0)
+		  .attr("x", (window.innerWidth*0.05)+(d3_width *0.2)+200-10)
+		  .attr("y", (40))//.attr("y", (7))
+		  .attr("height",30)
+		  .attr("width",100)
+		  .style("fill", mycol).style("font-weight", "bold")//.style("font-style", "italic")
+		  .style("font-size","small")
+		  .text("100");
+		g.append("text")
+		  //.attr("x",(window.innerWidth*0.05)+30) 
+		  //.attr("y", 55+ d3_height *0.4)
+		  .attr("x", (window.innerWidth*0.05)+(d3_width *0.1)+200-3)
+		  .attr("y", (40))
+		  .attr("height",30)
+		  .attr("width",100)
+		  .style("fill", mycol).style("font-weight", "bold")//.style("font-style", "italic")
+		  .style("font-size","small")
+		  .text("0"); 
+		g.append("text")
+		  //.attr("x",(window.innerWidth*0.05)+30) 
+		  //.attr("y", 55+ d3_height *0.8)
+		  .attr("x", (window.innerWidth*0.05)+(d3_width *0.0)+200-15)
+		  .attr("y", (40))
+		  .attr("height",30)
+		  .attr("width",100)
+		  .style("fill", mycol).style("font-weight", "bold")//.style("font-style", "italic")
+		  .style("font-size","small")
+		  .text("-200");
+
+		});
+		
+		range_cost=d3.scale.linear().domain([0,294156056]).range([0,(d3_height *0.4)]);
+		range_diff=d3.scale.linear().domain([0,-353.5807]).range([0,(d3_height *0.4)]);
+		//range_diff_nodes=d3.scale.linear().domain([0,listNodes.length-1]).range([0,(d3_height *0.4)]);
+		// caped to five
+		range_diff_nodes=d3.scale.linear().domain([0,5]).range([0,(d3_height *0.4)]);
+		legend_bars.remove();
+		legend_bars = d3_svg.append("g")
+			.attr("class", "legend_bars")
+			.attr("x", 0)
+			.attr("y", 25)
+			.attr("height", 100)
+			.attr("width", 100);
+		cost_bar0= legend_bars.append("rect")
+			.attr("x", (window.innerWidth*0.05)+15)
+			.attr("y", (((d3_height *0.4)-range_cost(totalcost))+95))//.attr("y", (7))
+			.attr("width", (d3_width *0.03))
+			.attr("height", range_cost(totalcost))
+			.style("fill", "red");
+		
+		cost_bar= legend_bars.append("rect")
+		  .attr("x", (window.innerWidth*0.05)+15)
+		  .attr("y", 95)//.attr("y", (7))
+		  .attr("width", (d3_width *0.03))
+		  .attr("height", (d3_height *0.4))
+		  .style("fill", "none")
+		  .style("stroke", mycol)
+		  .style("stroke-width", 1);
+legend_bars.append("text")
+		  .attr("x",(window.innerWidth*0.05)+8) 
+		  .attr("y", 88)
+		  .attr("height",30)
+		  .attr("width",100)
+		  .style("fill", mycol).style("font-weight", "bold")//.style("font-style", "italic")
+		  .style("font-size","small")
+		  .text("Cost");
+// cost_text=legend_bars.append("text")
+		  // .attr("x",(window.innerWidth*0.05)+8) 
+		  // .attr("y", 88+(d3_height *0.4)+20)
+		  // .attr("height",30)
+		  // .attr("width",100)
+		  // .style("fill", "white").style("font-weight", "bold")//.style("font-style", "italic")
+		  // .style("font-size","small")
+		  // .text(format(totalcost));
+
+diff_bar0= legend_bars.append("rect")
+  .attr("x", (window.innerWidth*0.05)+80)
+  .attr("y", (((d3_height *0.4)-range_diff(total_deficit))+95))//.attr("y", (7))
+  .attr("width", (d3_width *0.03))
+  .attr("height", range_diff(total_deficit))
+  .style("fill", "red");
+diff_bar= legend_bars.append("rect")
+  .attr("x", (window.innerWidth*0.05)+80)
+  .attr("y", 95)//.attr("y", (7))
+  .attr("width", (d3_width *0.03))
+  .attr("height", (d3_height *0.4))
+  .style("fill", "none")
+  .style("stroke", mycol)
+  .style("stroke-width", 1);
+legend_bars.append("text")
+		  .attr("x",(window.innerWidth*0.05)+73) 
+		  .attr("y", 62)
+		  .attr("height",30)
+		  .attr("width",100)
+		  .style("fill", mycol).style("font-weight", "bold")//.style("font-style", "italic")
+		  .style("font-size","small")
+		  .text("Total");
+legend_bars.append("text")
+		  .attr("x",(window.innerWidth*0.05)+73) 
+		  .attr("y", 75)
+		  .attr("height",30)
+		  .attr("width",100)
+		  .style("fill", mycol).style("font-weight", "bold")//.style("font-style", "italic")
+		  .style("font-size","small")
+		  .text("deficit");
+legend_bars.append("text")
+		  .attr("x",(window.innerWidth*0.05)+73) 
+		  .attr("y", 88)
+		  .attr("height",30)
+		  .attr("width",100)
+		  .style("fill", mycol).style("font-weight", "bold")//.style("font-style", "italic")
+		  .style("font-size","small")
+		  .text("(PSI)");
+  
+// diff_text=legend_bars.append("text")
+		  // .attr("x",(window.innerWidth*0.05)+70) 
+		  // .attr("y", 88+(d3_height *0.4)+20)
+		  // .attr("height",30)
+		  // .attr("width",100)
+		  // .style("fill", "white").style("font-weight", "bold")//.style("font-style", "italic")
+		  // .style("font-size","small")
+		  // .text((total_deficit).toFixed(1));  
+  
+nodes_bar0= legend_bars.append("rect")
+  .attr("x", (window.innerWidth*0.05)+145)
+  .attr("y", (((d3_height *0.4)-range_diff_nodes(nb_deficit_nodes))+95))//.attr("y", (7))
+  .attr("width", (d3_width *0.03))
+  .attr("height", range_diff_nodes(nb_deficit_nodes))
+  .style("fill", "red");
+nodes_bar= legend_bars.append("rect")
+  .attr("x", (window.innerWidth*0.05)+145)
+  .attr("y", 95)//.attr("y", (7))
+  .attr("width", (d3_width *0.03))
+  .attr("height", (d3_height *0.4))
+  .style("fill", "none")
+  .style("stroke", mycol)
+  .style("stroke-width", 1);
+legend_bars.append("text")
+		  .attr("x",(window.innerWidth*0.05)+128) 
+		  .attr("y", 75)
+		  .attr("height",30)
+		  .attr("width",100)
+		  .style("fill", mycol).style("font-weight", "bold")//.style("font-style", "italic")
+		  .style("font-size","small")
+		  .text("No. nodes");
+legend_bars.append("text")
+		  .attr("x",(window.innerWidth*0.05)+128) 
+		  .attr("y", 88)
+		  .attr("height",30)
+		  .attr("width",100)
+		  .style("fill", mycol).style("font-weight", "bold")//.style("font-style", "italic")
+		  .style("font-size","small")
+		  .text("deficit");
+// nodes_text=legend_bars.append("text")
+		  // .attr("x",(window.innerWidth*0.05)+143) 
+		  // .attr("y", 88+(d3_height *0.4)+20)
+		  // .attr("height",30)
+		  // .attr("width",100)
+		  // .style("fill", "white").style("font-weight", "bold")//.style("font-style", "italic")
+		  // .style("font-size","small")
+		  // .text(nb_deficit_nodes+"/"+(listNodes.length-1)); 
+		var topinfo = '';
+
+topinfo +='<table class="table-condensed" style="font-size:16px;border-style: solid;border-color: '+mycol+';border-width: 0px;color:'+mycol+'">';
+topinfo +='<tr><td>Total Cost: </td><td>$'+d3.format(",.0f")(totalcost)+'</td><td>Total deficit (PSI): </td><td>'+(total_deficit).toFixed(2)+'</td><td>No. deficit nodes: </td><td>'+nb_deficit_nodes+'</td></tr></table>'
+
+document.getElementById('info-top').innerHTML=topinfo;
+		stats.dom.style.top = parseInt(window.innerHeight-60 )+"px";
+		stats.dom.style.left = parseInt((window.innerWidth*0.05))+"px";
+		document.getElementById('info-win').style.left=((window.innerWidth*0.95)-300)+"px";
+		document.getElementById('info-win').style.top=170+"px";
+		document.getElementById('info-cost').style.left=((window.innerWidth*0.05+10))+"px";
+		document.getElementById('info-cost').style.top=((window.innerHeight)*0.50)+"px";
+		document.getElementById('info-top').style.left=((window.innerWidth*0.05)+320)+"px";
+		document.getElementById('info-top').style.top=120+"px";
+		document.getElementById('info-top').style.width=((window.innerWidth*0.9*0.6))+"px";
+		document.getElementById('mycm').style.top=(((window.innerHeight*0.7)*0.50)-100)+"px";
+		document.getElementById('mycm').style.left=(((window.innerWidth*0.9)*0.50)-100)+"px";
+		document.querySelector('.menu-button').style.top=(((window.innerHeight*0.7)*0.50)-90)+"px";
+		document.querySelector('.menu-button').style.left=(((window.innerWidth*0.9)*0.50)-146)+"px";
+		document.querySelector('#x0').style.top=185+'px'
+		document.querySelector('#x0').style.left=125+'px'
+		//document.getElementById('rdb').style.top=((window.innerHeight*0.29))+"px";
+		//document.getElementById('rdb').style.left=((window.innerWidth*0.307))+"px";
+
+	}
+
+
+	function animate() {
+
+		requestAnimationFrame( animate );
+		controls.update();
+		stats.update();
+		render();
+
+	}
+
+	function render() {
+		
+		camera.updateMatrixWorld();
+		// find intersections
+		raycaster.setFromCamera( mouse, camera );
+		var first_intersects= raycaster.intersectObjects( scene.children, true );
+		
+			
+		//if (intersects[ 0 ] && intersects[ 0 ].object.name.startsWith('t')){
+		//		intersects.shift();
+		//}
+		//console.log(intersects)
+		var intersects=[];
+		for (var i=0;i<first_intersects.length;i++){
+			if (!(first_intersects[i].object.name.startsWith('t'))){
+				intersects.push(first_intersects[i])
+			}
+		}
+		if ( intersects.length > 0 ) {
+			if (target){
+				target.rotation.x+=0.03;
+				target.rotation.y+=0.03;
+			}
+			if ( INTERSECTED != intersects[ 0 ].object ) {
+				var mycol="";
+				if (UIColor=="black"){
+					mycol="white";
+				}
+				else if (UIColor=="white"){
+					mycol="black";
+				}
+				if (isWebGl==false){
+					var def_line_col;
+					// lines
+					if (UIColor=="black"){
+						def_line_col=0xffffff;
+					}
+					else if (UIColor=="white"){
+						def_line_col=0x888888;
+					}
+					var l_scene = scene.children[0].children.length;
+						
+					for (var s =0;s<l_scene;s++){
+						//console.log(scene.children[0].children[s])
+						if (scene.children[0].children[s].name.startsWith('p')){							
+							scene.children[0].children[s].material.program = programFill;							
+						}
+						else if (scene.children[0].children[s].name.startsWith('vl')){
+							var nb= parseInt(scene.children[0].children[s].name.split('vl')[1])
+							var default_col = 0xff0000;
+							if (latest_diameters[nb]!=0){
+								default_col= 0x00ff00;
+							}
+							scene.children[0].children[s].material.lineWidth=1.0;
+							scene.children[0].children[s].material.color=new THREE.Color( default_col );
+							scene.children[0].children[s].material.opacity=0.7;
+						}
+						else if (scene.children[0].children[s].name.startsWith('fl')){
+							scene.children[0].children[s].material.color=new THREE.Color( def_line_col );
+							scene.children[0].children[s].material.opacity=0.7;
+						}
+					}
+					if ( INTERSECTED && INTERSECTED.type=="Sprite" && INTERSECTED.name.startsWith('p')) {
+						INTERSECTED.material.program = programFill;
+					}
+					else if ( INTERSECTED && INTERSECTED.type=="Line") {
+						INTERSECTED.material.color = new THREE.Color( def_line_col );
+						INTERSECTED.material.opacity=0.7;
+					}
+					//if ( INTERSECTED ) INTERSECTED.scale = 30;
+					INTERSECTED = intersects[ 0 ].object;
+					if ( INTERSECTED && INTERSECTED.type=="Sprite" && INTERSECTED.name.startsWith('p')) {
+						INTERSECTED.material.program = programStroke;
+						if (INTERSECTED.name.startsWith("p")){
+							var myinfo = '';
+							if (listNodes[parseInt(INTERSECTED.name.split("p")[1])]['minimumPressure']){
+								myinfo +='<div style="border-radius: 10px;border-style: solid;border-color: '+mycol+';">';
+								myinfo +='<table class="table table-condensed" style="font-size:20px;color:'+mycol+'">';
+								myinfo +='<thead><tr><th>NODE &nbsp; &nbsp;'+listNodes[parseInt(INTERSECTED.name.split("p")[1])]['id']+'</th><th></th></tr></thead>'
+								myinfo +='<tr><td>Minimum pressure</td><td>'+listNodes[parseInt(INTERSECTED.name.split("p")[1])]['minimumPressure'].toFixed(2)+'</td></tr>'
+								myinfo +='<tr><td>Measured pressure</td><td>'+listNodes[parseInt(INTERSECTED.name.split("p")[1])]['initialPressure'].toFixed(2)+'</td>'
+								//var diff = (listNodes[parseInt(INTERSECTED.name.split("p")[1])]['initialPressure']-listNodes[parseInt(INTERSECTED.name.split("p")[1])]['minimumPressure']).toFixed(2);
+								var diff =latest_pressures[parseInt(INTERSECTED.name.split("p")[1])-1]
+								if (diff>0){
+									myinfo += '<tr style="color:'+range_c4(diff)+'"><td>Surplus</td><td>'+diff.toFixed(2)+'</td></tr></table>'; //style="color:'+range_c4(diff)+'"
+								}
+								else{
+									myinfo += '<tr style="color:'+range_c4(diff)+'"><td>Deficit</td><td>'+diff.toFixed(2)+'</td></tr></table>';
+								}
+								myinfo +='</div>';
+							}
+							document.getElementById('info-win').innerHTML=myinfo;
+						}
+					}
+					else if ( INTERSECTED && INTERSECTED.type=="Line") {
+						var nb= parseInt(INTERSECTED.name.split('vl')[1])
+						
+						INTERSECTED.material.color = new THREE.Color( 0x0000ff );
+						INTERSECTED.material.opacity=1.0;
+						if (INTERSECTED.name.startsWith("vl")){
+							var myinfo ='';
+							myinfo +='<div style="border-radius: 10px;border-style: solid;border-color: '+mycol+';">';
+							myinfo +='<table class="table table-condensed" style="font-size:20px;color:'+mycol+'">';
+							myinfo +='<thead><tr><th>Changeable pipe</th><th>'+listVariableLinks[parseInt(INTERSECTED.name.split("vl")[1])]['id']+'</th></tr></thead>';
+							myinfo +='<tr><td>Diameter</td><td>'+index_2_diameters[latest_diameters[parseInt(INTERSECTED.name.split("vl")[1])]]+'</td></tr>';
+							myinfo +='<tr><td>Length</td><td>'+listVariableLinks[parseInt(INTERSECTED.name.split("vl")[1])]['Length']+'</td></tr></table>';
+							myinfo +='</div>';
+							myinfo +='<br><p align="center" style="font-size:20px; border-radius: 10px;border-style: solid;border-color: green;color:'+mycol+'"><i><b>Click on pipe</b><br>to change diameter</i></p>';
+							document.getElementById('info-win').innerHTML=myinfo;
+						}
+						else if (INTERSECTED.name.startsWith("fl")){
+						var myinfo ='';
+							myinfo +='<div style="border-radius: 10px;border-style: solid;border-color: '+mycol+';">';
+							myinfo +='<table class="table table-condensed" style="font-size:20px;color:'+mycol+'">';
+							myinfo +='<thead><tr><th>Fixed pipe</th><th>'+listFixedLinks[parseInt(INTERSECTED.name.split("fl")[1])]['id']+'</th></tr></thead>';
+							myinfo +='<tr><td>Diameter</td><td>'+listFixedLinks[parseInt(INTERSECTED.name.split("fl")[1])]['Diameter']+'"</td></tr>';
+							myinfo +='<tr><td>Length</td><td>'+listVariableLinks[parseInt(INTERSECTED.name.split("fl")[1])]['Length']+'</td></tr></table>';
+							myinfo +='</div>';
+							document.getElementById('info-win').innerHTML=myinfo;
+						}
+					}
+					else{
+						document.getElementById('info-win').innerHTML="";
+					}
+					
+				}
+				else{
+					if (detailLevel==1){
+						var def_line_col;
+					// lines
+					if (UIColor=="black"){
+						def_line_col=0xffffff;
+					}
+					else if (UIColor=="white"){
+						def_line_col=0x888888;
+					}
+						target.material.visible=false;
+						
+						var l_scene = scene.children[0].children.length;
+						for (var s =0;s<l_scene;s++){
+							if (scene.children[0].children[s].name.startsWith('mvl')){
+								//scene.children[0].children[s].material.uniforms.lineWidth.value=1.0;
+								scene.children[0].children[s].material.uniforms.color.value=new THREE.Color( 0xff0000 );
+							}
+							if (scene.children[0].children[s].name.startsWith('mfl')){
+								//scene.children[0].children[s].material.uniforms.lineWidth.value=1.0;
+								scene.children[0].children[s].material.uniforms.color.value=new THREE.Color( def_line_col );
+							}
+						}
+						
+						
+						
+						INTERSECTED = intersects[ 0 ].object;
+						
+						if ( INTERSECTED && INTERSECTED.type=="Mesh") {
+							if (!(INTERSECTED.name)){
+							target.material.visible=false;}
+							else{
+							target.material.visible=true;
+							target.position.x=INTERSECTED.position.x;
+							target.position.y=INTERSECTED.position.y;
+							target.position.z=INTERSECTED.position.z;
+							}
+							if (INTERSECTED.name.startsWith("p")){
+								
+								var myinfo = '';
+								if (listNodes[parseInt(INTERSECTED.name.split("p")[1])]['minimumPressure']){
+									
+									myinfo +='<div style="border-radius: 10px;border-style: solid;border-color: '+mycol+';">';
+									myinfo +='<table class="table table-condensed" style="font-size:20px;color:'+mycol+'">';
+									myinfo +='<thead><tr><th>NODE &nbsp; &nbsp;'+listNodes[parseInt(INTERSECTED.name.split("p")[1])]['id']+'</th><th></th></tr></thead>'
+									myinfo +='<tr><td>Minimum pressure</td><td>'+listNodes[parseInt(INTERSECTED.name.split("p")[1])]['minimumPressure'].toFixed(2)+'</td></tr>'
+									myinfo +='<tr><td>Measured pressure</td><td>'+listNodes[parseInt(INTERSECTED.name.split("p")[1])]['initialPressure'].toFixed(2)+'</td>'
+									//var diff = (listNodes[parseInt(INTERSECTED.name.split("p")[1])]['initialPressure']-listNodes[parseInt(INTERSECTED.name.split("p")[1])]['minimumPressure']).toFixed(2);
+									var diff =latest_pressures[parseInt(INTERSECTED.name.split("p")[1])-1]
+									if (diff>0){
+										myinfo += '<tr style="color:'+range_c4(diff)+'"><td>Surplus</td><td>'+diff.toFixed(2)+'</td></tr></table>'; //style="color:'+range_c4(diff)+'"
+									}
+									else{
+										myinfo += '<tr style="color:'+range_c4(diff)+'"><td>Deficit</td><td>'+diff.toFixed(2)+'</td></tr></table>';
+									}
+									myinfo +='</div>'
+									//console.log(myinfo)
+								}
+								document.getElementById('info-win').innerHTML=myinfo;
+							}
+							else{
+							document.getElementById('info-win').innerHTML="";
+						}
+						}
+						
+						var l_scene = scene.children[0].children.length;
+						for (var s =0;s<l_scene;s++){
+							if (scene.children[0].children[s].name.startsWith('mvl')){
+								//scene.children[0].children[s].material.uniforms.lineWidth.value=1.0;
+								var nb= parseInt(scene.children[0].children[s].name.split('vl')[1])
+								var default_col = 0xff0000;
+								if (latest_diameters[nb]!=0){
+									default_col= 0x00ff00;
+								}
+								scene.children[0].children[s].material.uniforms.color.value=new THREE.Color( default_col );
+							}
+							if (scene.children[0].children[s].name.startsWith('mfl')){
+								//scene.children[0].children[s].material.uniforms.lineWidth.value=1.0;
+								scene.children[0].children[s].material.uniforms.color.value=new THREE.Color( def_line_col );
+							}
+						}
+						
+						if (INTERSECTED && INTERSECTED.name.startsWith('vl')){
+							var l_scene = scene.children[0].children.length;
+							for (var s =0;s<l_scene;s++){
+								if (scene.children[0].children[s].name=='m'+INTERSECTED.name){
+									//scene.children[0].children[s].material.uniforms.lineWidth.value=2.0;
+									scene.children[0].children[s].material.uniforms.color.value=new THREE.Color( 0x0000ff );
+								}
+							}
+							var myinfo ='';
+							myinfo +='<div style="border-radius: 10px;border-style: solid;border-color: '+mycol+';">';
+							myinfo +='<table class="table table-condensed" style="font-size:20px;color:'+mycol+'">';
+							myinfo +='<thead><tr><th>Changeable pipe</th><th>'+listVariableLinks[parseInt(INTERSECTED.name.split("vl")[1])]['id']+'</th></tr></thead>';
+							myinfo +='<tr><td>Diameter</td><td>'+index_2_diameters[latest_diameters[parseInt(INTERSECTED.name.split("vl")[1])]]+'</td></tr>';
+							myinfo +='<tr><td>Length</td><td>'+listVariableLinks[parseInt(INTERSECTED.name.split("vl")[1])]['Length']+'</td></tr></table>';
+							myinfo +='</div>'
+							myinfo +='<br><p align="center" style="font-size:20px; border-radius: 10px;border-style: solid;border-color: green;;color:'+mycol+'"><i><b>Click on pipe</b><br>to change diameter</i></p>';
+							document.getElementById('info-win').innerHTML=myinfo;
+						}
+						else if (INTERSECTED && INTERSECTED.name.startsWith('fl')){
+							var l_scene = scene.children[0].children.length;
+							for (var s =0;s<l_scene;s++){
+								if (scene.children[0].children[s].name=='m'+INTERSECTED.name){
+									//scene.children[0].children[s].material.uniforms.lineWidth.value=2.0;
+									scene.children[0].children[s].material.uniforms.color.value=new THREE.Color( 0x0000ff );
+								}
+							}
+							var myinfo ='';
+							myinfo +='<div style="border-radius: 10px;border-style: solid;border-color: '+mycol+';">';
+							myinfo +='<table class="table table-condensed" style="font-size:20px;color:'+mycol+'">';
+							myinfo +='<thead><tr><th>Fixed pipe</th><th>'+listFixedLinks[parseInt(INTERSECTED.name.split("fl")[1])]['id']+'</th></tr></thead>';
+							myinfo +='<tr><td>Diameter</td><td>'+listFixedLinks[parseInt(INTERSECTED.name.split("fl")[1])]['Diameter']+'"</td></tr>';
+							myinfo +='<tr><td>Length</td><td>'+listVariableLinks[parseInt(INTERSECTED.name.split("fl")[1])]['Length']+'</td></tr></table>';
+							myinfo +='</div>'
+							document.getElementById('info-win').innerHTML=myinfo;
+						}
+						
+						
+					}
+					else{
+							
+						 target.rotation.x+=0.03;
+						 target.rotation.y+=0.03;
+						var m_group= scene.children[3].children;
+						var l_scene = m_group.length;
+						//console.log(scene.children[3].children.length)
+						for (var s =0;s<l_scene;s++){
+							if (m_group[s].type=="Mesh" ){
+								if (m_group[s].name && (m_group[s].name.startsWith('mvl')) ){
+									var nb= parseInt(m_group[s].name.split('mvl')[1])
+									var default_col = 0xff0000;
+									if (latest_diameters[nb]!=0){
+										default_col= 0x00ff00;
+									}
+									m_group[s].material.color=new THREE.Color( default_col );
+								}
+								if (m_group[s].name && (m_group[s].name.startsWith('mfl')) ){
+									m_group[s].material.color=new THREE.Color( 0x2121ce );
+								}
+							}
+						}	
+						//if (INTERSECTED && INTERSECTED.name.startsWith('m')){
+						target.material.visible=false;
+						//}
+						INTERSECTED = intersects[ 0 ].object;
+						if (INTERSECTED && INTERSECTED.name.startsWith('m')){
+							target.material.visible=false;
+						}
+						if ( INTERSECTED && INTERSECTED.type=="Mesh") {
+							if (INTERSECTED.name.startsWith('p')){
+								target.material.visible=true;
+								target.position.x=INTERSECTED.position.x;
+								target.position.y=INTERSECTED.position.y;
+								target.position.z=INTERSECTED.position.z;
+								
+							}
+							else if (INTERSECTED.name.startsWith('mvl')){
+								//target.material.visible=false;
+								INTERSECTED.material.color=new THREE.Color( widget_color );
+								target.material.visible=false;
+							}
+							else if (INTERSECTED.name.startsWith('mfl')){
+								//target.material.visible=false;
+								INTERSECTED.material.color=new THREE.Color( widget_color );
+								target.material.visible=false;
+							}
+						}
+						if (INTERSECTED.name.startsWith("p")){
+							var myinfo = '';
+							if (listNodes[parseInt(INTERSECTED.name.split("p")[1])]['minimumPressure']){
+								myinfo +='<div style="border-radius: 10px;border-style: solid;border-color: '+mycol+';">';
+								myinfo +='<table class="table table-condensed" style="font-size:20px;color:'+mycol+'">';
+								myinfo +='<thead><tr><th>NODE &nbsp; &nbsp;'+listNodes[parseInt(INTERSECTED.name.split("p")[1])]['id']+'</th><th></th></tr></thead>'
+								myinfo +='<tr><td>Minimum pressure</td><td>'+listNodes[parseInt(INTERSECTED.name.split("p")[1])]['minimumPressure'].toFixed(2)+'</td></tr>'
+								myinfo +='<tr><td>Measured pressure</td><td>'+listNodes[parseInt(INTERSECTED.name.split("p")[1])]['initialPressure'].toFixed(2)+'</td>'
+								//var diff = (listNodes[parseInt(INTERSECTED.name.split("p")[1])]['initialPressure']-listNodes[parseInt(INTERSECTED.name.split("p")[1])]['minimumPressure']).toFixed(2);
+								var diff =latest_pressures[parseInt(INTERSECTED.name.split("p")[1])-1]
+								if (diff>0){
+									myinfo += '<tr style="color:'+range_c4(diff)+'"><td>Surplus</td><td>'+diff.toFixed(2)+'</td></tr></table>'; //style="color:'+range_c4(diff)+'"
+								}
+								else{
+									myinfo += '<tr style="color:'+range_c4(diff)+'"><td>Deficit</td><td>'+diff.toFixed(2)+'</td></tr></table>';
+								}
+								myinfo +='</div>'
+							}
+							document.getElementById('info-win').innerHTML=myinfo;
+						}
+						else if (INTERSECTED.name.startsWith("mvl")){
+							var myinfo ='';
+							
+							myinfo +='<div style="border-radius: 10px;border-style: solid;border-color: '+mycol+';">';
+							myinfo +='<table class="table table-condensed" style="font-size:20px;color:'+mycol+'">';
+							myinfo +='<thead><tr><th>Changeable pipe</th><th>'+listVariableLinks[parseInt(INTERSECTED.name.split("mvl")[1])]['id']+'</th></tr></thead>';
+							myinfo +='<tr><td>Diameter</td><td>'+index_2_diameters[latest_diameters[parseInt(INTERSECTED.name.split("mvl")[1])]]+'</td></tr>';
+							myinfo +='<tr><td>Length</td><td>'+listVariableLinks[parseInt(INTERSECTED.name.split("mvl")[1])]['Length']+'</td></tr></table>';
+							myinfo +='</div>'
+							myinfo +='<br><p align="center" style="font-size:20px; border-radius: 10px;border-style: solid;border-color: green;color:'+mycol+'"><i><b>Click on pipe</b><br>to change diameter</i></p>';
+							document.getElementById('info-win').innerHTML=myinfo;
+						}
+						else if (INTERSECTED.name.startsWith("mfl")){
+							var myinfo ='';
+							myinfo +='<div style="border-radius: 10px;border-style: solid;border-color: '+mycol+';">';
+							myinfo +='<table class="table table-condensed" style="font-size:20px;color:'+mycol+'">';
+							myinfo +='<thead><tr><th>Fixed pipe</th><th>'+listFixedLinks[parseInt(INTERSECTED.name.split("mfl")[1])]['id']+'</th></tr></thead>';
+							myinfo +='<tr><td>Diameter</td><td>'+listFixedLinks[parseInt(INTERSECTED.name.split("mfl")[1])]['Diameter']+'"</td></tr>';
+							myinfo +='<tr><td>Length</td><td>'+listVariableLinks[parseInt(INTERSECTED.name.split("mfl")[1])]['Length']+'</td></tr></table>';
+							myinfo +='</div>'
+							document.getElementById('info-win').innerHTML=myinfo;
+						}
+						else{
+							document.getElementById('info-win').innerHTML="";
+						}
+						
+					}
+				}
+				
+			}
+			else{
+				
+				
+				
+			}
+			
+		}
+		 else{
+			
+			if (isWebGl==false){
+				var def_line_col;
+				// lines
+				if (UIColor=="black"){
+					def_line_col=0xffffff;
+				}
+				else if (UIColor=="white"){
+					def_line_col=0x888888;
+				}
+				var l_scene = scene.children[0].children.length;
+					
+				for (var s =0;s<l_scene;s++){
+					//console.log(scene.children[0].children[s])
+					if (scene.children[0].children[s].name.startsWith('p')){							
+						scene.children[0].children[s].material.program = programFill;							
+					}
+					else if (scene.children[0].children[s].name.startsWith('vl')){
+						var nb= parseInt(scene.children[0].children[s].name.split('vl')[1])
+						var default_col = 0xff0000;
+						if (latest_diameters[nb]!=0){
+							default_col= 0x00ff00;
+						}
+						scene.children[0].children[s].material.lineWidth=1.0;
+						scene.children[0].children[s].material.color=new THREE.Color( default_col );
+						scene.children[0].children[s].material.opacity=0.7;
+					}
+					else if (scene.children[0].children[s].name.startsWith('fl')){
+						scene.children[0].children[s].material.color=new THREE.Color( def_line_col );
+						scene.children[0].children[s].material.opacity=0.7;
+					}
+				}
+				if (document.getElementById('info-win').innerHTML!=""){
+					document.getElementById('info-win').innerHTML="";
+				}
+					
+			}
+			else if (isWebGl==true){
+				if (detailLevel==1){
+					var def_line_col;
+					// lines
+					if (UIColor=="black"){
+						def_line_col=0xffffff;
+					}
+					else if (UIColor=="white"){
+						def_line_col=0x888888;
+					}
+					target.material.visible=false;
+					target.position.x= 10000000;
+					target.position.y=10000000;
+					target.position.z=10000000;
+					var l_scene = scene.children[0].children.length;
+					for (var s =0;s<l_scene;s++){
+						if (scene.children[0].children[s].name.startsWith('mvl')){
+							//scene.children[0].children[s].material.uniforms.lineWidth.value=1.0;
+							var nb= parseInt(scene.children[0].children[s].name.split('mvl')[1])
+							var default_col = 0xff0000;
+							if (latest_diameters[nb]!=0){
+								default_col= 0x00ff00;
+							}
+							scene.children[0].children[s].material.uniforms.color.value=new THREE.Color( default_col );
+						}
+						if (scene.children[0].children[s].name.startsWith('mfl')){
+							//scene.children[0].children[s].material.uniforms.lineWidth.value=1.0;
+							scene.children[0].children[s].material.uniforms.color.value=new THREE.Color( def_line_col );
+						}
+					}
+					if (document.getElementById('info-win').innerHTML!=""){
+						document.getElementById('info-win').innerHTML="";
+					}
+				}
+				else{
+					target.material.visible=false;
+					target.position.x= 10000000;
+					target.position.y=10000000;
+					target.position.z=10000000;
+					//console.log('reset')
+					var m_group= lines.children;
+					var l_scene = m_group.length;
+					//console.log(scene.children[3].children.length)
+					for (var s =0;s<l_scene;s++){
+						if (m_group[s].type=="Mesh" ){
+							if (m_group[s].name && (m_group[s].name.startsWith('mvl')) ){
+								var nb= parseInt(m_group[s].name.split('mvl')[1])
+								var default_col = 0xff0000;
+								if (latest_diameters[nb]!=0){
+									default_col= 0x00ff00;
+								}
+								m_group[s].material.color=new THREE.Color( default_col );
+							}
+							if (m_group[s].name && (m_group[s].name.startsWith('mfl')) ){
+								m_group[s].material.color=new THREE.Color( 0x2121ce );
+							}
+						}
+					}
+					if (document.getElementById('info-win').innerHTML!=""){
+						document.getElementById('info-win').innerHTML="";
+					}
+				}
+			}
+			
+			INTERSECTED = null;
+		}
+		renderer.render( scene, camera );
+
+	}
+	
+	function getHeightData(img) {
+		var canvas = document.createElement( 'canvas' );
+		canvas.width = 128;
+		canvas.height = 128;
+		var context = canvas.getContext( '2d' );
+
+		var size = 128 * 128, data = new Float32Array( size );
+
+		context.drawImage(img,0,0);
+
+		for ( var i = 0; i < size; i ++ ) {
+			data[i] = 0
+		}
+
+		var imgd = context.getImageData(0, 0, 128, 128);
+		var pix = imgd.data;
+		var j=0;
+		for (var i = 0, n = pix.length; i < n; i += (4)) {
+			var all = pix[i]+pix[i+1]+pix[i+2];
+			if (all==0){
+			
+			}
+			data[j++] = all/30;
+		}
+
+		return data;
+	}
+
+	</script>
+  </body>
+</html>

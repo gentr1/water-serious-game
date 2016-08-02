@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SeGWADE | Welcome back, <%= me.name %>!</title>
+    <!-- Viewport mobile tag for sensible mobile support -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    
+    <link rel="stylesheet" href="/styles/bootstrap.3.1.1.css">
+    <link rel="stylesheet" href="/styles/handsontable.full.min.css">
+    <link rel="stylesheet" href="/styles/importer.css">
+    
+    <!--Added this so the client has access to the csrf tag and it's grabbed first service side on every page -->
+    <script type="text/javascript">
+    window.SAILS_LOCALS = {
+      _csrf: '<%= _csrf %>',
+      me: <%- JSON.stringify(me) %>
+    };
+    var myuser = <%-JSON.stringify(me)%>
+	var game = <%-JSON.stringify(game)%>
+	var network = <%-JSON.stringify(network)%>
+	//var input=[];
+	//console.log(myuser);
+    </script>
+	
+	<style>
+	
+
+	.switch {
+	  position: relative;
+	  display: inline-block;
+	  width: 60px;
+	  height: 34px;
+	}
+
+	.switch input {display:none;}
+
+	.slider {
+	  position: absolute;
+	  cursor: pointer;
+	  top: 0;
+	  left: 0;
+	  right: 0;
+	  bottom: 0;
+	  background-color: #ccc;
+	  -webkit-transition: .4s;
+	  transition: .4s;
+	}
+
+	.slider:before {
+	  position: absolute;
+	  content: "";
+	  height: 26px;
+	  width: 26px;
+	  left: 4px;
+	  bottom: 4px;
+	  background-color: white;
+	  -webkit-transition: .4s;
+	  transition: .4s;
+	}
+
+	input:checked + .slider {
+	  background-color: #2196F3;
+	}
+
+	input:focus + .slider {
+	  box-shadow: 0 0 1px #2196F3;
+	}
+
+	input:checked + .slider:before {
+	  -webkit-transform: translateX(26px);
+	  -ms-transform: translateX(26px);
+	  transform: translateX(26px);
+	}
+
+	/* Rounded sliders */
+	.slider.round {
+	  border-radius: 34px;
+	}
+
+	.slider.round:before {
+	  border-radius: 50%;
+	}
+
+
+
+
+
+	</style>
+	
+  </head>
+  <body ng-app="DashboardModule" ng-controller="DashboardController">
+	
+    <!-- container = Fixed-width container container-fluid = full-width -->
+    <div id="big-container" >
+      <!-- Creates the navbar -->
+      <nav id ="mynav" class="navbar navbar-default navbar-inverse" style="margin-left:15px;margin-right:15px;height:50px">
+        <!-- This creates the mechanism for collapse button -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" ng-init="navCollapsed = true" ng-click="navCollapsed = !navCollapsed">
+        <!-- This controls the number of lines in the image when the nav collapse -->
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        </button>
+        <!-- This is the brand on the left-hand side. -->
+        <a class="navbar-brand" href="/#/"> SeGWADE</a>
+        <!-- This is what is the above collapse button points to when the mark-up below is collapsed -->
+        <div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'">
+          <!-- This is what "styles" the li's as navbar items -->
+          <ul class="nav navbar-nav navbar-right">
+            <!-- navbar-right pulls this element right -->
+            <!-- Using ng-show instead of ng-if because we need this mark-up to be in the dom when signup controller
+            fires.  If it's not there (which it wouldn't be in the case of ng-if) then the scope of the signup
+            controller will not be tied to this element. -->
+            <li>
+              <a id="useraccess" href="/editusers" style="">users</a>
+            </li>
+			<li>
+              <a id="gameaccess" href="/seegames" style="">games</a>
+            </li>
+			<li>
+              <a id="netaccess" href="/seenetworks">networks</a>
+            </li>
+			<li>
+              <a href="/logout">sign-out</a>
+            </li>
+            <!-- <a ng-controller="signinController" class="btn btn-default navbar-btn navbar-right" href="#" ng-if="!isAuthenticated">sign-in</a> -->
+            <!-- Using ng-show instead of ng-if because we need this mark-up to be in the dom when signup controller
+            fires.  If it's not there (which it wouldn't be in the case of ng-if) then the scope of the signup
+            controller will not be tied to this element. -->
+          </ul>
+        </div>
+      </nav>
+
+      <h1 id="maintitle" align="center" style="height:39px;">Serious Game for WDS Analysis, Design & Evaluation</h1>
+	  <h2 id="subtitle1" align="center" style="height:25px;">Dungeon Master interface</h2>
+	  <!-- <div ng-repeat="n in [42, 42, 43, 43] track by $index">
+	    {{n}}
+	  </div>-->
+	  
+
+    </div>
+	
+	
+	
+	
+	<div id="info-win" style="position:absolute;z-index:10000;pointer-events: none;color:#ffffff" ></div>
+	<div id="info-cost" style="position:absolute;z-index:10000;pointer-events: none;color:#ffffff" ></div>
+	<div id="info-top" style="position:absolute;z-index:10000;pointer-events: none;color:#ffffff" ></div>
+	
+	
+	<div id="score-message" style="position:absolute;z-index:40000"></div>
+	<br><br>
+	<div align="center">
+		<div style="font-size:25px;">Start/stop game:</div>
+		<label class="switch">
+		  <input id="myswitch" type="checkbox">
+		  <div class="slider"></div>
+		</label>
+	</div>
+	<br>
+	<div align="center">
+		<div style="font-size:25px;">Show/hide update messages:</div>
+		<label class="switch">
+		  <input id="myswitch2" type="checkbox">
+		  <div class="slider"></div>
+		</label>
+	</div>
+	<br>
+	<div align="center">
+		<div style="font-size:25px;">Show/reset final score table:</div>
+		<input class="btn btn-info " id="showScoreGame" type="button" value="Show scores" onclick="showScores();"/>	
+		<input class="btn btn-danger " id="resetScoreGame" type="button" value="Reset scores" onclick="resetScores();"/>	 
+	</div>
+	<br>
+	<div align="center">
+		<div style="font-size:25px;">Change water network during game time:</div>
+		<div style="width:400px;" >
+		  <div id="nb_pipes"><strong>Change one pipe, then update (this change will be immutable for players)</strong></div>
+		  <div id="table1" style="height:400px;overflow:auto;text-align:left;"></div>
+		  </div>
+		<input class="btn btn-success " id="changeGame" type="button" value="Update Game" onclick="requestDMComputation();"/>	 
+	</div>
+	
+    <script src="/js/dependencies/sails.io.js"></script>
+    <script src="/js/dependencies/jquery-2.2.3.min.js"></script>    
+    <script src="/js/dependencies/Underscore.1.8.3.min.js"></script>
+    <script src="/js/dependencies/bootstrap-select.min.js"></script>
+    <script src="/js/dependencies/d3.min.js"></script>
+    <script src="/js/dependencies/handsontable.full.min.js"></script>
+	
+	<script>
+	
+	document.getElementById('score-message').style.top=15+"px";
+	document.getElementById('score-message').style.left=450+"px";
+	//var myhistory = myuser['history']['sessions'];
+	var changedPipe=[];
+	var obj_pipes=network['pipes'];
+	var listPipes=[];//jQuery.makeArray(obj_pumps);
+	for( var elem in obj_pipes) {
+		var tmp={};
+		tmp['ID']=elem;
+		tmp['Status']=obj_pipes[elem]['Status'];
+		tmp['Diameter']=parseInt(obj_pipes[elem]['Diameter']);				
+		listPipes.push(tmp);
+	}
+	
+	document.getElementById('myswitch').checked=game.is_on;
+	d3.select("#myswitch").on("change", function() {
+		if (this.checked){
+			startGame();
+		}
+		else{
+			endGame();
+		}
+	});
+	
+	document.getElementById('myswitch2').checked=game.updates_on;
+	d3.select("#myswitch2").on("change", function() {
+		if (this.checked){
+			updatesOn();
+		}
+		else{
+			updatesOff();
+		}
+	});
+	
+	//console.log(network.pipe_diameters)
+	
+	var $container1 = $("#table1");
+	$container1.handsontable({
+	  data: listPipes,
+	  stretchH:"all",
+	  //renderAllRows: true,
+	  //width: 400,
+	  //height: 400,
+	  startRows: 1,
+	  startCols: 3,
+	  colHeaders: true,
+	  colHeaders: ['ID', 'Status', 'Diameter'],
+	  columns: [
+		{data: "ID",editor: false},
+		{data: "Status",type: 'checkbox', checkedTemplate: 'Open', uncheckedTemplate: 'Closed',label: {position: 'before',value: 'Open ? '}},
+		{data: "Diameter",type: 'autocomplete', source: network.pipe_diameters.map(String), strict: false}, 
+		
+	  ],
+	  afterChange: function(changes, source) {
+			//console.log(changes)
+			
+			if (changes!=null){
+				var listChanged =this.getData();
+				changedPipe= listChanged[changes[0][0]];
+				var intDiam=parseInt(changedPipe[2]);
+				changedPipe[2]=intDiam;
+			}
+	  },
+	  minSpareRows: 0
+	});
+	
+	
+	
+	
+	io.socket.put('/update', {history:[]},function gotResponse(body, response) {
+	  console.log('Client sending start request to server ');
+	})
+	// used to trigger dm modification and broadcast message to all users
+	function requestDMComputation(){
+		io.socket.put('/changedm', {parameters:{game:game.name,change:changedPipe}},function gotResponse(body, response) {
+		  console.log('DM Client sending modification request to server ');
+		})
+	}
+	function startGame(){
+		io.socket.put('/startdm', {parameters:{game:game.name, ison:true}},function gotResponse(body, response) {
+		  console.log('DM Client sending start game signal ');
+		})
+	}
+	function endGame(){
+		io.socket.put('/stopdm', {parameters:{game:game.name, ison:false}},function gotResponse(body, response) {
+		  console.log('DM Client sending end game signal ');
+		})
+	}
+	function updatesOn(){
+		io.socket.put('/updatesondm', {parameters:{game:game.name, updateson:true}},function gotResponse(body, response) {
+		  console.log('DM Client sending start game signal ');
+		})
+	}
+	function updatesOff(){
+		io.socket.put('/updatesoffdm', {parameters:{game:game.name, updateson:false}},function gotResponse(body, response) {
+		  console.log('DM Client sending end game signal ');
+		})
+	}
+	io.socket.on('betterscore', function gotHelloMessage (data) {
+		document.getElementById('score-message').innerHTML='<span style="color:white">Best solution- Team <strong>'+ data['team']+'</strong>: cost '+parseFloat(data['overall_cost']).toFixed(2)+' - leakage '+parseFloat(data['leakage']).toFixed(0)+' - age '+parseFloat(data['water_age']).toFixed(0)+'</span>';
+		//$("#score-message").delay().hide(10000);
+		//console.log("User "+ data['user']+" found lowest present total cost at :" +data['score'])
+	});
+	
+	function closeAlert(){
+		document.getElementById('high-score-table').style.visibility="hidden";
+	}
+	
+	function resetScores(){
+		io.socket.put('/resetscore', {game:game.name},function gotResponse(body, response) {
+		  console.log('Sending reset game score request to server');
+		  
+		});
+	}
+	function showScores(){
+		io.socket.put('/endscore', {game:game.name},function gotResponse(body, response) {
+		  console.log('Sending end score game request to server');
+		});
+	}
+
+	
+	var offSetTop = $('#maintitle').height();
+	
+			  
+	document.getElementById('info-win').style.left=((window.innerWidth*0.95)-300)+"px";
+	document.getElementById('info-win').style.top=170+"px";
+	document.getElementById('info-cost').style.left=((window.innerWidth*0.05)+10)+"px";
+	document.getElementById('info-cost').style.top=((window.innerHeight)*0.50)+"px";
+	document.getElementById('info-top').style.left=((window.innerWidth*0.05)+320)+"px";
+	document.getElementById('info-top').style.top=120+"px";
+	document.getElementById('info-top').style.width=((window.innerWidth*0.9*0.6))+"px";
+	
+	
+
+	</script>
+  </body>
+</html>

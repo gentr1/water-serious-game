@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SeGWADE | Welcome back, <%= me.name %>!</title>
+    <!-- Viewport mobile tag for sensible mobile support -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    
+    <link rel="stylesheet" href="/styles/bootstrap.3.1.1.css">
+    <link rel="stylesheet" href="/styles/importer.css">
+    
+	<link rel="stylesheet" href="/styles/handsontable.full.min.css">
+    <!--Added this so the client has access to the csrf tag and it's grabbed first service side on every page -->
+    <script type="text/javascript">
+    window.SAILS_LOCALS = {
+      _csrf: '<%= _csrf %>',
+      me: <%- JSON.stringify(me) %>
+    };
+    var myuser = <%-JSON.stringify(me)%>
+	var users = <%-JSON.stringify(users)%>
+	var game = <%-JSON.stringify(game)%>
+	var network = <%-JSON.stringify(network)%>
+	//var input=[];
+	//console.log(myuser);
+	//console.log(game);
+	//console.log(network);
+	//console.log(listnetworks);
+    </script>
+	
+	
+	
+  </head>
+  <body ng-app="DashboardModule" ng-controller="DashboardController">
+	
+    <!-- container = Fixed-width container container-fluid = full-width -->
+    <div id="big-container" >
+      <!-- Creates the navbar -->
+      <nav id ="mynav" class="navbar navbar-default navbar-inverse" style="margin-left:15px;margin-right:15px;height:50px">
+        <!-- This creates the mechanism for collapse button -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" ng-init="navCollapsed = true" ng-click="navCollapsed = !navCollapsed">
+        <!-- This controls the number of lines in the image when the nav collapse -->
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        </button>
+        <!-- This is the brand on the left-hand side. -->
+        <a class="navbar-brand" href="/#/"> SeGWADE</a>
+        <!-- This is what is the above collapse button points to when the mark-up below is collapsed -->
+        <div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'">
+          <!-- This is what "styles" the li's as navbar items -->
+          <ul class="nav navbar-nav navbar-right">
+            <!-- navbar-right pulls this element right -->
+            <!-- Using ng-show instead of ng-if because we need this mark-up to be in the dom when signup controller
+            fires.  If it's not there (which it wouldn't be in the case of ng-if) then the scope of the signup
+            controller will not be tied to this element. -->
+			<li>
+              <a id="netaccess" href="/seegames" style="">games</a>
+            </li>
+			<li>
+              <a id="netaccess" href="/seenetworks">networks</a>
+            </li>
+            <li>
+              <a href="/logout">sign-out</a>
+            </li>
+            <!-- <a ng-controller="signinController" class="btn btn-default navbar-btn navbar-right" href="#" ng-if="!isAuthenticated">sign-in</a> -->
+            <!-- Using ng-show instead of ng-if because we need this mark-up to be in the dom when signup controller
+            fires.  If it's not there (which it wouldn't be in the case of ng-if) then the scope of the signup
+            controller will not be tied to this element. -->
+          </ul>
+        </div>
+      </nav>
+
+      <h1 id="maintitle" align="center" style="height:39px;">Game settings</h1>
+	  <form action="setgame" enctype="multipart/form-data" method="post">
+		  <div style="width:100%; text-align:center;" align="center">
+		  <br><br>
+		  <input type="text" name="game-name" id ="game-name" style="visibility: hidden;" value="">
+		  <input type="text" name="players-teams" id ="players-teams" style="visibility: hidden;" value="">
+		  <input type="text" name="team-size" id ="team-size" style="visibility: hidden;" value="">
+		  <input type="text" name="pumps-roles" id ="pumps-roles" style="visibility: hidden;" value="">
+		  <input type="text" name="valves-roles" id ="valves-roles" style="visibility: hidden;" value="">
+		  <input type="text" name="pipes-roles" id ="pipes-roles" style="visibility: hidden;" value="">
+		 
+		  <br>
+		  <div align="center">
+		    <div id="gamename"><strong>Game name :</strong></div>
+			<div id="netname"><strong>Epanet network :</strong></div>
+			<br>
+			<strong>Select team size :</strong><select name="teamsize" id="teamsize"  onchange="OnSelectionChangeTeam (this)">
+			</select>
+			<br>
+			<br><strong>Time points :</strong><input type="number" min="1" max="24" name="time-points" id ="time-points" value=1>
+		  </div><br>
+		 
+		 <div style="width:33%;float:left;" ><div id="table0" style="height:400px;overflow:auto;"></div></div>
+		  <div style="width:35%;float:left;height:400px;" >
+		  <div id="title_players"><strong>Players, teams, and team roles allocation</strong></div>
+		  <div id="table01" style="height:300px;overflow:auto;"></div>
+		  </div>
+		  <div style="width:30%;float:left;" ><div style="height:400px;overflow:auto;"></div></div>
+		  <br><br>
+		  <div style="width:30%;float:left;" >
+		  <div id="nb_pumps"><strong>Which team member can change which pumps</strong></div>
+		  <div id="table1" style="height:400px;overflow:auto;"></div>
+		  </div>
+		  <div style="width:30%;float:left;" >
+		  <div id="nb_valves"><strong>Which team member can change which valves</strong></div>
+		  <div id="table2" style="height:400px;overflow:auto;"></div>
+		  </div>
+		  <div style="width:30%;float:left;" >
+		  <div id="nb_pipes"><strong>Which team member can change which pipes</strong></div>
+		  <div id="table3" style="height:400px;overflow:auto;"></div>
+		  </div>
+		  	  
+		  </div>
+		  
+		  <br><br>
+		  <input type="submit" id="cre" class="btn btn-lg btn-primary btn-block" value="Update"/>
+		  <input type="hidden" name="_csrf" value="<%= _csrf %>" />
+		</form>	  
+    </div>
+	
+   
+    <script src="/js/dependencies/sails.io.js"></script>
+    <script src="/js/dependencies/jquery-2.2.3.min.js"></script>
+    <script src="/js/dependencies/Underscore.1.8.3.min.js"></script>
+   
+   
+	  
+    
+    
+	<script src="/js/dependencies/handsontable.full.min.js"></script>
+	<script>
+	var listUsersTeamsRoles=[];
+	var obj_players_teams_roles = game['players_teams'];
+	document.getElementById("players-teams").value=JSON.stringify(obj_players_teams_roles);
+	document.getElementById("game-name").value=game['name'];
+	document.getElementById("team-size").value=game['team_size'];
+	document.getElementById("time-points").value=game['time_points'];
+	
+	var listTeams = [-1];
+	var tmpi=0;
+	for (elem in obj_players_teams_roles){
+		listUsersTeamsRoles.push({user:elem, team: obj_players_teams_roles[elem]['team'], team_member: obj_players_teams_roles[elem]['team_member']});
+		listTeams.push(tmpi);
+		tmpi++;
+	}
+	for (var i=0;i<users.length;i++){
+		if (!(obj_players_teams_roles.hasOwnProperty(users[i]['name']))){
+			listUsersTeamsRoles.push({user:users[i]['name'], team: tmpi, team_member: 0});
+			listTeams.push(tmpi);
+			tmpi++;
+		}
+	}
+	//console.log(listUsersTeamsRoles)
+	var team_size = game['team_size'];
+	var listTeamRoles=[];
+	for (var i = 0; i<team_size; i++){
+		listTeamRoles.push(i);
+	}
+	listTeamRoles.push(-1);
+	//console.log(team_size)
+	var sselect = document.getElementById('teamsize');
+	for (var i = 0; i<listUsersTeamsRoles.length; i++){
+		var opt = document.createElement('option');
+		opt.value = i+1;
+		
+		opt.innerHTML = ""+(i+1);
+		sselect.appendChild(opt);
+		if (team_size==(i+1)){opt.selected = true;}
+	}
+	
+	
+	var obj_pipes=network['pipes'];
+	var obj_pumps=network['pumps'];
+	var obj_valves=network['valves'];	
+	
+	var pumps_roles=game['pumps_roles'];
+	var valves_roles=game['valves_roles'];
+	var pipes_roles=game['pipes_roles'];
+	//console.log(pipes_roles)
+	
+	var listPumps=[];//jQuery.makeArray(obj_pumps);
+	for( var elem in obj_pumps) {
+		var tmp={};
+		tmp['ID']=elem;
+		
+		if (!(pumps_roles.hasOwnProperty(elem))){
+			tmp['team_member']=0;
+			pumps_roles[elem]=0;
+		}
+		else{
+			tmp['team_member']=pumps_roles[elem];
+		}
+		
+		listPumps.push(tmp);
+	}
+	listPumps.sort(function(a, b){return a.ID.localeCompare(b.ID);});
+	document.getElementById("pumps-roles").value=JSON.stringify(pumps_roles);
+	var listValves=[];//jQuery.makeArray(obj_pumps);
+	for( var elem in obj_valves) {
+		var tmp={};
+		tmp['ID']=elem;
+		
+		if (!(valves_roles.hasOwnProperty(elem))){
+			valves_roles[elem]=0;
+			tmp['team_member']=0;
+		}
+		else{
+			tmp['team_member']=valves_roles[elem];
+		}
+		listValves.push(tmp);
+	}
+	listValves.sort(function(a, b){return a.ID.localeCompare(b.ID);});
+	document.getElementById("valves-roles").value=JSON.stringify(valves_roles);
+	//console.log(pipes_roles)
+	var listPipes=[];//jQuery.makeArray(obj_pumps);
+	for( var elem in obj_pipes) {
+		var tmp={};
+		tmp['ID']=elem;
+		
+		if(obj_pipes[elem]['Replaceable']){			
+			//console.log(elem)
+			if (!(pipes_roles.hasOwnProperty(elem))){
+				pipes_roles[elem]=0;
+				tmp['team_member']=0;
+			}
+			else{
+				tmp['team_member']=pipes_roles[elem];
+			}
+			listPipes.push(tmp);
+		}
+	}
+	listPipes.sort(function(a, b){return a.ID.localeCompare(b.ID);});
+	document.getElementById("pipes-roles").value=JSON.stringify(pipes_roles);
+		
+	var $container01 = $("#table01");
+	$container01.handsontable({
+	  data: listUsersTeamsRoles,
+	  stretchH:"all",
+	  //width: 400,
+	  //height: 400,
+	  startRows: 1,
+	  startCols: 4,
+	  colHeaders: true,
+	  colHeaders: ['User', 'Team', 'Team member'],
+	  columns: [
+		{data: "user",editor: false},
+		{data: "team",type: 'dropdown', source: listTeams},
+		{data: "team_member",type: 'dropdown', source: listTeamRoles},
+	  ],
+	  afterChange: function(changes, source) {
+			var listChanged =this.getData();
+			for (var i=0, j=listChanged.length; i<j; i++){
+				
+				if (obj_players_teams_roles.hasOwnProperty(listChanged[i][0])){
+					obj_players_teams_roles[listChanged[i][0]]['team']=listChanged[i][1];
+					obj_players_teams_roles[listChanged[i][0]]['team_member']=parseInt(listChanged[i][2]);
+				}
+			}							
+			document.getElementById("players-teams").value=JSON.stringify(obj_players_teams_roles);
+			
+	  },
+	  minSpareRows: 0
+	});
+	var ct = $container01.handsontable("getInstance");
+	
+	
+	var $container1 = $("#table1");
+	$container1.handsontable({
+	  data: listPumps,
+	  stretchH:"all",
+	  //width: 400,
+	  //height: 400,
+	  startRows: 1,
+	  startCols: 4,
+	  colHeaders: true,
+	  colHeaders: ['pump', 'team_member'],
+	  columns: [
+		{data: "ID",editor: false},
+		{data: "team_member",type: 'dropdown', source: listTeamRoles}
+	  ],
+	  afterChange: function(changes, source) {
+			var listChanged =this.getData();
+			for (var i=0, j=listChanged.length; i<j; i++){
+				if (pumps_roles.hasOwnProperty(listChanged[i][0])){
+					pumps_roles[listChanged[i][0]]=parseInt(listChanged[i][1]);
+				}
+			}							
+			document.getElementById("pumps-roles").value=JSON.stringify(pumps_roles);
+
+	  },
+	  minSpareRows: 0
+	});
+	var $container2 = $("#table2");
+	$container2.handsontable({
+	  data: listValves,
+	  stretchH:"all",
+	  //width: 400,
+	  //height: 400,
+	  startRows: 1,
+	  startCols: 5,
+	  colHeaders: true,
+	  colHeaders: ['valve', 'team_member'],
+	  columns: [
+		{data: "ID",editor: false},
+		{data: "team_member",type: 'dropdown', source: listTeamRoles}
+	  ],
+	  afterChange: function(changes, source) {
+			var listChanged =this.getData();
+			for (var i=0, j=listChanged.length; i<j; i++){
+				if (valves_roles.hasOwnProperty(listChanged[i][0])){
+					valves_roles[listChanged[i][0]]=parseInt(listChanged[i][1]);
+				}
+			}	
+			document.getElementById("valves-roles").value=JSON.stringify(valves_roles);
+	  },
+	  minSpareRows: 0
+	});
+	var $container3 = $("#table3");
+	$container3.handsontable({
+	  data: listPipes,
+	  stretchH:"all",
+	  //renderAllRows: true,
+	  //width: 400,
+	  //height: 400,
+	  startRows: 1,
+	  startCols: 3,
+	  colHeaders: true,
+	  colHeaders: ['pipe', 'team_member'],
+	  columns: [
+		{data: "ID",editor: false},
+		{data: "team_member",type: 'dropdown', source: listTeamRoles}
+	  ],
+	  afterChange: function(changes, source) {
+			var listChanged =this.getData();
+			for (var i=0, j=listChanged.length; i<j; i++){
+				if (pipes_roles.hasOwnProperty(listChanged[i][0])){
+					pipes_roles[listChanged[i][0]]=parseInt(listChanged[i][1]);
+				}
+			}
+			document.getElementById("pipes-roles").value=JSON.stringify(pipes_roles);
+			//console.log(pipes_roles)
+	  },
+	  minSpareRows: 0
+	});
+	
+	
+	var ct1 = $container1.handsontable("getInstance");
+	var ct2 = $container2.handsontable("getInstance");
+	var ct3 = $container3.handsontable("getInstance");
+	
+	function OnSelectionChangeTeam (select) {
+		var selectedOption = select.options[select.selectedIndex];
+		team_size=parseInt(selectedOption.value);
+		document.getElementById('team-size').value=""+team_size;
+		//alert ("The selected option is " + selectedOption.value);
+		//document.getElementById('network-name').value=selectedOption.value;
+		//console.log(team_size);
+		listTeamRoles=[];
+		for (var i = 0; i<team_size; i++){
+			listTeamRoles.push(i);
+		}
+		listTeamRoles.push(-1);
+		ct.updateSettings({
+	  data: listUsersTeamsRoles,
+	  stretchH:"all",
+	  //width: 400,
+	  //height: 400,
+	  startRows: 1,
+	  startCols: 4,
+	  colHeaders: true,
+	  colHeaders: ['User', 'Team', 'Team member'],
+	  columns: [
+		{data: "user",editor: false},
+		{data: "team",type: 'dropdown', source: listTeams},
+		{data: "team_member",type: 'dropdown', source: listTeamRoles},
+	  ],
+	  afterChange: function(changes, source) {
+			var listChanged =this.getData();
+			for (var i=0, j=listChanged.length; i<j; i++){
+				
+				if (obj_players_teams_roles.hasOwnProperty(listChanged[i][0])){
+					obj_players_teams_roles[listChanged[i][0]]['team']=listChanged[i][1];
+					obj_players_teams_roles[listChanged[i][0]]['team_member']=listChanged[i][2];
+				}
+			}							
+			document.getElementById("players-teams").value=JSON.stringify(obj_players_teams_roles);
+			//console.log(document.getElementById("players-teams").value)
+	  },
+	  minSpareRows: 0
+	});
+    
+    ct.render();
+	
+		ct1.updateSettings({
+			data: listPumps,
+			stretchH:"all",
+			//width: 400,
+			//height: 400,
+			startRows: 1,
+			startCols: 4,
+			colHeaders: true,
+			colHeaders: ['pump', 'team_member'],
+			columns: [
+			{data: "ID",editor: false},
+			{data: "team_member",type: 'dropdown', source: listTeamRoles}
+			],
+			afterChange: function(changes, source) {
+				var listChanged =this.getData();
+				var listChanged =this.getData();
+				for (var i=0, j=listChanged.length; i<j; i++){
+					if (pumps_roles.hasOwnProperty(listChanged[i][0])){
+						pumps_roles[listChanged[i][0]]=parseInt(listChanged[i][1]);
+					}
+				}							
+				document.getElementById("pumps-roles").value=JSON.stringify(pumps_roles);
+
+			},
+			minSpareRows: 0
+		});
+    
+		ct1.render();
+		
+		ct2.updateSettings({
+			data: listValves,
+			stretchH:"all",
+			//width: 400,
+			//height: 400,
+			startRows: 1,
+			startCols: 5,
+			colHeaders: true,
+			colHeaders: ['valve', 'team_member'],
+			columns: [
+			{data: "ID",editor: false},
+			{data: "team_member",type: 'dropdown', source: listTeamRoles}
+			],
+			afterChange: function(changes, source) {
+				var listChanged =this.getData();
+			for (var i=0, j=listChanged.length; i<j; i++){
+				if (valves_roles.hasOwnProperty(listChanged[i][0])){
+					valves_roles[listChanged[i][0]]=parseInt(listChanged[i][1]);
+				}
+			}	
+			document.getElementById("valves-roles").value=JSON.stringify(valves_roles);
+			},
+			minSpareRows: 0
+		});	
+		ct2.render();
+		ct3.updateSettings({
+			data: listPipes,
+			stretchH:"all",
+			//renderAllRows: true,
+			//width: 400,
+			//height: 400,
+			startRows: 1,
+			startCols: 3,
+			colHeaders: true,
+			colHeaders: ['pipe', 'team_member'],
+			columns: [
+			{data: "ID",editor: false},
+			{data: "team_member",type: 'dropdown', source: listTeamRoles}
+			],
+			afterChange: function(changes, source) {
+				var listChanged =this.getData();
+			for (var i=0, j=listChanged.length; i<j; i++){
+				if (pipes_roles.hasOwnProperty(listChanged[i][0])){
+					pipes_roles[listChanged[i][0]]=parseInt(listChanged[i][1]);
+				}
+			}
+			document.getElementById("pipes-roles").value=JSON.stringify(pipes_roles);
+				
+			},
+			minSpareRows: 0
+		});	
+		ct3.render();
+	}
+	
+	
+	</script>
+  </body>
+</html>

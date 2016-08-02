@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SeGWADE</title>
+    <!-- Viewport mobile tag for sensible mobile support -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    
+    <link rel="stylesheet" href="/styles/bootstrap.3.1.1.css">
+    <link rel="stylesheet" href="/styles/importer.css">
+    
+	<link rel="stylesheet" href="handsontable.full.min.css">
+    <!--Added this so the client has access to the csrf tag and it's grabbed first service side on every page -->
+    <script type="text/javascript">
+    window.SAILS_LOCALS = {
+      _csrf: '<%= _csrf %>',
+      me: <%- JSON.stringify(me) %>
+    };
+    var myuser = <%-JSON.stringify(me)%>
+	var users = <%-JSON.stringify(users)%>
+	//var input=[];
+	//console.log(myuser);
+    </script>
+	<style>
+	
+	//.table{width:300px}
+
+	</style>
+	
+  </head>
+  <body ng-app="DashboardModule" ng-controller="DashboardController">
+	
+    <!-- container = Fixed-width container container-fluid = full-width -->
+    <div id="big-container" >
+      <!-- Creates the navbar -->
+      <nav id ="mynav" class="navbar navbar-default navbar-inverse" style="margin-left:15px;margin-right:15px;height:50px">
+        <!-- This creates the mechanism for collapse button -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" ng-init="navCollapsed = true" ng-click="navCollapsed = !navCollapsed">
+        <!-- This controls the number of lines in the image when the nav collapse -->
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        </button>
+        <!-- This is the brand on the left-hand side. -->
+        <a class="navbar-brand" href="/#/"> SeGWADE</a>
+        <!-- This is what is the above collapse button points to when the mark-up below is collapsed -->
+        <div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'">
+          <!-- This is what "styles" the li's as navbar items -->
+          <ul class="nav navbar-nav navbar-right">
+            <!-- navbar-right pulls this element right -->
+            <!-- Using ng-show instead of ng-if because we need this mark-up to be in the dom when signup controller
+            fires.  If it's not there (which it wouldn't be in the case of ng-if) then the scope of the signup
+            controller will not be tied to this element. -->
+            <li>
+              <a id="gameaccess" href="/seegames" style="">games</a>
+            </li>
+			<li>
+              <a href="/logout">sign-out</a>
+            </li>
+            <!-- <a ng-controller="signinController" class="btn btn-default navbar-btn navbar-right" href="#" ng-if="!isAuthenticated">sign-in</a> -->
+            <!-- Using ng-show instead of ng-if because we need this mark-up to be in the dom when signup controller
+            fires.  If it's not there (which it wouldn't be in the case of ng-if) then the scope of the signup
+            controller will not be tied to this element. -->
+          </ul>
+        </div>
+      </nav>
+
+      <h1 id="maintitle" align="center" style="height:39px;">List of users</h1>
+	  <br><br>
+	 
+	  <div align="center">
+	  <table id="listUsers" class="table" style="font-size:18px;width:200px">
+		<thead>
+		  <tr>
+			<th style="min-width:200px">User name</th>
+			<th>Admin privilege</th>
+			<th>Action</th>
+		  </tr>
+		  
+		</thead>
+	  </table>
+	  </div>
+	  <form action="/updateusers" id="user-edit-form" method="POST" class="form-signin form-inline">
+	  <input type="text" name="users-admins" id ="users-admins" style="visibility: hidden;" value="">
+	  <input type="submit" id="up" class="btn btn-lg btn-primary btn-block" value="Update"/>
+	  <input type="hidden" name="_csrf" value="<%= _csrf %>" />
+	  
+    </div>
+    <script src="/js/dependencies/sails.io.js"></script>
+    <script src="/js/dependencies/jquery-2.2.3.min.js"></script>
+    <script src="/js/dependencies/Underscore.1.8.3.min.js"></script>
+  
+	<script>
+	
+	
+	var listUsersAdmins={};
+	var tbl  = document.getElementById('listUsers');
+	for(var i = 0; i < users.length; i++){
+	
+        var tr = tbl.insertRow();
+		var td0 = tr.insertCell();
+		var tx = document.createTextNode(users[i]['name']);
+		td0.appendChild(document.createElement('br'));
+		td0.appendChild(tx);
+		
+		var td1 = tr.insertCell();
+		var checkbox = document.createElement('input');
+		checkbox.type = "checkbox";
+		checkbox.name = "c-"+i;
+		checkbox.checked=users[i]['admin'];
+		checkbox.id = "c-"+i;
+		td1.appendChild(document.createElement('br'));
+		td1.appendChild(checkbox);
+		checkbox.onchange = function(){myFunction(this);};
+		
+		var td2 = tr.insertCell();
+		
+		var myform2 = document.createElement("form");
+		myform2.action = "/deleteuser";
+		myform2.method = "POST";
+		var t2 = document.createElement("input");
+		t2.type = "text";
+		t2.value = users[i]['id'];
+		t2.style.visibility="hidden";
+		t2.name = "nid";
+		t2.style.height="0px";
+		myform2.appendChild(t2);
+		// var a2 = document.createElement('a');
+		// a2.setAttribute('href','/network/delete/'+games[i]['id']);
+		// a2.className += "btn btn-xs btn-danger";
+		// //a.style.width="300px";
+		// a2.innerHTML = "Delete";
+		var a2 = document.createElement("input");
+		a2.id = "f"+i;
+		a2.type="submit"; 
+		a2.value = "Delete";
+		a2.className+="btn btn-sm btn-danger"
+		myform2.appendChild(a2);
+		var a3 = document.createElement("input");
+		a3.name="_csrf";
+		a3.type="hidden"; 
+		a3.value = window.SAILS_LOCALS._csrf;
+		
+		
+		
+		td2.appendChild(myform2);
+         myform2.appendChild(a3);   
+    }
+	function myFunction (ob){
+		for(var i = 0; i < users.length; i++){
+			listUsersAdmins[users[i]['name']]=document.getElementById('c-'+i).checked;
+		}
+		//console.log(listUsersAdmins)
+		document.getElementById('users-admins').value=JSON.stringify(listUsersAdmins);
+	}
+	
+	</script>
+  
+  
+  </body>
+</html>
