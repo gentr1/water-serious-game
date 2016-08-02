@@ -4,6 +4,7 @@ A multi player online serious game for water engineers. You can upload towns dis
 Installation steps:
 
 1- Needs node.js and a mongodb server to be installed and running on your computer. 
+
 2- Then do npm install -g sails 
 
 3- Then go to folder and do npm install . Then run sails lift to start the server
