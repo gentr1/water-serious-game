@@ -171,7 +171,7 @@
 		var tmp={};
 		tmp['ID']=elem;
 		tmp['Status']=obj_pipes[elem]['Status'];
-		tmp['Diameter']=parseInt(obj_pipes[elem]['Diameter']);
+		tmp['Diameter']=obj_pipes[elem]['Diameter'];
 		tmp['Replaceable']=obj_pipes[elem]['Replaceable'];				
 		listPipes.push(tmp);
 	}
@@ -430,6 +430,7 @@
 	  columns: [
 		{data: "ID",editor: false},
 		{data: "Status",type: 'checkbox', checkedTemplate: 'Open', uncheckedTemplate: 'Closed',label: {position: 'before',value: 'Open ? '}},
+		//{data: "Diameter", type: 'autocomplete', source: pipe_diameters, strict: false}, 
 		{data: "Diameter", type: 'autocomplete', source: [0,36,48,60,72,84,96,108,120,132,144,156,168,180,192,204,999].map(String), strict: false}, 
 		{data: "Type",type: 'dropdown', source: ["PRV","PSV","PBV","FCV","TCV","GPV"]},
 		{data: "Setting"}
@@ -463,7 +464,8 @@
 	  columns: [
 		{data: "ID",editor: false},
 		{data: "Status",type: 'checkbox', checkedTemplate: 'Open', uncheckedTemplate: 'Closed',label: {position: 'before',value: 'Open ? '}},
-		{data: "Diameter",type: 'autocomplete', source: [0,36,48,60,72,84,96,108,120,132,144,156,168,180,192,204,999].map(String), strict: false}, 
+		//{data: "Diameter",type: 'autocomplete', source: [0,36,48,60,72,84,96,108,120,132,144,156,168,180,192,204,999].map(String), strict: false}, 
+		{data: "Diameter", type: 'autocomplete', source: pipe_diameters, strict: false}, 
 		{data: "Replaceable",type: 'checkbox'},
 	  ],
 	  afterChange: function(changes, source) {

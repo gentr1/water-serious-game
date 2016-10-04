@@ -47,6 +47,7 @@ module.exports.routes = {
   'POST /signup': 'UserController.signup',
   'PUT /playerevaluate': 'UserController.evaluate',
   'PUT /playercommit': 'UserController.commit',
+  'PUT /dmcommit': 'UserController.dmcommit',
   'PUT /update': 'UserController.update',
   'PUT /committed': 'UserController.done',
   'PUT /changedm': 'UserController.changedm',

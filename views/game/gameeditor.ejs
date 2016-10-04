@@ -76,17 +76,24 @@
 		  <br><br>
 		  <input type="text" name="game-name" id ="game-name" style="visibility: hidden;" value="">
 		  <input type="text" name="players-teams" id ="players-teams" style="visibility: hidden;" value="">
+		  <input type="text" name="open-game" id ="open-game" style="visibility: hidden;" value="">
 		  <input type="text" name="team-size" id ="team-size" style="visibility: hidden;" value="">
 		  <input type="text" name="pumps-roles" id ="pumps-roles" style="visibility: hidden;" value="">
 		  <input type="text" name="valves-roles" id ="valves-roles" style="visibility: hidden;" value="">
 		  <input type="text" name="pipes-roles" id ="pipes-roles" style="visibility: hidden;" value="">
-		 
+		  <input type="text" name="game-mode" id ="game-mode" style="visibility: hidden;" value="">
 		  <br>
 		  <div align="center">
-		    <div id="gamename"><strong>Game name :</strong></div>
-			<div id="netname"><strong>Epanet network :</strong></div>
+		    <strong>Game name :</strong><div id="gamename"></div>
+			<strong>Epanet network :</strong><div id="netname"></div>
 			<br>
+			<div class="checkbox">
+				<label><input id="ck1" type="checkbox" value="" onchange="handleChangeCk();">Open game (any player can participate)</label>
+			</div>
 			<strong>Select team size :</strong><select name="teamsize" id="teamsize"  onchange="OnSelectionChangeTeam (this)">
+			</select>
+			<br>
+			<strong>Select game mode</strong>:<select name="select-mode" id="select-mode"  onchange="OnSelectionChangeMode (this)">
 			</select>
 			<br>
 			<br><strong>Time points :</strong><input type="number" min="1" max="24" name="time-points" id ="time-points" value=1>
@@ -137,7 +144,15 @@
 	document.getElementById("game-name").value=game['name'];
 	document.getElementById("team-size").value=game['team_size'];
 	document.getElementById("time-points").value=game['time_points'];
-	
+	document.getElementById("open-game").value=game['open_game'];
+	document.getElementById("game-mode").value=game['game_mode'];
+	document.getElementById("ck1").checked=game['open_game'];
+	function handleChangeCk(){
+		document.getElementById("open-game").value=""+document.getElementById("ck1").checked;
+		console.log(document.getElementById("open-game").value)
+	}
+	document.getElementById("gamename").innerHTML=""+game['name'];;
+	document.getElementById("netname").innerHTML=""+game['network_name'];;
 	var listTeams = [-1];
 	var tmpi=0;
 	for (elem in obj_players_teams_roles){
@@ -154,6 +169,7 @@
 	}
 	//console.log(listUsersTeamsRoles)
 	var team_size = game['team_size'];
+	var game_mode = game['game_mode'];
 	var listTeamRoles=[];
 	for (var i = 0; i<team_size; i++){
 		listTeamRoles.push(i);
@@ -168,6 +184,37 @@
 		opt.innerHTML = ""+(i+1);
 		sselect.appendChild(opt);
 		if (team_size==(i+1)){opt.selected = true;}
+	}
+	// create game mode select
+	var rselect = document.getElementById('select-mode');
+	var opt1 = document.createElement('option');
+	opt1.value = 'modena';
+	opt1.innerHTML = 'modena';
+	rselect.appendChild(opt1);
+	var opt2 = document.createElement('option');
+	opt2.value = 'hydraulic';
+	opt2.innerHTML = 'hydraulic';
+	rselect.appendChild(opt2);
+	var opt3 = document.createElement('option');
+	opt3.value = 'nyc';
+	opt3.innerHTML = 'nyc';
+	rselect.appendChild(opt3);
+	var opt4 = document.createElement('option');
+	opt4.value = 'aqualibrium';
+	opt4.innerHTML = 'aqualibrium';
+	rselect.appendChild(opt4);
+	
+	if (game_mode=='modena'){
+		opt1.selected = true;
+	}
+	else if (game_mode=='hydraulic'){
+		opt2.selected = true;
+	}
+	else if (game_mode=='nyc'){
+		opt3.selected = true;
+	}
+	else if (game_mode=='aqualibrium'){
+		opt4.selected = true;
 	}
 	
 	
@@ -253,13 +300,21 @@
 			var listChanged =this.getData();
 			for (var i=0, j=listChanged.length; i<j; i++){
 				
+				//if (obj_players_teams_roles.hasOwnProperty(listChanged[i][0])){
 				if (obj_players_teams_roles.hasOwnProperty(listChanged[i][0])){
 					obj_players_teams_roles[listChanged[i][0]]['team']=listChanged[i][1];
 					obj_players_teams_roles[listChanged[i][0]]['team_member']=parseInt(listChanged[i][2]);
+					}
+				else{
+					obj_players_teams_roles[listChanged[i][0]]={};
+					obj_players_teams_roles[listChanged[i][0]]['team']=listChanged[i][1];
+					obj_players_teams_roles[listChanged[i][0]]['team_member']=parseInt(listChanged[i][2]);
 				}
+				//}
 			}							
 			document.getElementById("players-teams").value=JSON.stringify(obj_players_teams_roles);
-			
+			console.log(obj_players_teams_roles)
+			console.log(listUsersTeamsRoles)
 	  },
 	  minSpareRows: 0
 	});
@@ -349,6 +404,13 @@
 	var ct1 = $container1.handsontable("getInstance");
 	var ct2 = $container2.handsontable("getInstance");
 	var ct3 = $container3.handsontable("getInstance");
+	
+	function OnSelectionChangeMode(select){
+		var selectedOption = select.options[select.selectedIndex];
+		game_mode=selectedOption.value;
+		document.getElementById('game-mode').value=game_mode;
+	}
+	
 	
 	function OnSelectionChangeTeam (select) {
 		var selectedOption = select.options[select.selectedIndex];

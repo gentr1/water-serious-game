@@ -469,16 +469,23 @@
 									}
 								}
 								delete pipe_data[";ID"];
-								pipe_data["ID"]=0;										
+								pipe_data["ID"]=0;		
+							
 							}
+							
 							if (all_lines[i][0]!=";" && all_lines[i][0]!="\t" && all_lines[i]!=" " && all_lines[i]!=""){
+							
 								var node_detail=all_lines[i].trim().split(/\t*\s+/);
 								if (node_detail[0]!="" && node_detail[0][0]!=";" && node_detail[0]!="\n"){
+									//console.log(node_detail)
 									var tmp_j=node_detail[0];
+									//console.log(pipe_data)	
 									obj_pipes[tmp_j]={};								
 									for (elem in pipe_data){
 										if (elem!="ID"){
 											obj_pipes[tmp_j][elem]=node_detail[pipe_data[elem]];
+											//console.log(pipe_data[elem]+" : "+ node_detail[pipe_data[elem]])
+											//console.log(obj_pipes[tmp_j][elem])
 										}
 									}
 									if (obj_pipes[tmp_j].hasOwnProperty('Status')==false){
@@ -492,7 +499,7 @@
 					else{
 						alert('File does nor seem to contain an enumeration of pipes between [PIPES] and line starting with "[" ');
 					}
-					
+					//console.log(obj_pipes)
 					// find pumps
 					if (index_lines['pumps'].length==2){
 						for (var i=index_lines['pumps'][0], j=index_lines['pumps'][1];i<=j;i++){
@@ -833,7 +840,7 @@
 						var tmp={};
 						tmp['ID']=elem;
 						tmp['Status']=obj_pipes[elem]['Status'];
-						tmp['Diameter']=parseInt(obj_pipes[elem]['Diameter']);
+						tmp['Diameter']=obj_pipes[elem]['Diameter'];
 						tmp['Replaceable']=true;					
 						listPipes.push(tmp);
 					}
@@ -896,10 +903,10 @@
 								if (listChanged[0][i]!=null && listChanged[0][i]!=""){
 									pipe_diameters.push(listChanged[0][i])
 								}
-								//console.log(pipe_diameters)
+								
 							}							
 							document.getElementById("pipe-diameters").value=JSON.stringify(pipe_diameters);
-		 
+							//console.log(pipe_diameters)
 		 
 					  },
 					  minSpareRows: 0,
@@ -1105,7 +1112,7 @@
 					  columns: [
 						{data: "ID",editor: false},
 						{data: "Status",type: 'checkbox', checkedTemplate: 'Open', uncheckedTemplate: 'Closed',label: {position: 'before',value: 'Open ? '}},
-						{data: "Diameter",type: 'autocomplete', source: pipe_diameters, strict: false}, 
+						{data: "Diameter"},//'autocomplete', source: pipe_diameters, strict: false}, 
 						{data: "Replaceable",type: 'checkbox'},
 					  ],
 					  afterChange: function(changes, source) {

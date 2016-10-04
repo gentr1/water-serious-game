@@ -78,10 +78,10 @@
         <div class="control-group form-group col-md-12"
         ng-class="{'has-error':signup.name.$invalid &&
                               signup.name.$dirty}">
-          <label>Your full name</label>
+          <label>User name</label>
 
           <!-- For this input field make it required, and have a max length of 25 -->
-          <input type="text" class="form-control" placeholder="e.g. Nikola Tesla" name="name" ng-model="signupForm.name" ng-maxlength="50" required>
+          <input type="text" class="form-control" placeholder="e.g. NTesla" name="name" ng-model="signupForm.name" ng-maxlength="50" required>
 
           <!-- Also, if signup.name.$dirty is true, show the message depending upon the particular properties truthiness (e.g. required
           and/or maxlength) -->

@@ -25,6 +25,14 @@ module.exports = {
 		type: 'boolean',
       defaultsTo: true
 	},
+	game_mode: {
+		type: 'string',
+		defaultsTo: 'modena'
+	},
+	dm_teams_updated:{
+		type: 'json',
+	    defaultsTo: {}
+	},
 	time_points: {
 		type: 'integer',
 		defaultsTo: 1
@@ -32,6 +40,10 @@ module.exports = {
 	team_size: {
 		type: 'integer',
 		defaultsTo: 1
+	},
+	open_game:{
+		type: 'boolean',
+		defaultsTo: false
 	},
 	players_teams: {
       type: 'json',

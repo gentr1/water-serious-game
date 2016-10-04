@@ -174,7 +174,7 @@ module.exports = {
 			
 		
 		var parameters= req.param('history');
-		
+		var game_mode= req.param('mode');
 		var myos = os.type();
 		var typos=0;
 		if (myos.substring(0,3)=="Win"){
@@ -200,7 +200,12 @@ module.exports = {
 		
 		var command;
 		if (typos==0){
-			command = 'assets\\game-engine\\cwsSeGWADE.exe ' + parameters;
+			if (game_mode=='modena'){
+				command = 'assets\\game-engine\\cwsSeGWADE.exe ' + parameters;
+			}
+			else if (game_mode=='aqualibrium'){
+				command = 'assets\\game-engine\\aqualibriumConsole.exe ' + parameters;
+			}
 		}
 		else{
 			//command = 'assets/game-engine/cwsNYTServer.exe ' + method + ' -i ' + fname + ' -b ' + fname1 + ' -f ' + fname2 + ' -X ' + xt + ' -comment';
@@ -222,9 +227,10 @@ module.exports = {
 		var myteam=req.param('myteam');
 		var myplayer=req.param('player');
 		var mydate=req.param('mydate');
+		var game_mode= req.param('mode');
 		//console.log(parameters)
 		//console.log(mygame)
-		//console.log(myteam)
+		//console.log("commit parameter team: "+myteam)
 		//console.log(myplayer)
 		//console.log(mydate)
 		// get as parameter 
@@ -234,19 +240,25 @@ module.exports = {
 		
 		if (all_job_queues.hasOwnProperty(mygame)){
 			if (all_job_queues[mygame].hasOwnProperty(myteam)){
-				all_job_queues[mygame][myteam].push([''+myplayer+mydate,mydate,parameters,0])
+				var pid = ""+myplayer+mydate;
+				pid = pid.replace(/\s/g,"_"); 
+				all_job_queues[mygame][myteam].push([''+pid,mydate,parameters,0])
 			}
 			else{
+				var pid = ""+myplayer+mydate;
+				pid = pid.replace(/\s/g,"_"); 
 				all_job_queues[mygame][myteam]=[];
-				all_job_queues[mygame][myteam].push([''+myplayer+mydate,mydate,parameters,0])
+				all_job_queues[mygame][myteam].push([''+pid,mydate,parameters,0])
 			}
 		}
 		else{
+			var pid = ""+myplayer+mydate;
+			pid = pid.replace(/\s/g,"_"); 
 			all_job_queues[mygame]={};
 			all_job_queues[mygame][myteam]=[];
-			all_job_queues[mygame][myteam].push([''+myplayer+mydate,mydate,parameters,0])
+			all_job_queues[mygame][myteam].push([''+pid,mydate,parameters,0])
 		}
-		console.log(all_job_queues[mygame][myteam]);
+		//console.log(all_job_queues[mygame][myteam]);
 		
 		var myos = os.type();
 		var typos=0;
@@ -274,8 +286,110 @@ module.exports = {
 		var command;
 		if (typos==0){
 			for (var i=0;i<all_job_queues[mygame][myteam].length;i++){
-				if (all_job_queues[mygame][myteam][i][0]==(''+myplayer+mydate)){
-					command = 'assets\\game-engine\\cwsSeGWADE.exe ' +all_job_queues[mygame][myteam][i][2];
+				var pid = ""+myplayer+mydate;
+				pid = pid.replace(/\s/g,"_"); 
+				if (all_job_queues[mygame][myteam][i][0]==(pid)){
+					if (game_mode=='modena'){
+						command = 'assets\\game-engine\\cwsSeGWADE.exe ' +all_job_queues[mygame][myteam][i][2];
+					}
+					else if (game_mode=='aqualibrium'){
+						command = 'assets\\game-engine\\aqualibriumConsole.exe ' +all_job_queues[mygame][myteam][i][2];
+					}
+					console.log('executing command job id: '+all_job_queues[mygame][myteam][i][0]);
+					all_job_queues[mygame][myteam][i][3]+=1;
+				}
+			}
+			//command = 'assets\\game-engine\\cwsSeGWADE.exe ' + all_job_queues[mygame][myteam].shift()[2]//all_job_queues[mygame][myteam][0][2]//all_job_queues[mygame][myteam].shift()[2]
+		}
+		else{
+			//command = 'assets/game-engine/cwsNYTServer.exe ' + method + ' -i ' + fname + ' -b ' + fname1 + ' -f ' + fname2 + ' -X ' + xt + ' -comment';
+		}
+		console.log(command)
+		exec(command, function(err, stdout, stderr) {
+			console.log('output:', stdout);
+			console.log('stderr:', stderr);
+			command=null;
+		});
+    }
+  },
+  
+  dmcommit: function (req, res,next) {
+    if (req.session.me) {
+		
+		
+		var parameters= req.param('history');
+		var mygame=req.param('mygame');
+		var myteam=req.param('myteam');
+		var myplayer=req.param('player');
+		var mydate=req.param('mydate');
+		var game_mode= req.param('mode');
+		//console.log(parameters)
+		//console.log(mygame)
+		//console.log("commit parameter team: "+myteam)
+		//console.log(myplayer)
+		//console.log(mydate)
+		// get as parameter 
+		// the game name
+		// the team name
+		// the add these in the queue data structure
+		
+		if (all_job_queues.hasOwnProperty(mygame)){
+			if (all_job_queues[mygame].hasOwnProperty(myteam)){
+				var pid = ""+myplayer+mydate;
+				pid = pid.replace(/\s/g,"_"); 
+				all_job_queues[mygame][myteam].push([''+pid,mydate,parameters,0,'dm'])
+			}
+			else{
+				var pid = ""+myplayer+mydate;
+				pid = pid.replace(/\s/g,"_"); 
+				all_job_queues[mygame][myteam]=[];
+				all_job_queues[mygame][myteam].push([pid,mydate,parameters,0,'dm'])
+			}
+		}
+		else{
+			var pid = ""+myplayer+mydate;
+			pid = pid.replace(/\s/g,"_"); 
+			all_job_queues[mygame]={};
+			all_job_queues[mygame][myteam]=[];
+			all_job_queues[mygame][myteam].push([''+pid,mydate,parameters,0,'dm'])
+		}
+		//console.log(all_job_queues[mygame][myteam]);
+		
+		var myos = os.type();
+		var typos=0;
+		if (myos.substring(0,3)=="Win"){
+			typos=0;
+		}
+		else if (myos.substring(0,3)=="Dar"){
+			typos=1;
+		}
+		else if (myos.substring(0,3)=="Lin"){
+			typos=2;
+		}
+		else{
+			typos=3;
+		}
+		//sails.log(typos);
+		var fname;  
+		if (typos==0){
+			fname = 'assets\\game-engine';
+		}
+		else{
+			fname = 'assets/game-engine';
+		}
+		
+		var command;
+		if (typos==0){
+			for (var i=0;i<all_job_queues[mygame][myteam].length;i++){
+				var pid = ""+myplayer+mydate;
+				pid = pid.replace(/\s/g,"_"); 
+				if (all_job_queues[mygame][myteam][i][0]==(''+pid)){
+					if (game_mode=='modena'){
+						command = 'assets\\game-engine\\cwsSeGWADE.exe ' +all_job_queues[mygame][myteam][i][2];
+					}
+					else if (game_mode=='aqualibrium'){
+						command = 'assets\\game-engine\\aqualibriumConsole.exe ' +all_job_queues[mygame][myteam][i][2];
+					}
 					console.log('executing command job id: '+all_job_queues[mygame][myteam][i][0]);
 					all_job_queues[mygame][myteam][i][3]+=1;
 				}
@@ -299,6 +413,10 @@ module.exports = {
 	var mgame= req.body['game'];
 	var mteam= req.body['team'];
 	var jobid = req.body['jobid'];
+	var game_mode= req.body['mode'];
+	//console.log(mteam);
+	//console.log(all_job_queues[mgame]);
+	//console.log(all_job_queues[mgame][mteam]);
 	for (var i=0;i<all_job_queues[mgame][mteam].length;i++){
 		if (all_job_queues[mgame][mteam][i][0]==jobid){
 			console.log("commit job id: "+jobid+" completed.")
@@ -339,7 +457,12 @@ module.exports = {
 			
 			var command;
 			if (typos==0){
-				command = 'assets\\game-engine\\cwsSeGWADE.exe ' +all_job_queues[mgame][mteam][i][2];
+				if (game_mode=='modena'){
+					command = 'assets\\game-engine\\cwsSeGWADE.exe ' +all_job_queues[mgame][mteam][i][2];
+				}
+				else if (game_mode=='aqualibrium'){
+					command = 'assets\\game-engine\\aqualibriumConsole.exe ' +all_job_queues[mygame][myteam][i][2];
+				}
 			}
 			else{
 				//command = 'assets/game-engine/cwsNYTServer.exe ' + method + ' -i ' + fname + ' -b ' + fname1 + ' -f ' + fname2 + ' -X ' + xt + ' -comment';
@@ -377,10 +500,28 @@ module.exports = {
 			
 			if (req.body['changedbest']==true){
 				console.log("detail best : "+req.body['changedbestdetail']);
+				//console.log("detail game state : ");
+				//for (elem in req.body['state']){
+				//	console.log(elem);
+				//}
 				console.log("broadcasting newbestteam message resulting from commit history update !!!")
 				sails.sockets.broadcast("funSockets", "betterscore", req.body['changedbestdetail']);
 			}
 			console.log("broadcasting hello message resulting from commit history update !!!")
+			sails.sockets.broadcast("funSockets", "hello", {name:req.body['name'], game:req.body['game'], jobid: req.body['jobid'],type:req.body['type'] ,result: req.body['last_result']});
+				//console.log('solving next job in queue if present');
+				
+			
+		}
+		else if (req.body['type']=='d' || req.body['type']=='D'){
+			console.log("changed best dm : "+req.body['changedbest']);
+			
+			if (req.body['changedbest']==true){
+				console.log("detail best : "+req.body['changedbestdetail']);
+				console.log("broadcasting newbestteam message resulting from dm commit history update !!!")
+				sails.sockets.broadcast("funSockets", "betterscore", req.body['changedbestdetail']);
+			}
+			console.log("broadcasting hello message resulting from dm commit history update !!!")
 			sails.sockets.broadcast("funSockets", "hello", {name:req.body['name'], game:req.body['game'], jobid: req.body['jobid'],type:req.body['type'] ,result: req.body['last_result']});
 				//console.log('solving next job in queue if present');
 				
@@ -428,7 +569,48 @@ module.exports = {
 					mygame.modified_pipes[newpipe[0]]=diameters_2_index[newpipe[2]];
 					
 				}
-				Game.update({id:mygame['id']},{pipes_roles: mygame.pipes_roles, modified_pipes:mygame.modified_pipes }, function gameUpdated(erru1) {
+				//console.log(mygame.team_size);
+				var dm_teams_updated={};
+				if (mygame.open_game==false){
+					if (mygame.team_size==1){
+						
+						for (muser in mygame.players_teams){
+							//console.log(mygame.players_teams[muser])
+							if (mygame.players_teams[muser]['team']!=-1 && mygame.players_teams[muser]['team']!='-1'){
+								dm_teams_updated[muser]=false;
+							}
+							
+						}
+					}
+					else{
+						var listTeams=[];
+						for (muser in mygame.players_teams){
+							//console.log(mygame.players_teams[muser])
+							if (mygame.players_teams[muser]['team']!=-1 && mygame.players_teams[muser]['team']!='-1'){
+								//dm_teams_updated[muser]=false;
+								if (listTeams.indexOf(mygame.players_teams[muser]['team'])==-1){
+									listTeams.push(mygame.players_teams[muser]['team']);
+								}
+							}
+							for (var i=0;i<listTeams.length;i++){
+								dm_teams_updated[listTeams[i]]=false;
+							}
+							
+						}
+					}
+				}
+				else{
+					if (mygame.team_size==1){
+						for (muser in mygame.players_teams){
+							//console.log(mygame.players_teams[muser])
+							if (mygame.players_teams[muser]['team']!=-1 && mygame.players_teams[muser]['team']!='-1'){
+								dm_teams_updated[muser]=false;
+							}
+							
+						}
+					}
+				}
+				Game.update({id:mygame['id']},{pipes_roles: mygame.pipes_roles, modified_pipes:mygame.modified_pipes, dm_teams_updated: dm_teams_updated }, function gameUpdated(erru1) {
 						if (erru1) return res.negotiate(erru1);
 						//console.log("game "+mygame['name']+" updated !!!")
 						Network.update({id:net['id']},{pipes: net.pipes}, function netUpdated(erru2) {
