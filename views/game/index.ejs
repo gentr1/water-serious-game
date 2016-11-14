@@ -99,7 +99,7 @@
     //tbl.style.width  = '100px';
     //tbl.style.border = '1px solid black';
 	for(var i = 0; i < games.length; i++){
-	
+		
 		//var myform = document.createElement("form");
     //myform.action = "myForm.aspx";
    // myform.method = "post";
@@ -225,8 +225,69 @@
 		
 		
 		td2.appendChild(myform2);
-         myform2.appendChild(a3);   
-        
+        myform2.appendChild(a3);  
+		
+		if (games[i]['game_mode']=='aqualibrium'){
+		
+			var td3 = tr.insertCell();
+			var myform3 = document.createElement("form");
+			myform3.action = "/rewritedbfromfiles";
+			myform3.method = "POST";
+			var t3 = document.createElement("input");
+			t3.type = "text";
+			t3.value = games[i]['id'];
+			t3.style.visibility="hidden";
+			t3.name = "nid";
+			t3.style.height="0px";
+			myform3.appendChild(t3);
+			// var a2 = document.createElement('a');
+			// a2.setAttribute('href','/network/delete/'+games[i]['id']);
+			// a2.className += "btn btn-xs btn-danger";
+			// //a.style.width="300px";
+			// a2.innerHTML = "Delete";
+			var a32 = document.createElement("input");
+			a32.id = "f"+i;
+			a32.type="submit"; 
+			a32.value = "Refresh DB";
+			a32.className+="btn btn-sm btn-danger"
+			myform3.appendChild(a32);
+			var a33 = document.createElement("input");
+			a33.name="_csrf";
+			a33.type="hidden"; 
+			a33.value = window.SAILS_LOCALS._csrf;
+			td3.appendChild(myform3);
+			myform3.appendChild(a33);
+
+			var td4 = tr.insertCell();
+			var myform4 = document.createElement("form");
+			myform4.action = "/export3BestToEpfiles";
+			myform4.method = "POST";
+			var t4 = document.createElement("input");
+			t4.type = "text";
+			t4.value = games[i]['id'];
+			t4.style.visibility="hidden";
+			t4.name = "nid";
+			t4.style.height="0px";
+			myform4.appendChild(t4);
+			// var a2 = document.createElement('a');
+			// a2.setAttribute('href','/network/delete/'+games[i]['id']);
+			// a2.className += "btn btn-xs btn-danger";
+			// //a.style.width="300px";
+			// a2.innerHTML = "Delete";
+			var a42 = document.createElement("input");
+			a42.id = "f"+i;
+			a42.type="submit"; 
+			a42.value = "Export 1st-5th";
+			a42.className+="btn btn-sm btn-danger"
+			myform4.appendChild(a42);
+			var a43 = document.createElement("input");
+			a43.name="_csrf";
+			a43.type="hidden"; 
+			a43.value = window.SAILS_LOCALS._csrf;
+			td4.appendChild(myform4);
+			myform4.appendChild(a43);
+		
+        }
     }
 	</script>
   

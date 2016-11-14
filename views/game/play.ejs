@@ -173,11 +173,15 @@
         <div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'">
           
 		  <ul class="nav navbar-nav navbar-right">
+		    
             <li>
               <a id="gameaccess" href="/seegames" style="">games</a>
             </li>
 			<li>
               <a href="/logout">sign-out</a>
+            </li>
+			<li>
+              <a id="gameaccess" href="#" style="" onclick="displayhelp()"><i class="fa fa-info-circle fa-2x" aria-hidden="true" ></i></a>
             </li>
             
           </ul>
@@ -258,6 +262,12 @@
 	  </button>
 	  <div id="list_hs"></div>
 	</div>
+	<div id="info-table" style="position:absolute;visibility:hidden;z-index:40000;" class="alert alert-info info-dismissible fade in" role="alert">
+	  <button type="button" class="close" onclick="closeInfo();">
+		<span aria-hidden="true">&times;</span>
+	  </button>
+	  <div id="list_info"></div>
+	</div>
 	
     <script src="/js/dependencies/sails.io.js"></script>
     <script src="/js/dependencies/jquery-2.2.3.min.js"></script>    
@@ -278,6 +288,7 @@
 	<script src="/js/dependencies/handsontable.full.min.js"></script>
 
 	<script>
+	var server_maintenance=false;
 	
 	$('#closeb').click(function(){
 		$('#slideout').toggleClass('on');
@@ -311,6 +322,52 @@
 	$('#slideout').on("mouseleave", function(){
 		mouseOverSpreadsheet=false;
 	});
+	displayhelp();
+	closeInfo();
+	function displayhelp(){
+		document.getElementById('info-table').style.top=100+"px";
+		document.getElementById('info-table').style.left=100+"px";
+		document.getElementById('info-table').style.width=400+"px";
+		document.getElementById('info-table').style.visibility="visible";
+		if (game.game_mode=='aqualibrium'){
+			//console.log('help aqualibrium')
+			var myinfo='<strong>Information</strong><br><br>'
+			myinfo+='The goal of the Aqualibrium game is to change the diameters of the pipes in this network so as the minimise the difference of volume between the three reservoirs Res1, Res2, and Res2.<br>'
+			myinfo+='(For more information, you can also watch the <a href="https://youtu.be/fmzFZFIjtTk" style="color:blue;text-decoration:underline;" target="_blank"><strong><i>video tutorial</i></strong>.</a>)<br><br>'
+			myinfo+='<strong>Rotate camera</strong>: Left mouse button + mouse move<br>'
+			myinfo+='<strong>Zoom in/out camera</strong>: mouse wheel or Z and X Keys<br>'
+			myinfo+='<strong>Pan camera</strong>: Right mouse button + mouse move<br>'
+			myinfo+='<strong>Change diameter of one pipe</strong>: Left click on a pipe a select a diameter and close the diameter selection window.<br>'
+			myinfo+='<strong>Change diameter for a group of pipes</strong>: Leave Shift key pressed + Left click on a pipe to add/remove it to the selection, then select a diameter and close the diameter selection window.<br>'
+			myinfo+='<strong>Reset pipes diameters to the start</strong>: Click the "Reset Default" button.<br>'
+			myinfo+='<strong>Compute without saving result</strong>: Click the "Evaluate" button. <br>'
+			myinfo+='<strong>Compute and save result</strong>: Click the "Commit" button. <br>'
+			myinfo+='<strong>Load past result</strong>: click on one of the results in the select combo list.<br>'
+			document.getElementById('list_info').innerHTML=myinfo;
+		}
+		else if (game.game_mode=='modena'){
+			//console.log('help modena')
+		}
+		else if (game.game_mode=='hydraulic'){
+			//console.log('help hydraulic')
+		}
+		else if (game.game_mode=='nyc'){
+			var myinfo='<strong>Information</strong><br><br>'
+			myinfo+='The goal of the NYC game is to change the diameters of the pipes in this network in order to alleviate a pressure deficiency, while minimising the overall cost increasing in function of pipes diameters.<br>'
+			myinfo+='(For more information, you can also watch the <a href="https://youtu.be/84Tk4DoXeq4" style="color:blue;text-decoration:underline;" target="_blank"><strong><i>video tutorial</i></strong>.</a>)<br><br>'
+			myinfo+='<strong>Rotate camera</strong>: Left mouse button + mouse move<br>'
+			myinfo+='<strong>Zoom in/out camera</strong>: mouse wheel or Z and X Keys<br>'
+			myinfo+='<strong>Pan camera</strong>: Right mouse button + mouse move<br>'
+			myinfo+='<strong>Change diameter of one pipe</strong>: Left click on a pipe a select a diameter and close the diameter selection window.<br>'
+			myinfo+='<strong>Change diameter for a group of pipes</strong>: Leave Shift key pressed + Left click on a pipe to add/remove it to the selection, then select a diameter and close the diameter selection window.<br>'
+			myinfo+='<strong>Reset pipes diameters to the start</strong>: Click the "Reset Default" button.<br>'
+			myinfo+='<strong>Compute without saving result</strong>: Click the "Evaluate" button. <br>'
+			myinfo+='<strong>Compute and save result</strong>: Click the "Commit" button. <br>'
+			myinfo+='<strong>Load past result</strong>: click on one of the results in the select combo list.<br>'
+			document.getElementById('list_info').innerHTML=myinfo;
+		}
+		
+	}
 	//$('#pumps').click(function (e) {
 	//	e.preventDefault()
 	//	$('#pumps').tab('show')
@@ -540,10 +597,20 @@
 	//console.log(width_coord)
 	//console.log(height_coord)
 	if (team_size>1){
-		document.getElementById('welcometitle').innerHTML="Player "+myuser.name+ " / Team "+ team+" / Team member " +member ;
+		if (server_maintenance){
+			document.getElementById('welcometitle').innerHTML='<b><font color="red">Game server is under maintenance !!! Game is not playable for the moment.</font><b>' ;
+		}
+		else {
+			document.getElementById('welcometitle').innerHTML="Player "+myuser.name+ " / Team "+ team+" / Team member " +member ;
+		}
 	}
 	else{
-		document.getElementById('welcometitle').innerHTML="Player "+myuser.name ;
+		if (server_maintenance){
+			document.getElementById('welcometitle').innerHTML='<b><font color="red">Game server is under maintenance !!! Game is not playable for the moment.</font><b>' ;
+		}
+		else{
+			document.getElementById('welcometitle').innerHTML="Player "+myuser.name ;
+		}
 	}
 	// intialialising history + output values (cost, pressure differential, nb nodes with deficit pressure, ...) 
 	//var myhistory = myuser['history']['sessions'];
@@ -579,7 +646,7 @@
 	if (game.game_mode=='aqualibrium'){
 		//document.getElementById('maxPriceB').disabled=true;
 		//document.getElementById('maxPriceB').innerHTML="";
-		document.getElementById('clickMe').className += " hide";
+		//document.getElementById('clickMe').className += " hide";
 		document.getElementById('maxPriceB').className += " hide";
 		document.getElementById('closeb').className += " hide";
 		document.getElementById('extrap').className += " hide";
@@ -1011,7 +1078,7 @@
 		topinfo +='<tr><td>Cost: </td><td>$'+d3.format(",.0f")(overall_cost)+'</td><td>Leakage: </td><td>'+leakage+'</td><td>Max age: </td><td>'+(water_age).toFixed(2)+'</td><td>Pressure deficit: </td><td>'+(pressure_deficit).toFixed(2)+'</td><td>No. deficit nodes: </td><td>'+nb_deficit_nodes+'</td></tr></table>'
 	}
 	else if (game.game_mode=='aqualibrium'){
-		topinfo +='<tr><td>Score: </td><td>'+parseFloat(overall_score).toFixed(3)+'</td><td>Reservoir 1: </td><td>'+(reservoir_1).toFixed(3)+'</td><td>Reservoir 2: </td><td>'+(reservoir_2).toFixed(3)+'</td><td>Reservoir 3: </td><td>'+(reservoir_3).toFixed(3)+'</td></tr></table>'
+		topinfo +='<tr><td>Score: </td><td>'+parseFloat(overall_score).toFixed(3)+'</td><td>Reservoir 1: </td><td>'+(reservoir_1).toFixed(5)+'</td><td>Reservoir 2: </td><td>'+(reservoir_2).toFixed(5)+'</td><td>Reservoir 3: </td><td>'+(reservoir_3).toFixed(5)+'</td></tr></table>'
 	}
 	document.getElementById('info-top').innerHTML=topinfo;
 	
@@ -3047,7 +3114,22 @@
 			for (pipe in all_fixed_pipes) {
 				var array_points=[];
 				for (var i=0;i< all_fixed_pipes[pipe]['Vertices'].length;i++ ){
-					array_points.push( new THREE.Vector3(((parseFloat(all_fixed_pipes[pipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),0, ((parseFloat(all_fixed_pipes[pipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
+					//console.log(all_fixed_pipes[pipe]['Node1'])
+					//console.log(all_fixed_pipes[pipe]['Node2'])
+					var ypos=0.0;
+					if (game.game_mode=='aqualibrium'){
+						if (i==0 && all_fixed_pipes[pipe]['Node1']=='Source'){
+							ypos = -10-((20)*0.5);
+						}
+						else if (i==1 && all_fixed_pipes[pipe]['Node2']=='Source'){
+							ypos = -10-((20)*0.5);
+						}
+						
+					}
+					else{
+						
+					}
+					array_points.push( new THREE.Vector3(((parseFloat(all_fixed_pipes[pipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),ypos, ((parseFloat(all_fixed_pipes[pipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
 				}
 				var curve = new THREE.CatmullRomCurve3(array_points);
 				var index_diameter=team_latest_diameters[pipe];
@@ -4804,7 +4886,7 @@
 				topinfo +='<tr><td>Cost: </td><td>$'+d3.format(",.0f")(overall_cost)+'</td><td>Leakage: </td><td>'+leakage+'</td><td>Max age: </td><td>'+(water_age).toFixed(2)+'</td><td>Pressure deficit: </td><td>'+(pressure_deficit).toFixed(2)+'</td><td>No. deficit nodes: </td><td>'+nb_deficit_nodes+'</td></tr></table>'
 			}
 			else if (game.game_mode=='aqualibrium'){
-				topinfo +='<tr><td>Score: </td><td>'+parseFloat(overall_score).toFixed(3)+'</td><td>Reservoir 1: </td><td>'+(reservoir_1).toFixed(3)+'</td><td>Reservoir 2: </td><td>'+(reservoir_2).toFixed(3)+'</td><td>Reservoir 3: </td><td>'+(reservoir_3).toFixed(3)+'</td></tr></table>'
+				topinfo +='<tr><td>Score: </td><td>'+parseFloat(overall_score).toFixed(3)+'</td><td>Reservoir 1: </td><td>'+(reservoir_1).toFixed(5)+'</td><td>Reservoir 2: </td><td>'+(reservoir_2).toFixed(5)+'</td><td>Reservoir 3: </td><td>'+(reservoir_3).toFixed(5)+'</td></tr></table>'
 			}
 			document.getElementById('info-top').innerHTML=topinfo;
 			onWindowResize();
@@ -4828,7 +4910,7 @@
 				topinfo +='<tr><td>Cost: </td><td>$'+d3.format(",.0f")(overall_cost)+'</td><td>Leakage: </td><td>'+leakage+'</td><td>Max age: </td><td>'+(water_age).toFixed(2)+'</td><td>Pressure deficit: </td><td>'+(pressure_deficit).toFixed(2)+'</td><td>No. deficit nodes: </td><td>'+nb_deficit_nodes+'</td></tr></table>'
 			}
 			else if (game.game_mode=='aqualibrium'){
-				topinfo +='<tr><td>Score: </td><td>'+parseFloat(overall_score).toFixed(3)+'</td><td>Reservoir 1: </td><td>'+(reservoir_1).toFixed(3)+'</td><td>Reservoir 2: </td><td>'+(reservoir_2).toFixed(3)+'</td><td>Reservoir 3: </td><td>'+(reservoir_3).toFixed(3)+'</td></tr></table>'
+				topinfo +='<tr><td>Score: </td><td>'+parseFloat(overall_score).toFixed(3)+'</td><td>Reservoir 1: </td><td>'+(reservoir_1).toFixed(5)+'</td><td>Reservoir 2: </td><td>'+(reservoir_2).toFixed(5)+'</td><td>Reservoir 3: </td><td>'+(reservoir_3).toFixed(5)+'</td></tr></table>'
 			}
 			document.getElementById('info-top').innerHTML=topinfo;
 			onWindowResize();
@@ -6902,6 +6984,7 @@
 			var d = new Date();
 			var n = d.getTime();
 			var input_obj={};
+			
 			if (game.game_mode=='modena'){
 				for (pipe in team_latest_diameters){
 					if (team_latest_diameters[pipe] != diameters_2_index[all_pipes[pipe]['Diameter']]){
@@ -6925,6 +7008,7 @@
 						}
 					}
 				}
+				
 			}
 			for (pipe in user_latest_diameters){
 				if (pipe!=='NaN' && input_obj.hasOwnProperty(pipe)==false){
@@ -6936,44 +7020,61 @@
 			}
 			latest_input = ' pipes';
 			for (pipe in input_obj){
-				latest_input +=' "'+pipe+'" '+input_obj[pipe]
+				if (pipe!=""){
+					latest_input +=' "'+pipe+'" '+input_obj[pipe]
+				}
 			}
 			var pid = ""+myuser.name+n;
 			//console.log(pid);
 			pid = pid.replace(/\s/g,"_"); 
 			//console.log(pid);
 			var myparam = '"'+myuser.name+ '" "'+ game.game_mode+ '" "'+ game.name+ '" "'+ game.network_name+'" '+ game.time_points+ ' "'+pid+'" c'+ latest_input; 
-			document.getElementById('commit-btn').className += "disabled";
-			document.getElementById('commit-btn').style.pointerEvents = "none";
-			commit_id=myuser.name+''+n;
-			commit_id=commit_id.replace(/\s/g,"_"); 
-			commit_timer=0;
-			if(myInterval==null){
-				myInterval = window.setInterval(function (a,b) {
-					commit_timer++;
-					//console.log(commit_timer+' : '+commit_id)
-					
-					if (commit_id=='' || (!(commit_id))){
-						commit_timer=0;
-						clearInterval(myInterval);
-						myInterval=null;
-					}
-					else if (commit_id!='' && commit_timer >= 20){
-						commit_timer=0;
-						clearInterval(myInterval);
-						myInterval=null;
-						window.alert("The network did not seem to allow your commit to come through. \n Please try again." )
-						document.getElementById('commit-btn').className = "btn btn-danger";
-						document.getElementById('commit-btn').style.pointerEvents = "auto";
-					}
-					
-				},500);
+			var go_on=true;
+			if (game.game_mode=='aqualibrium'){
+				if (game.players_teams.hasOwnProperty(myuser.name) && game.players_teams[myuser.name]['team']==myuser.name){
+					go_on=true;
+				}
+				else{
+					go_on=false;
+				}
 			}
-			io.socket.put('/playercommit', {history: myparam, mygame:game.name, myteam: team, player: myuser.name, mydate: n, mode: game_mode},function gotResponse(body, response) { });
-			//console.log(latest_input)
-			d=null;
-			listEditedPipes=[];
-			
+			if (go_on==true){
+				document.getElementById('commit-btn').className += "disabled";
+				document.getElementById('commit-btn').style.pointerEvents = "none";
+				commit_id=myuser.name+''+n;
+				commit_id=commit_id.replace(/\s/g,"_"); 
+				commit_timer=0;
+				if(myInterval==null){
+					myInterval = window.setInterval(function (a,b) {
+						commit_timer++;
+						//console.log(commit_timer+' : '+commit_id)
+						
+						if (commit_id=='' || (!(commit_id))){
+							commit_timer=0;
+							clearInterval(myInterval);
+							myInterval=null;
+						}
+						else if (commit_id!='' && commit_timer >= 30){
+							commit_timer=0;
+							clearInterval(myInterval);
+							myInterval=null;
+							if (server_maintenance==true){
+								window.alert("Sorry ! The game server is undergoing some maintenance. Try again in a couple of hours. Thank you !" );
+							}
+							else{
+								window.alert("The network did not seem to allow your commit to come through. \n Please try again." );
+							}
+							document.getElementById('commit-btn').className = "btn btn-danger";
+							document.getElementById('commit-btn').style.pointerEvents = "auto";
+						}
+						
+					},500);
+				}
+				io.socket.put('/playercommit', {history: myparam, mygame:game.name, myteam: team, player: myuser.name, mydate: n, mode: game_mode},function gotResponse(body, response) { });
+				console.log(myparam);
+				d=null;
+				listEditedPipes=[];
+			}
 		
 		
 		
@@ -7002,7 +7103,7 @@
 						clearInterval(myInterval);
 						myInterval=null;
 					}
-					else if (commit_id!='' && commit_timer >= 20){
+					else if (commit_id!='' && commit_timer >= 30){
 						commit_timer=0;
 						clearInterval(myInterval);
 						myInterval=null;
@@ -7550,7 +7651,7 @@
 			res2_text.text((parseFloat(myhistory[this.value][0][5])).toFixed(3));
 			res3_text.text((parseFloat(myhistory[this.value][0][6])).toFixed(3));
 			topinfo +='<table class="table-condensed" style="font-size:16px;border-style: solid;border-color: '+mycol+';border-width: 0px;color:'+mycol+'">';
-			topinfo +='<tr><td>Score: </td><td>'+parseFloat(myhistory[this.value][0][7]).toFixed(3)+'</td><td>Reservoir 1: </td><td>'+(parseFloat(myhistory[this.value][0][4])).toFixed(3)+'</td><td>Reservoir 2: </td><td>'+(parseFloat(myhistory[this.value][0][5])).toFixed(3)+'</td><td>Reservoir 3: </td><td>'+(parseFloat(myhistory[this.value][0][6])).toFixed(3)+'</td></tr></table>'
+			topinfo +='<tr><td>Score: </td><td>'+parseFloat(myhistory[this.value][0][7]).toFixed(3)+'</td><td>Reservoir 1: </td><td>'+(parseFloat(myhistory[this.value][0][4])).toFixed(5)+'</td><td>Reservoir 2: </td><td>'+(parseFloat(myhistory[this.value][0][5])).toFixed(5)+'</td><td>Reservoir 3: </td><td>'+(parseFloat(myhistory[this.value][0][6])).toFixed(5)+'</td></tr></table>'
 			overall_score=parseFloat(myhistory[this.value][0][7]);
 			reservoir_1=parseFloat(myhistory[this.value][0][4]);
 			reservoir_2=parseFloat(myhistory[this.value][0][5]);
@@ -7587,7 +7688,7 @@
 				document.getElementById('score-message').innerHTML='<span style="color:white">Best solution- Team <strong>'+ data['team']+'</strong>: cost '+parseFloat(data['overall_cost']).toFixed(2)+' - leakage '+parseFloat(data['leakage']).toFixed(0)+' - age '+parseFloat(data['water_age']).toFixed(0)+'</span>';
 			}
 			else if (game.game_mode=='aqualibrium'){
-				document.getElementById('score-message').innerHTML='<span style="color:white">Best solution- User <strong>'+ data['team']+'</strong>: score '+parseFloat(data['overall_score']).toFixed(3)+' - res 1 '+parseFloat(data['res1']).toFixed(3)+' - res 2 '+parseFloat(data['res2']).toFixed(3)+'- res 3 '+parseFloat(data['res3']).toFixed(3)+'</span>';
+				document.getElementById('score-message').innerHTML='<span style="color:white">Best solution- User <strong>'+ data['team']+'</strong>: score '+parseFloat(data['overall_score']).toFixed(3)+'</span>';
 			}
 		}
 	});
@@ -7596,18 +7697,31 @@
 		//console.log(data.sessionBests);
 		document.getElementById('high-score-table').style.visibility="visible";
 		document.getElementById('high-score-table').style.width="500px";
+		
 		//document.getElementById('high-score-table').innerHTML=""+data;
 		var hs_values=[];
 		var listnames=[];
 		var hs_object=[];
-		for (var i=0;i<data['board'].length;i++){
-			if (listnames.indexOf(data['board'][i]['team'])==-1){
-				listnames.push(data['board'][i]['team']);
-				hs_object.push('<span>'+(i+1)+' <strong>Team '+data['board'][i]['team']+'</strong> cost '+parseFloat(data['board'][i]['overall_cost']).toFixed(2)+' - leakage '+parseFloat(data['board'][i]['leakage']).toFixed(0)+' - age '+parseFloat(data['board'][i]['water_age']).toFixed(0)+'</span>');
-				
+		
+		if (game.game_mode=='modena'){
+			for (var i=0;i<data['board'].length;i++){
+				if (listnames.indexOf(data['board'][i]['team'])==-1){
+					listnames.push(data['board'][i]['team']);
+					hs_object.push('<span>'+(i+1)+' <strong>Team '+data['board'][i]['team']+'</strong> cost '+parseFloat(data['board'][i]['overall_cost']).toFixed(2)+' - leakage '+parseFloat(data['board'][i]['leakage']).toFixed(0)+' - age '+parseFloat(data['board'][i]['water_age']).toFixed(0)+'</span>');
+					
+				}
 			}
 		}
-		var final_hs="<strong>The best scores</strong>";
+		else if (game.game_mode=='aqualibrium'){
+			for (var i=0;i<data['board'].length;i++){
+				if (listnames.indexOf(data['board'][i]['team'])==-1){
+					listnames.push(data['board'][i]['team']);
+					hs_object.push('<span>'+(i+1)+' <strong>Player '+data['board'][i]['team']+'</strong> score '+parseFloat(data['board'][i]['overall_score']).toFixed(3)+'</span>');
+					
+				}
+			}
+		}
+		var final_hs="<strong>The best scores</strong><br>";
 		var limit = hs_object.length;
 		if (limit>10){
 		limit=10;
@@ -7615,6 +7729,7 @@
 		for (var i=0;i<hs_object.length;i++){
 			final_hs+=hs_object[i]+"<br>"
 		}
+		
 		document.getElementById('list_hs').innerHTML=final_hs;
 	});
 	
@@ -7938,7 +8053,7 @@
 				// update topinfo message with total cost etc...
 				var topinfo = '';
 				topinfo +='<table class="table-condensed" style="font-size:16px;border-style: solid;border-color: '+mycol+';border-width: 0px;color:'+mycol+'">';
-				topinfo +='<tr><td>Score: </td><td>'+parseFloat(overall_score).toFixed(3)+'</td><td>Reservoir 1: </td><td>'+(reservoir_1).toFixed(3)+'</td><td>Reservoir 2: </td><td>'+(reservoir_2).toFixed(3)+'</td><td>Reservoir 3: </td><td>'+(reservoir_3).toFixed(3)+'</td></tr></table>'
+				topinfo +='<tr><td>Score: </td><td>'+parseFloat(overall_score).toFixed(3)+'</td><td>Reservoir 1: </td><td>'+(reservoir_1).toFixed(5)+'</td><td>Reservoir 2: </td><td>'+(reservoir_2).toFixed(5)+'</td><td>Reservoir 3: </td><td>'+(reservoir_3).toFixed(5)+'</td></tr></table>'
 				document.getElementById('info-top').innerHTML=topinfo;	
 				updatePipesColors();
 				updateReservoirsLevels();
@@ -8340,7 +8455,7 @@
 					// update topinfo message with total cost etc...
 					var topinfo = '';
 					topinfo +='<table class="table-condensed" style="font-size:16px;border-style: solid;border-color: '+mycol+';border-width: 0px;color:'+mycol+'">';
-					topinfo +='<tr><td>Score: </td><td>'+parseFloat(overall_score).toFixed(3)+'</td><td>Reservoir 1: </td><td>'+(reservoir_1).toFixed(3)+'</td><td>Reservoir 2: </td><td>'+(reservoir_2).toFixed(3)+'</td><td>Reservoir 3: </td><td>'+(reservoir_3).toFixed(3)+'</td></tr></table>'
+					topinfo +='<tr><td>Score: </td><td>'+parseFloat(overall_score).toFixed(3)+'</td><td>Reservoir 1: </td><td>'+(reservoir_1).toFixed(5)+'</td><td>Reservoir 2: </td><td>'+(reservoir_2).toFixed(5)+'</td><td>Reservoir 3: </td><td>'+(reservoir_3).toFixed(5)+'</td></tr></table>'
 					document.getElementById('info-top').innerHTML=topinfo;	
 					// update myhistory + selectvar 
 					//console.log(data.result)
@@ -8584,6 +8699,9 @@
 	
 	function closeAlert(){
 		document.getElementById('high-score-table').style.visibility="hidden";
+	}
+	function closeInfo(){
+		document.getElementById('info-table').style.visibility="hidden";
 	}
 	
 	function updateWarning(){

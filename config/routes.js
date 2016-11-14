@@ -73,6 +73,8 @@ module.exports.routes = {
   '/gamecreator': 'GameController.create',
   'POST /creategame': 'GameController.update',
   'POST /deletegame': 'GameController.delete',
+  'POST /rewritedbfromfiles': 'GameController.rewritedb',
+  'POST /export3BestToEpfiles': 'GameController.export3best',
   'POST /editgame': 'GameController.settings',
   'POST /setgame': 'GameController.setgame',
   'POST /showgame': 'GameController.showgame',

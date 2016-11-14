@@ -73,7 +73,8 @@ module.exports.session = {
    port: 27017,
    db: 'sails',
    collection: 'sessions',
-	url: "mongodb://localhost:27017/sails",
+   url: "mongodb://localhost:27017/sails",
+   //url:'mongodb://gameadmin:mypassword@localhost:27017/sails',
   /***************************************************************************
   *                                                                          *
   * Optional Values:                                                         *

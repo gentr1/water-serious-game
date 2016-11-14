@@ -7,6 +7,8 @@
 
 var os = require('os');
 var exec = require('child_process').exec;
+var server_maintenance=false;
+
 //var rooms=[];
 var all_job_queues={};
 // function getAllInfo(session_info){
@@ -220,96 +222,97 @@ module.exports = {
   },
   commit: function (req, res,next) {
     if (req.session.me) {
-		
-		
-		var parameters= req.param('history');
-		var mygame=req.param('mygame');
-		var myteam=req.param('myteam');
-		var myplayer=req.param('player');
-		var mydate=req.param('mydate');
-		var game_mode= req.param('mode');
-		//console.log(parameters)
-		//console.log(mygame)
-		//console.log("commit parameter team: "+myteam)
-		//console.log(myplayer)
-		//console.log(mydate)
-		// get as parameter 
-		// the game name
-		// the team name
-		// the add these in the queue data structure
-		
-		if (all_job_queues.hasOwnProperty(mygame)){
-			if (all_job_queues[mygame].hasOwnProperty(myteam)){
-				var pid = ""+myplayer+mydate;
-				pid = pid.replace(/\s/g,"_"); 
-				all_job_queues[mygame][myteam].push([''+pid,mydate,parameters,0])
+		if (server_maintenance==false){
+			
+			var parameters= req.param('history');
+			var mygame=req.param('mygame');
+			var myteam=req.param('myteam');
+			var myplayer=req.param('player');
+			var mydate=req.param('mydate');
+			var game_mode= req.param('mode');
+			var go_on=true;
+			if (game_mode=='aqualibrium'){
+				console.log(myteam);
+				console.log(myplayer);
+				if (myteam!=myplayer){go_on=false}
 			}
-			else{
-				var pid = ""+myplayer+mydate;
-				pid = pid.replace(/\s/g,"_"); 
-				all_job_queues[mygame][myteam]=[];
-				all_job_queues[mygame][myteam].push([''+pid,mydate,parameters,0])
-			}
-		}
-		else{
-			var pid = ""+myplayer+mydate;
-			pid = pid.replace(/\s/g,"_"); 
-			all_job_queues[mygame]={};
-			all_job_queues[mygame][myteam]=[];
-			all_job_queues[mygame][myteam].push([''+pid,mydate,parameters,0])
-		}
-		//console.log(all_job_queues[mygame][myteam]);
-		
-		var myos = os.type();
-		var typos=0;
-		if (myos.substring(0,3)=="Win"){
-			typos=0;
-		}
-		else if (myos.substring(0,3)=="Dar"){
-			typos=1;
-		}
-		else if (myos.substring(0,3)=="Lin"){
-			typos=2;
-		}
-		else{
-			typos=3;
-		}
-		//sails.log(typos);
-		var fname;  
-		if (typos==0){
-			fname = 'assets\\game-engine';
-		}
-		else{
-			fname = 'assets/game-engine';
-		}
-		
-		var command;
-		if (typos==0){
-			for (var i=0;i<all_job_queues[mygame][myteam].length;i++){
-				var pid = ""+myplayer+mydate;
-				pid = pid.replace(/\s/g,"_"); 
-				if (all_job_queues[mygame][myteam][i][0]==(pid)){
-					if (game_mode=='modena'){
-						command = 'assets\\game-engine\\cwsSeGWADE.exe ' +all_job_queues[mygame][myteam][i][2];
+			// check that that in the case of aqualibrium . the team is the same as the user name
+			if (go_on){
+			
+				if (all_job_queues.hasOwnProperty(mygame)){
+					if (all_job_queues[mygame].hasOwnProperty(myteam)){
+						var pid = ""+myplayer+mydate;
+						pid = pid.replace(/\s/g,"_"); 
+						all_job_queues[mygame][myteam].push([''+pid,mydate,parameters,0])
 					}
-					else if (game_mode=='aqualibrium'){
-						command = 'assets\\game-engine\\aqualibriumConsole.exe ' +all_job_queues[mygame][myteam][i][2];
+					else{
+						var pid = ""+myplayer+mydate;
+						pid = pid.replace(/\s/g,"_"); 
+						all_job_queues[mygame][myteam]=[];
+						all_job_queues[mygame][myteam].push([''+pid,mydate,parameters,0])
 					}
-					console.log('executing command job id: '+all_job_queues[mygame][myteam][i][0]);
-					all_job_queues[mygame][myteam][i][3]+=1;
 				}
+				else{
+					var pid = ""+myplayer+mydate;
+					pid = pid.replace(/\s/g,"_"); 
+					all_job_queues[mygame]={};
+					all_job_queues[mygame][myteam]=[];
+					all_job_queues[mygame][myteam].push([''+pid,mydate,parameters,0])
+				}
+				//console.log(all_job_queues[mygame][myteam]);
+				
+				var myos = os.type();
+				var typos=0;
+				if (myos.substring(0,3)=="Win"){
+					typos=0;
+				}
+				else if (myos.substring(0,3)=="Dar"){
+					typos=1;
+				}
+				else if (myos.substring(0,3)=="Lin"){
+					typos=2;
+				}
+				else{
+					typos=3;
+				}
+				//sails.log(typos);
+				var fname;  
+				if (typos==0){
+					fname = 'assets\\game-engine';
+				}
+				else{
+					fname = 'assets/game-engine';
+				}
+				
+				var command;
+				if (typos==0){
+					for (var i=0;i<all_job_queues[mygame][myteam].length;i++){
+						var pid = ""+myplayer+mydate;
+						pid = pid.replace(/\s/g,"_"); 
+						if (all_job_queues[mygame][myteam][i][0]==(pid)){
+							if (game_mode=='modena'){
+								command = 'assets\\game-engine\\cwsSeGWADE.exe ' +all_job_queues[mygame][myteam][i][2];
+							}
+							else if (game_mode=='aqualibrium'){
+								command = 'assets\\game-engine\\aqualibriumConsole.exe ' +all_job_queues[mygame][myteam][i][2];
+							}
+							console.log('executing command job id: '+all_job_queues[mygame][myteam][i][0]);
+							all_job_queues[mygame][myteam][i][3]+=1;
+						}
+					}
+					//command = 'assets\\game-engine\\cwsSeGWADE.exe ' + all_job_queues[mygame][myteam].shift()[2]//all_job_queues[mygame][myteam][0][2]//all_job_queues[mygame][myteam].shift()[2]
+				}
+				else{
+					//command = 'assets/game-engine/cwsNYTServer.exe ' + method + ' -i ' + fname + ' -b ' + fname1 + ' -f ' + fname2 + ' -X ' + xt + ' -comment';
+				}
+				console.log(command)
+				exec(command, function(err, stdout, stderr) {
+					console.log('output:', stdout);
+					console.log('stderr:', stderr);
+					command=null;
+				});
 			}
-			//command = 'assets\\game-engine\\cwsSeGWADE.exe ' + all_job_queues[mygame][myteam].shift()[2]//all_job_queues[mygame][myteam][0][2]//all_job_queues[mygame][myteam].shift()[2]
 		}
-		else{
-			//command = 'assets/game-engine/cwsNYTServer.exe ' + method + ' -i ' + fname + ' -b ' + fname1 + ' -f ' + fname2 + ' -X ' + xt + ' -comment';
-		}
-		console.log(command)
-		exec(command, function(err, stdout, stderr) {
-			console.log('output:', stdout);
-			console.log('stderr:', stderr);
-			command=null;
-		});
     }
   },
   

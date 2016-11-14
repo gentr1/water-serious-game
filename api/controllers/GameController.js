@@ -6,7 +6,8 @@
  */
 var os = require('os');
 var exec = require('child_process').exec;
-
+var fs = require('fs');
+var path = require('path');
 module.exports = {
 	create: function(req, res) {
 		if (req.session.me) {
@@ -173,6 +174,7 @@ module.exports = {
 			});
 		}
 	},
+	
 	setgame: function(req, res) {
 		if (req.session.me) {
 			Game.findOne({
@@ -195,13 +197,16 @@ module.exports = {
 				var teams_games;
 				var final_games;
 				//console.log(different)
+				
 				if (different==true){
-					teams_games={};//game_state
-					final_games={}
-					for (elem in all_players_team){
-						if (parseInt(all_players_team[elem]['team'])!=-1){
-							teams_games[all_players_team[elem]['team']]=[];
-							final_games[all_players_team[elem]['team']]=[];
+					if (game_mode!='aqualibrium'){
+						teams_games={};//game_state
+						final_games={}
+						for (elem in all_players_team){
+							if (parseInt(all_players_team[elem]['team'])!=-1){
+								teams_games[all_players_team[elem]['team']]=[];
+								final_games[all_players_team[elem]['team']]=[];
+							}
 						}
 					}
 				}
@@ -277,6 +282,264 @@ module.exports = {
 			
 	},
 	
+	export3best: function(req, res) {
+		
+		Game.findOne(req.param('nid')).exec(function(err, game) {
+			if (err) {
+				return res.negotiate(err);
+			}
+			if (game.game_mode=='aqualibrium'){
+				var myos = os.type();
+				var typos=0;
+				if (myos.substring(0,3)=="Win"){
+					typos=0;
+				}
+				else if (myos.substring(0,3)=="Dar"){
+					typos=1;
+				}
+				else if (myos.substring(0,3)=="Lin"){
+					typos=2;
+				}
+				else{
+					typos=3;
+				}
+				var users_commands=[];
+				//console.log("export 5 best solutionsto epanet files");
+				for (var i1=0,j1=game.sessionBests.length;i1<j1;i1++){
+					if (i1<5){
+						
+						var command='';
+						if (typos==0){													
+							command = 'assets\\game-engine\\aqualibriumConsole.exe ';							
+						}
+						else{
+							//command = 'assets/game-engine/cwsNYTServer.exe ' + method + ' -i ' + fname + ' -b ' + fname1 + ' -f ' + fname2 + ' -X ' + xt + ' -comment';
+						}
+						command+='"'+game.sessionBests[i1]['team']+'" aqualibrium "Export" "'+game.network_name+'" 1 "export" S pipes';
+						//command+= '"t1" "aqualibrium" "Aqua" "A1" 1 "t11476281688727" c pipes ';
+		
+						if (game.game_state.hasOwnProperty(game.sessionBests[i1]['team']) ){
+							var max=false;
+							for (var i2=0, j2= game.game_state[game.sessionBests[i1]['team']].length;i2<j2;i2++){
+								if (game.game_state[game.sessionBests[i1]['team']][i2][0][7]==game.sessionBests[i1]['overall_score']){
+									for (pipe in game.game_state[game.sessionBests[i1]['team']][i2][1]){
+										if (max==false){
+											command +=' "'+pipe+'" '+game.game_state[game.sessionBests[i1]['team']][i2][1][pipe];
+											
+										}
+										
+									}
+									max=true;
+									//command = game.game_state[game.sessionBests[i1]['team']][i2][1];
+								}
+							}
+						}
+						users_commands.push([game.sessionBests[i1]['team'], game.sessionBests[i1]['overall_score'], command])
+						
+					}
+				}
+				//console.log(users_commands)
+				for (var i1=0,j1=users_commands.length;i1<j1;i1++){
+					console.log(users_commands[i1])
+					exec(users_commands[i1][2], function(err, stdout, stderr) {
+						console.log('output:', stdout);
+						console.log('stderr:', stderr);
+						command=null;
+					});
+				}
+				
+				sails.log('exported 3 best solutions to epanet files');
+				res.redirect('/seegames');
+			}
+		});
+	},
+	
+	rewritedb: function(req, res) {
+		console.log("rewriting game database from text files")
+		Game.findOne(req.param('nid')).exec(function(err, game) {
+			if (err) {
+				return res.negotiate(err);
+			  }
+			 //console.log(game.name)
+			// console.log(game.players_teams)
+			 if (game.game_mode=='aqualibrium'){
+				// fs.readdir( 'output\\', function( err, files) {
+					// if ( err ) {
+						// console.log("Error reading files: ", err);
+					// } else {
+						// // keep track of how many we have to go.
+						// var remaining = files.length;
+						// //var totalBytes = 0;
+						
+						// if ( remaining == 0 ) {
+							// console.log("Done reading files.");
+						// }
+
+						// // for each file,
+						// for ( var i = 0; i < files.length; i++ ) {
+							// try{
+								// //if (files[i] && files[i].endsWith('.out')){
+									// var file_data = fs.readFileSync('output\\'+files[i]+'.out', 'utf8').toString();
+									// if (file_data && file_data!=""){
+										// var lines =file_data.split('\n');
+										// console.log(lines.length);
+									// }
+								// //}
+								// //remaining -= 1;
+								// //if ( remaining == 0 ) {
+								// //	console.log("Done reading files.");
+								// //}
+							// }
+							// catch(exep){
+								
+								// remaining -= 1;
+								// if ( remaining == 0 ) {
+									// console.log("Done reading files.");
+								// }
+									
+							// }
+						// }
+					// }
+				// });
+				 var keys = Object.keys(game.players_teams).length;
+				 var cnt=0;
+				 for (player in game.players_teams){
+					//var player = 'Zara Visanji';
+					//console.log(player)
+					var myteam= "";
+					if ( game.team_size==1){
+						myteam= game.players_teams[player]['team'];
+					}
+					else{
+						myteam= game.players_teams[player]['team'];
+					}
+					if (myteam!=-1 && myteam!='-1' && myteam==player){
+					
+						game.game_state[myteam]=[];
+						
+							try {
+								var file_data = fs.readFileSync('output\\'+player+'.out', 'utf8').toString();
+								if (file_data && file_data!=""){
+									var lines =file_data.split('\n');
+									console.log(lines.length)
+									
+									for (var i0=0,j0=lines.length-2;i0<j0;i0++){
+										var initial_result = lines[i0].split(' ');
+									
+										if (initial_result && initial_result.length>0){
+											var game_mode = initial_result[1];
+											var gname=initial_result[2];
+											var mjobid= initial_result[3];
+											var commit_evaluate= initial_result[4];
+											if (gname==game.name){
+												if(commit_evaluate=='c' || commit_evaluate=='C'){
+													var reservoir_1=parseFloat(initial_result[5]);
+													var reservoir_2=parseFloat(initial_result[6]);
+													var reservoir_3=parseFloat(initial_result[7]);
+													var score=parseFloat(initial_result[8]);
+													var valid_score = initial_result[9];
+													var nb_pipes=Object.keys(game.pipes_roles).length;
+													var compact_history_start=initial_result.slice(1, 10);
+													var compact_history_end= {};
+													if (valid_score=='true'){
+														for (var i=initial_result.length-1-(nb_pipes*2),j=initial_result.length-1;i<j;i+=2){
+															if (initial_result[i+1]!=-1 && initial_result[i]!="" && initial_result[i]!=null){
+																compact_history_end[initial_result[i]]=initial_result[i+1];
+															}
+														}
+														// fill in game state only with inputs ans corresponding results from the time
+														if (game.game_state.hasOwnProperty(myteam)){
+															game.game_state[myteam].push([compact_history_start,compact_history_end]);
+														}
+														else{
+															game.game_state[myteam]=[];
+															game.game_state[myteam].push([compact_history_start,compact_history_end]);
+														}
+													}
+															
+												}
+											}
+										}
+									}
+								   
+								  
+							  }
+							}
+							catch(err){
+							}
+						
+						
+					}
+					cnt++;
+					if (keys==cnt){
+						
+					}
+					}
+				 
+				for (pl in game.game_state ){
+					 console.log(pl+' '+game.game_state[pl].length);
+				}
+				var bscore = parseFloat(game.overallBest['overall_score'])	;
+				 for (player in game.game_state){
+					 //console.log(player);
+					 
+					for (var i0=0, j0= game.game_state[player].length;i0<j0;i0++){
+						var pscore = parseFloat(game.game_state[player][i0][0][7]);
+						var correct = game.game_state[player][i0][0][8];
+						if (bscore>pscore && correct=='true'){	
+							//console.log(bscore +' '+pscore)
+							// update overallBest
+							game.overallBest['team']=player;
+							game.overallBest['overall_score']=pscore;
+							game.overallBest['res1']=parseFloat(game.game_state[player][i0][0][4]);
+							game.overallBest['res2']=parseFloat(game.game_state[player][i0][0][5]);
+							game.overallBest['res3']=parseFloat(game.game_state[player][i0][0][6]);
+							bscore = pscore;
+						}
+					}
+				 }
+				 
+				 for (player in game.game_state){
+					for (var i=0, j= game.game_state[player].length;i<j;i++){
+						var pscore = parseFloat(game.game_state[player][i][0][7]);
+						var correct = game.game_state[player][i][0][8];
+						
+						for (var i1=0,j1=game.sessionBests.length;i1<j1;i1++){
+							
+							if ((player == game.sessionBests[i1]['team']) && (pscore <parseFloat(game.sessionBests[i1]['overall_score'])) && correct=='true'){
+								//console.log("changed user "+player+" best score to "+ pscore)
+								game.sessionBests[i1]['overall_score']=pscore;
+							}
+						}
+						
+					}
+				 }
+				 game.sessionBests.sort(function(a, b){return parseFloat(a['overall_score'])- parseFloat(b['overall_score'])});
+				// // take not of each team ranking and replace rank value in the lot
+				
+				for (var s=0, maxs= game.sessionBests.length;s<maxs;s++){
+					game.sessionBests[s]['overall_score_rk']=s+1;
+				}
+				//console.log(game.sessionBests)
+				 Game.update({name:game.name},{game_state:game.game_state, overallBest:game.overallBest, sessionBests: game.sessionBests }).exec(function afterwards(errg, updated){
+					console.log('updated game database');
+				 });
+				 
+				//Game.destroy({id:req.param('nid')}).exec(function (err){
+				//  if (err) {
+					//return res.negotiate(err);
+				//	sails.log('error when trying to delete game')
+				//  }
+				   
+				sails.log('rewritten game database from text files...');
+				res.redirect('/seegames');
+			}
+			//});
+			    
+			
+			
+		});
+	},
 	resetscore: function (req, res) {
 		if (!req.isSocket) {return res.badRequest();}
 		
@@ -464,7 +727,7 @@ module.exports = {
 			return res.view('homepage');
 		  }
 		  
-		  Game.find({select: ['name','is_on','players_teams']}).exec(function(err, games) {
+		  Game.find({select: ['name','is_on','players_teams','game_mode']}).exec(function(err, games) {
 			  if (user.admin==true){
 				  return res.view('game/index', {
 					me: {

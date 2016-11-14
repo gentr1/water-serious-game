@@ -35,7 +35,7 @@
  1               	Source          	1               	1.1         	12          	.006        	0           	Open  	;
  2               	1               	2               	0.3         	7.1         	.006        	0           	Open  	;
  3               	2               	3               	0.3         	7.1         	.006        	0           	Open  	;
- 4               	3               	4               	0.3         	7.1         	.006        	0           	Open	;
+ 4               	3               	4               	0.3         	7.1           	.006        	0           	Open	;
  5               	5               	6               	0.3         	7.1         	.006        	0           	Open  	;
  6               	6               	7               	0.3         	7.1         	.006        	0           	Open  	;
  7               	7               	8               	0.3         	7.1         	.006        	0           	Open  	;
@@ -57,9 +57,9 @@
  23              	4               	8               	0.3         	7.1         	.006        	0           	Open  	;
  24              	8               	12              	0.3         	7.1         	.006        	0           	Open  	;
  25              	12              	16              	0.3         	7.1         	.006        	0           	Open  	;
- 26              	14              	Res3            	.15         	6           	.006        	0           	Open  	;
- 27              	8               	Res2            	.15         	6           	.006        	0           	Open  	;
- 28              	3               	Res1            	.15         	6           	.006        	0           	Open  	;
+ 26              	15              	Res3            	.15         	6           	.006        	0           	Open  	;
+ 27              	11              	Res2            	.15         	6           	.006        	0           	Open  	;
+ 28              	4               	Res1            	.15         	6           	.006        	0           	Open  	;
 
 [PUMPS]
 ;ID              	Node1           	Node2           	Parameters
@@ -83,9 +83,7 @@
 
 [CONTROLS]
 
-
 [RULES]
-
 
 [ENERGY]
  Global Efficiency  	75
@@ -118,15 +116,15 @@
 ;Tank            	Model
 
 [TIMES]
- Duration           	0:00 
- Hydraulic Timestep 	1:00 
- Quality Timestep   	0:05 
- Pattern Timestep   	1:00 
- Pattern Start      	0:00 
- Report Timestep    	1:00 
- Report Start       	0:00 
+ Duration           	0
+ Hydraulic Timestep 	1:00
+ Quality Timestep   	0:05
+ Pattern Timestep   	1:00
+ Pattern Start      	0:00
+ Report Timestep    	1:00
+ Report Start       	0:00
  Start ClockTime    	12 am
- Statistic          	NONE
+ Statistic          	None
 
 [REPORT]
  Status             	No
@@ -170,9 +168,9 @@
  15              	5500.00         	1000.00         
  16              	8000.00         	1000.00         
  Source          	-334.65         	9265.09         
- Res3            	2126.03         	1484.10         
- Res2            	7249.71         	6431.10         
- Res1            	4729.09         	8987.04         
+ Res3            	4805.08         	1457.63         
+ Res2            	4754.24         	3915.25         
+ Res1            	7313.56         	9135.59         
 
 [VERTICES]
 ;Link            	X-Coord         	Y-Coord
