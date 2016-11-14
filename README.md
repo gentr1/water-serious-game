@@ -37,7 +37,7 @@ Note that by default, the game connect to port 80 (the http port). That means yo
 
 
 8- Configure and play the aqualibrium game the first time:
-see youtube video at: 
+see instructions in youtube video at: https://youtu.be/9TN2hUe4OeM
 
 9- to stop the game, just go to the command line where the game server is running and Control+C and y or simply close the command line window. You can restart the game by opening the command line in the same folder place and type : sails lift --port 80
 The game will restart will all settings and users scores saved as they were previously.
