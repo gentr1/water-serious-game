@@ -27,7 +27,7 @@ In a command line in Admin mode, (Press the Win key, type cmd.exe, and press Ctr
 Unzip the game .zip file in a folder. 
 Go to that folder in the command line (just in normal mode, not admin - type:  cd your_folder_path to go there)
 Once you are in the folder where the file package.json is located, type: npm install
-It should take a few minutes for the game to install all the dependencies, if you have done the previous steps correctly. Typically, it will give some warning while installing some of the dependencies libraries, but, in the end, you should see a command line looking like the image below.
+It should take a few minutes for the game to install all the dependencies, if you have done the previous steps correctly. Typically, it will give some warning while installing some of the dependencies libraries, but, in the end, you should see a command line looking like a bit like a tree like structure of what has been installed (see youtube video in link below)
 
 7 - to run the game server: 
 in the same folder place type : sails lift --port 80
@@ -38,3 +38,6 @@ Note that by default, the game connect to port 80 (the http port). That means yo
 
 8- Configure and play the aqualibrium game the first time:
 see youtube video at: 
+
+9- to stop the game, just go to the command line where the game server is running and close it. You can restart the game by opening the command line in the same folder place and type : sails lift --port 80
+The game will restart will all settings and users scores saved as they were previously.
