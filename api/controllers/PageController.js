@@ -26,7 +26,7 @@ module.exports = {
         sails.log.verbose('Session refers to a user who no longer exists- did you delete a user, then try to refresh the page with an open tab logged-in as that user?');
         return res.view('homepage');
       }
-	  Game.find({select: ['name','is_on','players_teams','game_mode']}).exec(function(err, games) {
+	  Game.find({select: ['name','id','is_on','players_teams','game_mode']}).exec(function(err, games) {
 		  if (user.admin==true){
 			  return res.view('game/index', {
 				me: {

@@ -8,6 +8,8 @@ var os = require('os');
 var exec = require('child_process').exec;
 var fs = require('fs');
 var path = require('path');
+var game_modes2views={'modena':'game/play_modena','nyc':'game/play_nyc','aqualibrium':'game/play_aqua','hydraulic':'game/play_hyd'};
+
 module.exports = {
 	create: function(req, res) {
 		if (req.session.me) {
@@ -22,7 +24,7 @@ module.exports = {
 				}
 
 				User.find({select: ['name']}).exec(function(err, users) {
-					Network.find({select: ['name']}).exec(function(err, networks) {
+					Network.find({select: ['name','id']}).exec(function(err, networks) {
 							  return res.view('game/gamecreator', {
 								me: {
 								  id: user.id,
@@ -153,17 +155,30 @@ module.exports = {
 							command = 'assets\\game-engine\\cwsSeGWADE.exe "' + user.name+ '" "'+ game.game_mode+ '" "'+ game.name+ '" "'+ game.network_name+'" '+ game.time_points+' "initialisation" c';
 						}
 						else if (game.game_mode=='aqualibrium'){
-							command = 'assets\\game-engine\\aqualibriumConsole.exe "'+ user.name+ '" "aqualibrium" "'+ game.name+ '" "'+ game.network_name+'" '+ game.time_points+' "initialisation" c "2" 0 "3" 0 "4" 0 "5" 0 "6" 0 "7" 0 "8" 0 "9" 0 "10" 0 "11" 0 "12" 0 "13" 0 "14" 0 "15" 0 "16" 0 "17" 0 "18" 0 "19" 0 "20" 0 "21" 0 "22" 0 "23" 0 "24" 0 "25" 0';
+							command = 'assets\\game-engine\\CWS_AquaLibrium_Server.v0.exe "'+ user.name+ '" "aqualibrium" "'+ game.name+ '" "'+ game.network_name+'" '+ game.time_points+' "initialisation" c "2" 0 "3" 0 "4" 0 "5" 0 "6" 0 "7" 0 "8" 0 "9" 0 "10" 0 "11" 0 "12" 0 "13" 0 "14" 0 "15" 0 "16" 0 "17" 0 "18" 0 "19" 0 "20" 0 "21" 0 "22" 0 "23" 0 "24" 0 "25" 0';
 						}
+						else if (game.game_mode=='nyc'){
+							command = 'assets\\game-engine\\cwsNYTServer.v1.exe "'+ user.name+ '" "nyc" "'+ game.name+ '" "'+ game.network_name+'" '+ game.time_points+' "initialisation" c "101" 0 "102" 0 "103" 0 "104" 0 "105" 0 "106" 0 "107" 0 "108" 0 "109" 0 "110" 0 "111" 0 "112" 0 "113" 0 "114" 0 "115" 0 "116" 0 "117" 0 "118" 0 "119" 0 "120" 0 "121" 0';
+						}
+						//latest_session= myuser.name+ "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"
+						// should create a new line output with: 22/02/2017-14:44:31 game-mode game-name job-id C cost, total deficit, nb of deficit nodes + 21 x ("pipe name" + diameter )+ 19 x ("junction_id" + pressure) 
 					}
 					else{
-						//command = 'assets/game-engine/cwsNYTServer.exe ' + method + ' -i ' + fname + ' -b ' + fname1 + ' -f ' + fname2 + ' -X ' + xt + ' -comment';
+						if (game.game_mode=='modena'){
+							command = 'assets/game-engine/cwsSeGWADE-lin.exe "' + user.name+ '" "'+ game.game_mode+ '" "'+ game.name+ '" "'+ game.network_name+'" '+ game.time_points+' "initialisation" c';
+						}
+						else if (game.game_mode=='aqualibrium'){
+							command = 'assets/game-engine/CWS_AquaLibrium_Server.v0-lin.exe "'+ user.name+ '" "aqualibrium" "'+ game.name+ '" "'+ game.network_name+'" '+ game.time_points+' "initialisation" c pipes "2" 0 "3" 0 "4" 0 "5" 0 "6" 0 "7" 0 "8" 0 "9" 0 "10" 0 "11" 0 "12" 0 "13" 0 "14" 0 "15" 0 "16" 0 "17" 0 "18" 0 "19" 0 "20" 0 "21" 0 "22" 0 "23" 0 "24" 0 "25" 0';
+						}
+						else if (game.game_mode=='nyc'){
+							command = 'assets/game-engine/cwsNYTServer.v1-lin.exe "'+ user.name+ '" "nyc" "'+ game.name+ '" "'+ game.network_name+'" '+ game.time_points+' "initialisation" c "101" 0 "102" 0 "103" 0 "104" 0 "105" 0 "106" 0 "107" 0 "108" 0 "109" 0 "110" 0 "111" 0 "112" 0 "113" 0 "114" 0 "115" 0 "116" 0 "117" 0 "118" 0 "119" 0 "120" 0 "121" 0';
+						}
 					}
 					console.log(command)
 					
 					exec(command, function(err, stdout, stderr) {
-						console.log('output:', stdout);
-						console.log('stderr:', stderr);
+						//console.log('output:', stdout);
+						//console.log('stderr:', stderr);
 					  
 					});
 					
@@ -313,7 +328,7 @@ module.exports = {
 							command = 'assets\\game-engine\\aqualibriumConsole.exe ';							
 						}
 						else{
-							//command = 'assets/game-engine/cwsNYTServer.exe ' + method + ' -i ' + fname + ' -b ' + fname1 + ' -f ' + fname2 + ' -X ' + xt + ' -comment';
+							command = 'assets/game-engine/aqualibriumConsole.exe ';	
 						}
 						command+='"'+game.sessionBests[i1]['team']+'" aqualibrium "Export" "'+game.network_name+'" 1 "export" S pipes';
 						//command+= '"t1" "aqualibrium" "Aqua" "A1" 1 "t11476281688727" c pipes ';
@@ -503,14 +518,30 @@ module.exports = {
 					for (var i=0, j= game.game_state[player].length;i<j;i++){
 						var pscore = parseFloat(game.game_state[player][i][0][7]);
 						var correct = game.game_state[player][i][0][8];
-						
-						for (var i1=0,j1=game.sessionBests.length;i1<j1;i1++){
-							
-							if ((player == game.sessionBests[i1]['team']) && (pscore <parseFloat(game.sessionBests[i1]['overall_score'])) && correct=='true'){
-								//console.log("changed user "+player+" best score to "+ pscore)
-								game.sessionBests[i1]['overall_score']=pscore;
+						if (game.sessionBests.length>0){
+							for (var i1=0,j1=game.sessionBests.length;i1<j1;i1++){
+								
+								if ((player == game.sessionBests[i1]['team']) && (pscore <parseFloat(game.sessionBests[i1]['overall_score'])) && correct=='true'){
+									//console.log("changed user "+player+" best score to "+ pscore)
+									game.sessionBests[i1]['overall_score']=pscore;
+								}
 							}
 						}
+						if (game.sessionBests.length==0){
+							var listTeams = Object.keys(game.game_state)
+							for (var i1=0,j1=listTeams.length;i1<j1;i1++){
+								var scorerank={}
+								scorerank['team']=listTeams[i1];
+								scorerank['overall_score']=pscore;
+								scorerank['overall_score_rk']=i1;
+								game.sessionBests.push(scorerank);
+								//if ((player == game.sessionBests[i1]['team']) && (pscore <parseFloat(game.sessionBests[i1]['overall_score'])) && correct=='true'){
+									//console.log("changed user "+player+" best score to "+ pscore)
+									//game.sessionBests[i1]['overall_score']=pscore;
+								//}
+							}
+						}
+						
 						
 					}
 				 }
@@ -520,7 +551,7 @@ module.exports = {
 				for (var s=0, maxs= game.sessionBests.length;s<maxs;s++){
 					game.sessionBests[s]['overall_score_rk']=s+1;
 				}
-				//console.log(game.sessionBests)
+				console.log(game.sessionBests)
 				 Game.update({name:game.name},{game_state:game.game_state, overallBest:game.overallBest, sessionBests: game.sessionBests }).exec(function afterwards(errg, updated){
 					console.log('updated game database');
 				 });
@@ -648,7 +679,7 @@ module.exports = {
 									if (err3) {
 										return res.negotiate(err3);
 									}
-									return res.view('game/play', {
+									return res.view(game_modes2views[mgame.game_mode], {
 										me: {
 										  id: user.id,
 										  name: user.name,
@@ -687,7 +718,7 @@ module.exports = {
 									if (err3) {
 										return res.negotiate(err3);
 									}
-									return res.view('game/play', {
+									return res.view(game_modes2views[mgame.game_mode], {
 										me: {
 										  id: user.id,
 										  name: user.name,
@@ -727,7 +758,8 @@ module.exports = {
 			return res.view('homepage');
 		  }
 		  
-		  Game.find({select: ['name','is_on','players_teams','game_mode']}).exec(function(err, games) {
+		  Game.find({select: ['name','id','is_on','players_teams','game_mode']}).exec(function(err, games) {
+				//sails.log(games);
 			  if (user.admin==true){
 				  return res.view('game/index', {
 					me: {
@@ -743,6 +775,7 @@ module.exports = {
 				  });
 			  }
 			  else{
+					
 				  return res.view('game/playerindex', {
 					me: {
 					  id: user.id,

@@ -1,0 +1,105 @@
+1- Your have defined a username with admin privileges - let's call hime <myuser>... You also have decided of the same password called <mypassword> that you will use for both the redis and the postgresql database servers.
+2- install a REDIS database server for windows 
+Go to and download at :
+https://github.com/MSOpenTech/redis/releases
+
+3- change REDIS configuration file to add password:
+Go to the Program Files\Redis folder and change redis.windows-service.conf file.
+Make sure to uncomment the line with "requirepass" and write down your database password
+requirepass <mypassword>
+
+4- restart REDIS :
+restart the Redis service (Run -\> services.msc -\> Redis -\> Restart).
+
+5- install the postgresql database server
+go to https://www.bigsql.org/postgresql/installers.jsp/ and download the graphical installer.
+Just add <mypassword> when prompted (following on site instructions at https://www.bigsql.org/docs/installwindows/installwin)
+
+6- configure postgresql :
+Open psql to start working with PostgreSQL. You will see the following:
+
+$ psql -U postgres
+psql (9.6beta1)
+Type "help" for help"
+
+postgres=#
+
+Create a database:
+
+To create your "wds" database, enter the following:
+
+postgres=# create database wds;
+CREATE DATABASE
+You can now connect to the database "wds"
+
+postgres=# \c wds;
+You are now connected to database "mydb" as user "postgres".
+mydb=#
+
+type \q to exit the database command line.
+
+14- go where the serious game folder has been extracted and start installing node.js related stuff:
+e.g. cd Documents/myseriousgame/
+Go to  https://nodejs.org/en/ and download and install a recent stable version of node.js.
+Open a command line and type:
+sudo npm install sails -g
+sudo npm install forever -g
+npm install
+
+15- in the serious game folder, edit 2 files:
+
+config/connections.js
+
+...
+/***************************************************************************
+  *                                                                          *
+  * PostgreSQL is another officially supported relational database.          *
+  * http://en.wikipedia.org/wiki/PostgreSQL                                  *
+  *                                                                          *
+  * Run: npm install sails-postgresql                                        *
+  *                                                                          *
+  *                                                                          *
+  ***************************************************************************/
+  somePostgresqlServer: {
+    adapter: 'sails-postgresql',
+    host: 'localhost',
+    user: 'postgres',
+	port: 5432,
+	poolSize: 10,
+	ssl: false,
+    password: '<mypassword>',
+    database: 'wds'
+  }
+...
+
+
+config/sessions.js
+...
+adapter: 'redis',
+
+  /***************************************************************************
+  *                                                                          *
+  * The following values are optional, if no options are set a redis         *
+  * instance running on localhost is expected. Read more about options at:   *
+  * https://github.com/visionmedia/connect-redis                             *
+  *                                                                          *
+  *                                                                          *
+  ***************************************************************************/
+
+  host: 'localhost',
+  port: 6379,
+  ttl: 7200,
+  db: 0,
+  pass: '<mypassword>',
+  prefix: 'sess:',
+...
+
+16 - (finally) run the game server.
+You can either use:
+sudo sails lift --port 80
+or 
+sudo forever node app.js --port 80
+if you want the game server to start in a forever process that would restart immmediately if the server was to close because of a problem...
+
+You can now try the game if you open your chrome or chromium browser at the address: localhost.
+For further steps on how to configure and play games see youtube video or manual.

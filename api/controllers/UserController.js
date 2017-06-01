@@ -11,6 +11,8 @@ var server_maintenance=false;
 
 //var rooms=[];
 var all_job_queues={};
+var roomName="";
+var global_update=0;
 // function getAllInfo(session_info){
 	// var totalCost=0;
 	// for (var i=1;i<latest_diameters.length+1;i++){
@@ -206,11 +208,22 @@ module.exports = {
 				command = 'assets\\game-engine\\cwsSeGWADE.exe ' + parameters;
 			}
 			else if (game_mode=='aqualibrium'){
-				command = 'assets\\game-engine\\aqualibriumConsole.exe ' + parameters;
+				command = 'assets\\game-engine\\CWS_AquaLibrium_Server.v0.exe ' + parameters;
+			}
+			else if (game_mode=='nyc'){
+				command = 'assets\\game-engine\\cwsNYTServer.v1.exe ' + parameters;
 			}
 		}
 		else{
-			//command = 'assets/game-engine/cwsNYTServer.exe ' + method + ' -i ' + fname + ' -b ' + fname1 + ' -f ' + fname2 + ' -X ' + xt + ' -comment';
+			if (game_mode=='modena'){
+				command = 'assets/game-engine/cwsSeGWADE-lin.exe ' + parameters;
+			}
+			else if (game_mode=='aqualibrium'){
+				command = 'assets/game-engine/CWS_AquaLibrium_Server.v0-lin.exe ' + parameters;
+			}
+			else if (game_mode=='nyc'){
+				command = 'assets/game-engine/cwsNYTServer.v1-lin.exe ' + parameters;
+			}
 		}
 		console.log(command)
 		exec(command, function(err, stdout, stderr) {
@@ -232,8 +245,8 @@ module.exports = {
 			var game_mode= req.param('mode');
 			var go_on=true;
 			if (game_mode=='aqualibrium'){
-				console.log(myteam);
-				console.log(myplayer);
+				//console.log(myteam);
+				//console.log(myplayer);
 				if (myteam!=myplayer){go_on=false}
 			}
 			// check that that in the case of aqualibrium . the team is the same as the user name
@@ -294,7 +307,10 @@ module.exports = {
 								command = 'assets\\game-engine\\cwsSeGWADE.exe ' +all_job_queues[mygame][myteam][i][2];
 							}
 							else if (game_mode=='aqualibrium'){
-								command = 'assets\\game-engine\\aqualibriumConsole.exe ' +all_job_queues[mygame][myteam][i][2];
+								command = 'assets\\game-engine\\CWS_AquaLibrium_Server.v0.exe ' +all_job_queues[mygame][myteam][i][2];
+							}
+							else if (game_mode=='nyc'){
+								command = 'assets\\game-engine\\cwsNYTServer.v1.exe ' +all_job_queues[mygame][myteam][i][2];
 							}
 							console.log('executing command job id: '+all_job_queues[mygame][myteam][i][0]);
 							all_job_queues[mygame][myteam][i][3]+=1;
@@ -303,8 +319,25 @@ module.exports = {
 					//command = 'assets\\game-engine\\cwsSeGWADE.exe ' + all_job_queues[mygame][myteam].shift()[2]//all_job_queues[mygame][myteam][0][2]//all_job_queues[mygame][myteam].shift()[2]
 				}
 				else{
-					//command = 'assets/game-engine/cwsNYTServer.exe ' + method + ' -i ' + fname + ' -b ' + fname1 + ' -f ' + fname2 + ' -X ' + xt + ' -comment';
+					for (var i=0;i<all_job_queues[mygame][myteam].length;i++){
+						var pid = ""+myplayer+mydate;
+						pid = pid.replace(/\s/g,"_"); 
+						if (all_job_queues[mygame][myteam][i][0]==(pid)){
+							if (game_mode=='modena'){
+								command = 'assets/game-engine/cwsSeGWADE-lin.exe ' +all_job_queues[mygame][myteam][i][2];
+							}
+							else if (game_mode=='aqualibrium'){
+								command = 'assets/game-engine/CWS_AquaLibrium_Server.v0-lin.exe ' +all_job_queues[mygame][myteam][i][2];
+							}
+							else if (game_mode=='nyc'){
+								command = 'assets/game-engine/cwsNYTServer.v1-lin.exe ' +all_job_queues[mygame][myteam][i][2];
+							}
+							console.log('executing command job id: '+all_job_queues[mygame][myteam][i][0]);
+							all_job_queues[mygame][myteam][i][3]+=1;
+						}
+					}
 				}
+				//console.log(all_job_queues)
 				console.log(command)
 				exec(command, function(err, stdout, stderr) {
 					console.log('output:', stdout);
@@ -391,7 +424,10 @@ module.exports = {
 						command = 'assets\\game-engine\\cwsSeGWADE.exe ' +all_job_queues[mygame][myteam][i][2];
 					}
 					else if (game_mode=='aqualibrium'){
-						command = 'assets\\game-engine\\aqualibriumConsole.exe ' +all_job_queues[mygame][myteam][i][2];
+						command = 'assets\\game-engine\\CWS_AquaLibrium_Server.v0.exe ' +all_job_queues[mygame][myteam][i][2];
+					}
+					else if (game_mode=='nyc'){
+						command = 'assets\\game-engine\\cwsNYTServer.v1.exe ' +all_job_queues[mygame][myteam][i][2];
 					}
 					console.log('executing command job id: '+all_job_queues[mygame][myteam][i][0]);
 					all_job_queues[mygame][myteam][i][3]+=1;
@@ -400,7 +436,23 @@ module.exports = {
 			//command = 'assets\\game-engine\\cwsSeGWADE.exe ' + all_job_queues[mygame][myteam].shift()[2]//all_job_queues[mygame][myteam][0][2]//all_job_queues[mygame][myteam].shift()[2]
 		}
 		else{
-			//command = 'assets/game-engine/cwsNYTServer.exe ' + method + ' -i ' + fname + ' -b ' + fname1 + ' -f ' + fname2 + ' -X ' + xt + ' -comment';
+			for (var i=0;i<all_job_queues[mygame][myteam].length;i++){
+				var pid = ""+myplayer+mydate;
+				pid = pid.replace(/\s/g,"_"); 
+				if (all_job_queues[mygame][myteam][i][0]==(pid)){
+					if (game_mode=='modena'){
+						command = 'assets/game-engine/cwsSeGWADE-lin.exe ' +all_job_queues[mygame][myteam][i][2];
+					}
+					else if (game_mode=='aqualibrium'){
+						command = 'assets/game-engine/CWS_AquaLibrium_Server.v0-lin.exe ' +all_job_queues[mygame][myteam][i][2];
+					}
+					else if (game_mode=='nyc'){
+						command = 'assets/game-engine/cwsNYTServer.v1-lin.exe ' +all_job_queues[mygame][myteam][i][2];
+					}
+					console.log('executing command job id: '+all_job_queues[mygame][myteam][i][0]);
+					all_job_queues[mygame][myteam][i][3]+=1;
+				}
+			}
 		}
 		console.log(command)
 		exec(command, function(err, stdout, stderr) {
@@ -426,7 +478,7 @@ module.exports = {
 			//if (all_job_queues[mgame][mteam][i][3]==4){
 			all_job_queues[mgame][mteam].splice(i, 1);
 			//}
-			//console.log(all_job_queues[mgame][mteam]);
+			//console.log(all_job_queues);
 			
 		}
 	}
@@ -464,11 +516,22 @@ module.exports = {
 					command = 'assets\\game-engine\\cwsSeGWADE.exe ' +all_job_queues[mgame][mteam][i][2];
 				}
 				else if (game_mode=='aqualibrium'){
-					command = 'assets\\game-engine\\aqualibriumConsole.exe ' +all_job_queues[mygame][myteam][i][2];
+					command = 'assets\\game-engine\\CWS_AquaLibrium_Server.v0.exe ' +all_job_queues[mygame][myteam][i][2];
+				}
+				else if (game_mode=='nyc'){
+					command = 'assets\\game-engine\\cwsNYTServer.v1.exe ' +all_job_queues[mygame][myteam][i][2];
 				}
 			}
 			else{
-				//command = 'assets/game-engine/cwsNYTServer.exe ' + method + ' -i ' + fname + ' -b ' + fname1 + ' -f ' + fname2 + ' -X ' + xt + ' -comment';
+				if (game_mode=='modena'){
+					command = 'assets/game-engine/cwsSeGWADE-lin.exe ' +all_job_queues[mgame][mteam][i][2];
+				}
+				else if (game_mode=='aqualibrium'){
+					command = 'assets/game-engine/CWS_AquaLibrium_Server.v0-lin.exe ' +all_job_queues[mygame][myteam][i][2];
+				}
+				else if (game_mode=='nyc'){
+					command = 'assets/game-engine/cwsNYTServer.v1-lin.exe ' +all_job_queues[mygame][myteam][i][2];
+				}
 			}
 			console.log('executing element left in queue again')
 			console.log(command)
@@ -491,7 +554,8 @@ module.exports = {
 	//console.log(req.body['name']);
 	//console.log(req.body['game']);
 	//console.log(req.body['type']);
-	//console.log(req.body['jobid']);
+	
+	
 	//console.log(req.body['history']);
 	if (req.body['history'].length>0){ 
 		if (req.body['type']=='e' || req.body['type']=='E'){
@@ -499,7 +563,7 @@ module.exports = {
 			sails.sockets.broadcast("funSockets", "hello", {name:req.body['name'], game:req.body['game'], type:req.body['type'] ,result: req.body['last_result']});
 		}
 		else if (req.body['type']=='c' || req.body['type']=='C'){
-			console.log("changed best : "+req.body['changedbest']);
+			//console.log("changed best : "+req.body['changedbest']);
 			
 			if (req.body['changedbest']==true){
 				console.log("detail best : "+req.body['changedbestdetail']);
@@ -511,9 +575,11 @@ module.exports = {
 				sails.sockets.broadcast("funSockets", "betterscore", req.body['changedbestdetail']);
 			}
 			console.log("broadcasting hello message resulting from commit history update !!!")
+			//var lresult= initial_result = lines[lines.length-2].split(' ');
 			sails.sockets.broadcast("funSockets", "hello", {name:req.body['name'], game:req.body['game'], jobid: req.body['jobid'],type:req.body['type'] ,result: req.body['last_result']});
-				//console.log('solving next job in queue if present');
-				
+			//console.log(req.body['last_result']);
+			
+			//console.log(req.data);
 			
 		}
 		else if (req.body['type']=='d' || req.body['type']=='D'){
@@ -530,13 +596,17 @@ module.exports = {
 				
 			
 		}
+		
 	}
 	else{
 		
 		
 		//if (rooms.indexOf('funSockets')==-1){
 		//	console.log("subscribing to room as user enter game !!!")
+		//if (sails.socket.rooms.hasOwnProperty('funSockets')==false){
 			sails.sockets.join(req, 'funSockets');
+			//console.log(sails.sockets.rooms());
+		//}
 		//	rooms.push('funSockets');
 		//}
 	}
@@ -798,11 +868,54 @@ module.exports = {
 
               // Log user in
               req.session.me = newUser.id;
-
-              // Send back the id of the new user
-              return res.json({
-                id: newUser.id
-              });
+			  //////////////////////////////////////////////
+			  // add users to all games with an open policy
+			  Game.find({select: ['name','id','players_teams','game_mode','open_game']}).exec(function(err, games) {
+				  if (games.length==0){
+					return res.json({
+						id: newUser.id
+					});
+				  }
+				  var list_new_teams=[];
+				  var list_names=[];
+				  global_update=0;
+					for (var x=0;x<games.length;x++){
+						
+						//console.log(games[x]['open_game'])
+						if (games[x]['open_game']==true){
+							//console.log(games[x]['name']+ " needs an added user")
+							var new_teams=games[x]['players_teams'];
+							new_teams[newUser.name]={team: newUser.name, team_member: 0};
+							list_new_teams.push(new_teams);
+							list_names.push(games[x]['name']);
+							
+						}
+						
+					}
+					for (var x=0;x<list_names.length;x++){
+						global_update
+						Game.update({name:list_names[x]},{players_teams:list_new_teams[x] }).exec(function afterwards(errg, updated){
+							
+							console.log(global_update)
+							if (global_update==list_names.length-1){
+								console.log('updated all games databases');
+								return res.json({
+									id: newUser.id
+								});
+							}
+							global_update++;
+							
+						});
+					}
+			  });
+			  //Game.update({name:game.name},{game_state:game.game_state, overallBest:game.overallBest, sessionBests: game.sessionBests }).exec(function afterwards(errg, updated){
+			  //	console.log('updated game database');
+			  // });
+			  // Send back the id of the new user
+              
+			  
+			  
+              
             });
           }
         });

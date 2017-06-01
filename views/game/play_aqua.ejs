@@ -345,27 +345,7 @@
 			myinfo+='<strong>Load past result</strong>: click on one of the results in the select combo list.<br>'
 			document.getElementById('list_info').innerHTML=myinfo;
 		}
-		else if (game.game_mode=='modena'){
-			//console.log('help modena')
-		}
-		else if (game.game_mode=='hydraulic'){
-			//console.log('help hydraulic')
-		}
-		else if (game.game_mode=='nyc'){
-			var myinfo='<strong>Information</strong><br><br>'
-			myinfo+='The goal of the NYC game is to change the diameters of the pipes in this network in order to alleviate a pressure deficiency, while minimising the overall cost increasing in function of pipes diameters.<br>'
-			myinfo+='(For more information, you can also watch the <a href="https://youtu.be/84Tk4DoXeq4" style="color:blue;text-decoration:underline;" target="_blank"><strong><i>video tutorial</i></strong>.</a>)<br><br>'
-			myinfo+='<strong>Rotate camera</strong>: Left mouse button + mouse move<br>'
-			myinfo+='<strong>Zoom in/out camera</strong>: mouse wheel or Z and X Keys<br>'
-			myinfo+='<strong>Pan camera</strong>: Right mouse button + mouse move<br>'
-			myinfo+='<strong>Change diameter of one pipe</strong>: Left click on a pipe a select a diameter and close the diameter selection window.<br>'
-			myinfo+='<strong>Change diameter for a group of pipes</strong>: Leave Shift key pressed + Left click on a pipe to add/remove it to the selection, then select a diameter and close the diameter selection window.<br>'
-			myinfo+='<strong>Reset pipes diameters to the start</strong>: Click the "Reset Default" button.<br>'
-			myinfo+='<strong>Compute without saving result</strong>: Click the "Evaluate" button. <br>'
-			myinfo+='<strong>Compute and save result</strong>: Click the "Commit" button. <br>'
-			myinfo+='<strong>Load past result</strong>: click on one of the results in the select combo list.<br>'
-			document.getElementById('list_info').innerHTML=myinfo;
-		}
+		
 		
 	}
 	//$('#pumps').click(function (e) {
@@ -715,13 +695,7 @@
 			team_state= game.initial_solution;
 			user_latest_diameters={};
 			//user_junctions_data
-			if (game.game_mode=='modena'){
-				for (pipe in all_pipes){
-					//user_latest_diameters[pipe]=all_pipes[pipe]['Diameter'];
-					team_latest_diameters[pipe]=diameters_2_index[all_pipes[pipe]['Diameter']];
-				}
-			}
-			else if (game.game_mode=='aqualibrium'){
+			if (game.game_mode=='aqualibrium'){
 				if (team_state[9]===true || team_state[9]==='true' || team_state[9]==="true"){
 					score_valid=true;
 				}
@@ -741,51 +715,7 @@
 			if (team_state.length==0){
 				team_state=game.initial_solution;	
 			}
-			if (game.game_mode=='modena'){
-				overall_cost=parseFloat(team_state[5]);
-				leakage=parseFloat(team_state[6]).toFixed(2);
-				water_age=parseFloat(team_state[7]);
-				pressure_deficit=parseFloat(team_state[8]);
-				team_junctions_data={}
-				var indp=11;
-				for (var i =0; i<junctions_nb;i++){
-					var jid= team_state[indp]
-					indp++;
-					var pmin = parseFloat(team_state[indp]);
-					indp++;
-					var pmax = parseFloat(team_state[indp]);
-					indp++;
-					var maxage= parseFloat(team_state[indp]);
-					indp++;
-					if (jid){
-						team_junctions_data[jid]=[pmin,pmax,maxage];
-						if (pmin<0){
-							nb_deficit_nodes++;
-						}
-					}
-				}
-				//console.log(team_junctions_data)
-				for (var i =0; i<pipes_nb;i++){
-					var pid= team_state[indp];
-					indp++;
-					var mleakage= parseFloat(team_state[indp]);
-					indp++;
-					var pipediam= parseInt(team_state[indp]);
-					indp++;
-					if (pid){
-						if (pipediam!=-1){
-							user_latest_diameters[pid]=pipediam;
-							team_latest_diameters[pid]=pipediam;
-						}
-						else{
-							//console.log(pid)
-							team_latest_diameters[pid]=diameters_2_index[all_pipes[pid]['Diameter']];
-						}
-						team_pipes_leakage[pid]=mleakage;
-					}
-				}
-			}
-			else if (game.game_mode=='aqualibrium'){
+			if (game.game_mode=='aqualibrium'){
 				overall_score=parseFloat(team_state[8]);
 				reservoir_1=parseFloat(team_state[5]);
 				reservoir_2=parseFloat(team_state[6]);
@@ -836,65 +766,7 @@
 		
 	}
 	
-	if (game.game_mode=='modena'){
-		legend_psi.selectAll('g').data(["gdp"])
-		.enter()
-		.append('g')
-		.each(function(d, i) {
-			var g = d3.select(this);
-			var myx =100
-			var myy =10;
-			g.append("rect")
-			  .attr("x", (window.innerWidth*0.05)+200)
-			  .attr("y", (10))//.attr("y", (7))
-			  .attr("width", (d3_width *0.2))
-			  .attr("height", 15)
-			  .style("fill", c4gradient);	
-			g.append("text")
-			  .attr("x",(window.innerWidth*0.05)+5) 
-			  .attr("y", 20)
-			  .attr("height",30)
-			  .attr("width",100)
-			  .style("fill", mycol).style("font-weight", "bold")//.style("font-style", "italic")
-			  .style("font-size","small")
-			  .text("Junctions color scale");
-			g.append("text")
-			  .attr("x",(window.innerWidth*0.05)+5) 
-			  .attr("y", 35)
-			  .attr("height",30)
-			  .attr("width",100)
-			  .style("fill", mycol).style("font-weight", "bold")//.style("font-style", "italic")
-			  .style("font-size","small")
-			  .text("Pressure surplus/deficit:");
-			g.append("text")
-			  .attr("x", (window.innerWidth*0.05)+(d3_width *0.2)+200-10)
-			  .attr("y", (40))//.attr("y", (7))
-			  .attr("height",30)
-			  .attr("width",100)
-			  .style("fill", mycol).style("font-weight", "bold")//.style("font-style", "italic")
-			  .style("font-size","small")
-			  .text(min_max_diff_pressure[1]);
-			g.append("text")
-			  .attr("x", (window.innerWidth*0.05)+(d3_width *0.1)+200-3)
-			  .attr("y", (40))
-			  .attr("height",30)
-			  .attr("width",100)
-			  .style("fill", mycol).style("font-weight", "bold")//.style("font-style", "italic")
-			  .style("font-size","small")
-			  .text("0"); 
-			g.append("text")
-			  //.attr("x",(window.innerWidth*0.05)+30) 
-			  //.attr("y", 55+ d3_height *0.8)
-			  .attr("x", (window.innerWidth*0.05)+(d3_width *0.0)+200-15)
-			  .attr("y", (40))
-			  .attr("height",30)
-			  .attr("width",100)
-			  .style("fill", mycol).style("font-weight", "bold")//.style("font-style", "italic")
-			  .style("font-size","small")
-			  .text(min_max_diff_pressure[0]);
-		});
-	}
-	else if (game.game_mode=='aqualibrium'){
+	if (game.game_mode=='aqualibrium'){
 		legend_bars = d3_svg.append("g")
 			.attr("class", "legend_bars")
 			.attr("x", 0)
@@ -1030,10 +902,7 @@
 		//console.log(myhistory[ind][0])
 			var opt = document.createElement('option');
 			opt.value = i;
-			if (game.game_mode=='modena'){
-				opt.innerHTML = "result "+(i+1)+" - cost "+parseFloat(myhistory[i][0][4]).toFixed(1)+" - Pressure diff "+parseFloat(myhistory[i][0][7]).toFixed(1)+"- age "+parseFloat(myhistory[i][0][6]).toFixed(1)+" - leakage "+parseFloat(myhistory[i][0][5]).toFixed(2);
-			}
-			else if (game.game_mode=='aqualibrium'){
+			if (game.game_mode=='aqualibrium'){
 				opt.innerHTML = "result "+(i+1)+" - score "+parseFloat(myhistory[i][0][7]).toFixed(3)+" - res1 "+parseFloat(myhistory[i][0][4]).toFixed(3)+"- res2 "+parseFloat(myhistory[i][0][5]).toFixed(3)+" - res3 "+parseFloat(myhistory[i][0][6]).toFixed(3);
 			}
 			mySelect.appendChild(opt);
@@ -1074,10 +943,8 @@
 	var topinfo = '';
 
 	topinfo +='<table class="table-condensed" style="font-size:16px;border-style: solid;border-color: '+mycol+';border-width: 0px;color:'+mycol+'">';
-	if (game.game_mode=='modena'){
-		topinfo +='<tr><td>Cost: </td><td>$'+d3.format(",.0f")(overall_cost)+'</td><td>Leakage: </td><td>'+leakage+'</td><td>Max age: </td><td>'+(water_age).toFixed(2)+'</td><td>Pressure deficit: </td><td>'+(pressure_deficit).toFixed(2)+'</td><td>No. deficit nodes: </td><td>'+nb_deficit_nodes+'</td></tr></table>'
-	}
-	else if (game.game_mode=='aqualibrium'){
+	
+	if (game.game_mode=='aqualibrium'){
 		topinfo +='<tr><td>Score: </td><td>'+parseFloat(overall_score).toFixed(3)+'</td><td>Reservoir 1: </td><td>'+(reservoir_1).toFixed(5)+'</td><td>Reservoir 2: </td><td>'+(reservoir_2).toFixed(5)+'</td><td>Reservoir 3: </td><td>'+(reservoir_3).toFixed(5)+'</td></tr></table>'
 	}
 	document.getElementById('info-top').innerHTML=topinfo;
@@ -1154,10 +1021,7 @@
 	var height_coord= parseFloat(network['backdrop_data'][3])-low_coord;
 	
 	var max_3d_width= 200;
-	if (game.game_mode=='modena'){
-		max_3d_width= 200;
-	}
-	else if (game.game_mode=='aqualibrium'){
+	if (game.game_mode=='aqualibrium'){
 		max_3d_width= 200;
 	}
 	if ((junctions_nb+tanks_nb+reservoirs_nb)>20){
@@ -1170,10 +1034,7 @@
 	//var scale_3d= max_3d_width/Math.max(width_coord,height_coord);
 	//var scale_nodes= (20/(junctions_nb+tanks_nb+reservoirs_nb))*10;
 	var scale_nodes= 10;//(junctions_nb+tanks_nb+reservoirs_nb)/40;//(20/(junctions_nb+tanks_nb+reservoirs_nb))*10;
-	if (game.game_mode=='modena'){
-		scale_nodes= 10;
-	}
-	else if (game.game_mode=='aqualibrium'){
+	if (game.game_mode=='aqualibrium'){
 		scale_nodes= 10;
 	}
 	//var scale_nodes_text= (20/(junctions_nb+tanks_nb+reservoirs_nb))*10;
@@ -1223,80 +1084,7 @@
 	
 	var mlistPipes=[];//jQuery.makeArray(obj_pumps);
 	//console.log(all_changeable_pipes)
-	if (game.game_mode=='modena'){
-		for( var elem in all_pipes) {
-			var tmp={};
-			tmp['ID']=elem;
-			var index_diameter=0;
-			if (_.isEmpty(user_latest_diameters)){
-				//console.log(team_latest_diameters[pcid])
-				if (team_latest_diameters[elem]==-1){
-					index_diameter=diameters_2_index[all_pipes[elem]['Diameter']];
-				}
-				else{
-					index_diameter=team_latest_diameters[elem];
-				}
-			}
-			else{
-				if (user_latest_diameters.hasOwnProperty(elem)){
-					//console.log('pb 2 1')
-					index_diameter=user_latest_diameters[elem];
-					if (user_latest_diameters[elem]==-1){
-						index_diameter=diameters_2_index[all_pipes[elem]['Diameter']];
-						
-					}
-				}
-				else{
-					//console.log('pb 2 2')
-					index_diameter=team_latest_diameters[elem];
-				}
-			}
-			tmp['diameter']=index_2_diameters[index_diameter];//all_changeable_pipes[elem]['Diameter'];
-			tmp['length']=all_pipes[elem]['Length'];
-			var pcost = 0;//
-			if (diameters_costs.length>0){
-				
-				//console.log(all_pipes[INTERSECTED.name.split("pc-")[1]]['Diameter'])
-				//console.log(parseFloat(index_2_diameters[index_diameter]))
-				if (user_latest_diameters.hasOwnProperty(elem)==false){
-					pcost = 0;
-				}
-				else{
-					if (user_latest_diameters[elem]==-1){
-						pcost = 0;
-					}
-					else{
-						if (diameters_costs[index_diameter-1]){
-							pcost = (parseFloat(diameters_costs[index_diameter-1])*parseFloat(network['pipes'][elem]['Length'])).toFixed(2);
-						}
-					}
-				}
-			}
-			tmp['cost']=pcost;//all_changeable_pipes[elem]['Length'];
-			var mleakage;
-			if(needEvaluation){
-				mleakage='?';
-			}
-			else{
-				if (user_pipes_leakage.hasOwnProperty(elem)){
-					mleakage=''+parseFloat(user_pipes_leakage[elem]).toFixed(2);
-				}
-				else{
-					mleakage=''+parseFloat(team_pipes_leakage[elem]).toFixed(2);
-				}
-			}
-			tmp['leakage']=mleakage;
-			if (all_changeable_pipes.hasOwnProperty(elem)){
-				tmp['mine']='yes';
-			}
-			else{
-				tmp['mine']='no';
-			}
-			//tmp['repleacable']=all_changeable_pipes[elem]['Replaceable'];
-			mlistPipes.push(tmp);
-		}
-	}
-	else if (game.game_mode=='aqualibrium'){
+	if (game.game_mode=='aqualibrium'){
 	//console.log(all_pipes)
 		for( var elem in all_pipes) {
 			var tmp={};
@@ -1368,85 +1156,7 @@
 	//listPipes.sort(function(a, b){return a.ID.localeCompare(b.ID);});
 	//console.log(all_changeable_pipes)
 	var $container1 = $("#table1");
-	if (game.game_mode=='modena'){
-		$container1.handsontable({
-		  data: mlistPipes,
-		  stretchH:"all",
-		  columnSorting: true,
-		  sortIndicator: true,
-		  //columnSorting: {
-		  //	column: 5,
-		  //		sortOrder: false
-		  //},
-		  //renderAllRows: true,
-		  //width: 400,
-		  //height: 400,
-		  startRows: 1,
-		  startCols: 6,
-		  colHeaders: true,
-		  colHeaders: ['pipe', 'diameter','length','cost','leakage','modifiable'],
-		  columns: [
-			{data: "ID",editor: false},
-			{data: "diameter",type: 'dropdown', source: pipe_diameters},
-			{data: "length", editor: false},
-			{data: "cost", editor: false},
-			{data: "leakage", editor: false},
-			{data: "mine", editor: false}//,
-			//{data: "repleacable", editor: false}
-		  ],
-		  cells: function (row, col, prop) {
-			var cellProperties = {};
-
-			  //if (row === 0 || this.instance.getData()[row][col] === 'readOnly') {
-			  //  cellProperties.readOnly = true; // make cell read-only if it is first row or the text reads 'readOnly'
-			  //}
-			  if (this.instance.getData()[row][5] === 'no') {
-				
-				//cellProperties.readOnly = true;
-			  }
-			  else{
-				if (col===0){
-				//cellProperties.renderer = firstRowRenderer; // uses function directly
-				}
-			  }
-			  //else {
-			  //  cellProperties.renderer = "negativeValueRenderer"; // uses lookup map
-			  //}
-
-			  return cellProperties;
-		  },
-		  afterChange: function(changes, source) {
-				//var listChanged =this.getData();
-				//for (var i=0, j=listChanged.length; i<j; i++){
-				//	if (pipes_roles.hasOwnProperty(listChanged[i][0])){
-				//		pipes_roles[listChanged[i][0]]=parseInt(listChanged[i][1]);
-				//	}
-				//}
-				//document.getElementById("pipes-roles").value=JSON.stringify(pipes_roles);
-				//console.log(pipes_roles)
-		  },
-		  afterSelectionEnd: function(r, p,r2,p2) {
-			//console.log(r+" : "+r2)
-			//var tempdata = this.instance;
-			allSelectedPipes = [];
-			var len = this.getData().length;
-			var tempSelect = this.getData(r,0,r2,0);
-			//console.log(tempSelect.length)
-			//console.log(network['pipes'].length)
-			if (tempSelect.length<len){
-				for (var i=0;i<tempSelect.length;i++){
-					allSelectedPipes.push(tempSelect[i][0]);
-				}
-				//console.log(allSelectedPipes)
-				//console.log(all_pipes)
-			}
-			//
-			// underline selected pipes
-		  },
-		  minSpareRows: 0
-		});
-	}
-	else if (game.game_mode=='aqualibrium'){
+	if (game.game_mode=='aqualibrium'){
 		$container1.handsontable({
 		  data: mlistPipes,
 		  stretchH:"all",
@@ -1592,41 +1302,7 @@
 	  minSpareRows: 0
 	});
 	var mlistJunctions=[];//jQuery.makeArray(obj_pumps);
-	if (game.game_mode=='modena'){
-		for( var elem in all_junctions) {
-			var tmp={};
-			tmp['ID']=elem;
-			tmp['Elevation']=all_junctions[elem]['Elev'];;//all_changeable_pumps[elem]['Diameter'];
-			var m_start;
-			var m_end;
-			var m_age;
-			if(needEvaluation){
-				m_start='?';
-				m_end='?';
-				m_age='?';
-			}
-			else{
-				if (user_junctions_data.hasOwnProperty(elem)){
-												
-					m_start=''+user_junctions_data[elem][0]; 
-					m_end =''+user_junctions_data[elem][1]; 
-					m_age=''+user_junctions_data[elem][2]; 
-				}
-				else{
-					m_start=''+team_junctions_data[elem][0]; 
-					m_end=''+team_junctions_data[elem][1]; 
-					m_age=''+team_junctions_data[elem][2]; 
-				}
-			}
-			
-			tmp['MinPressure']=all_junctions[elem]['MinPressure'];//all_changeable_pumps[elem]['Diameter'];
-			tmp['StartPressDiff']=m_start;
-			tmp['EndPressDiff']=m_end;
-			tmp['Age']=m_age;
-			mlistJunctions.push(tmp);
-		}
-	}
-	else if (game.game_mode=='aqualibrium'){
+	if (game.game_mode=='aqualibrium'){
 		for( var elem in all_junctions) {
 			var tmp={};
 			tmp['ID']=elem;
@@ -1637,40 +1313,7 @@
 	//listPipes.sort(function(a, b){return a.ID.localeCompare(b.ID);});
 	//console.log(listPipes)
 	var $container4 = $("#table4");
-	if (game.game_mode=='modena'){
-		$container4.handsontable({
-		  data: mlistJunctions,
-		  stretchH:"all",
-		  columnSorting: true,
-		  //renderAllRows: true,
-		  //width: 400,
-		  //height: 400,
-		  startRows: 1,
-		  startCols: 6,
-		  colHeaders: true,
-		  colHeaders: ['id', 'elevation','min_pressure','start_diff','end_diff','age'],
-		  columns: [
-			{data: "ID",editor: false},
-			{data: "Elevation",editor: false},
-			{data: "MinPressure", editor: false},
-			{data: "StartPressDiff", editor: false},
-			{data: "EndPressDiff", editor: false},
-			{data: "Age", editor: false}
-		  ],
-		  afterChange: function(changes, source) {
-				//var listChanged =this.getData();
-				//for (var i=0, j=listChanged.length; i<j; i++){
-				//	if (pipes_roles.hasOwnProperty(listChanged[i][0])){
-				//		pipes_roles[listChanged[i][0]]=parseInt(listChanged[i][1]);
-				//	}
-				//}
-				//document.getElementById("pipes-roles").value=JSON.stringify(pipes_roles);
-				//console.log(pipes_roles)
-		  },
-		  minSpareRows: 0
-		});
-	}
-	else if (game.game_mode=='aqualibrium'){
+	if (game.game_mode=='aqualibrium'){
 		$container4.handsontable({
 		  data: mlistJunctions,
 		  stretchH:"all",
@@ -1775,140 +1418,7 @@
 	});
 	
 	function updateSpreadSheet(){
-		if (game.game_mode=='modena'){
-			var ind=0;
-			//console.log(diameters_2_index)
-			for( var elem in all_pipes) {
-				var tmp={};
-				tmp['ID']=elem;
-				var index_diameter=0;
-				
-				if (_.isEmpty(user_latest_diameters)){
-					//console.log(team_latest_diameters[pcid])
-					if (team_latest_diameters[elem]==-1){
-						index_diameter=diameters_2_index[all_pipes[elem]['Diameter']];
-					}
-					else{
-						index_diameter=team_latest_diameters[elem];
-					}
-				}
-				else{
-					if (user_latest_diameters.hasOwnProperty(elem)){
-						//console.log('pb 2 1')
-						index_diameter=user_latest_diameters[elem];
-						
-						if (user_latest_diameters[elem]==-1){
-							index_diameter=diameters_2_index[all_pipes[elem]['Diameter']];
-							
-						}
-					}
-					else{
-						//console.log('pb 2 2')
-						index_diameter=team_latest_diameters[elem];
-					}
-				}
-				//if (elem==72){
-				//	console.log(index_diameter)
-				//}
-				//if (elem==73){
-				//	console.log(index_diameter)
-				//}
-				if (index_diameter==-1){
-					index_diameter=diameters_2_index[all_pipes[elem]['Diameter']];
-				}
-				tmp['diameter']=index_2_diameters[index_diameter];//all_changeable_pipes[elem]['Diameter'];
-				tmp['length']=all_pipes[elem]['Length'];
-				var pcost = 0;//
-				if (diameters_costs.length>0){
-					
-					//console.log(all_pipes[INTERSECTED.name.split("pc-")[1]]['Diameter'])
-					//console.log(parseFloat(index_2_diameters[index_diameter]))
-					if (user_latest_diameters.hasOwnProperty(elem)==false){
-						pcost = 0;
-					}
-					else{
-						if (user_latest_diameters[elem]==-1){
-							pcost = 0;
-						}
-						else{
-							if (diameters_costs[index_diameter-1]){
-								pcost = (parseFloat(diameters_costs[index_diameter-1])*parseFloat(network['pipes'][elem]['Length'])).toFixed(2);
-							}
-						}
-					}
-				}
-				tmp['cost']=pcost;//all_changeable_pipes[elem]['Length'];
-				var mleakage;
-				if(needEvaluation){
-					mleakage='?';
-					tmp['cost']='?';
-				}
-				else{
-					if (user_pipes_leakage.hasOwnProperty(elem)){
-						mleakage=''+parseFloat(user_pipes_leakage[elem]).toFixed(2);
-					}
-					else{
-						mleakage=''+parseFloat(team_pipes_leakage[elem]).toFixed(2);
-					}
-				}
-				tmp['leakage']=mleakage;
-				if (all_changeable_pipes.hasOwnProperty(elem)){
-					tmp['mine']='yes';
-				}
-				else{
-					tmp['mine']='no';
-				}
-				//tmp['repleacable']=all_changeable_pipes[elem]['Replaceable'];
-				//mlistPipes.push(tmp);
-				
-				mlistPipes[ind]['diameter']=tmp['diameter'];
-				mlistPipes[ind]['length']=tmp['length'];
-				mlistPipes[ind]['cost']=tmp['cost'];
-				mlistPipes[ind]['leakage']=tmp['leakage'];
-				mlistPipes[ind]['mine']=tmp['mine'];
-				ind++;
-			}
-			$('#table1').handsontable('render');
-			ind=0;
-			for( var elem in all_junctions) {
-				var tmp={};
-				tmp['ID']=elem;
-				tmp['Elevation']=all_junctions[elem]['Elev'];;//all_changeable_pumps[elem]['Diameter'];
-				var m_start;
-				var m_end;
-				var m_age;
-				if(needEvaluation){
-					m_start='?';
-					m_end='?';
-					m_age='?';
-				}
-				else{
-					if (user_junctions_data.hasOwnProperty(elem)){
-													
-						m_start=''+user_junctions_data[elem][0]; 
-						m_end =''+user_junctions_data[elem][1]; 
-						m_age=''+user_junctions_data[elem][2]; 
-					}
-					else{
-						m_start=''+team_junctions_data[elem][0]; 
-						m_end=''+team_junctions_data[elem][1]; 
-						m_age=''+team_junctions_data[elem][2]; 
-					}
-				}
-				
-				tmp['MinPressure']=all_junctions[elem]['MinPressure'];//all_changeable_pumps[elem]['Diameter'];
-				tmp['StartPressDiff']=m_start;
-				tmp['EndPressDiff']=m_end;
-				tmp['Age']=m_age;
-				//mlistJunctions.push(tmp);
-				mlistJunctions[ind]['StartPressDiff']=tmp['StartPressDiff'];
-				mlistJunctions[ind]['EndPressDiff']=tmp['EndPressDiff'];
-				mlistJunctions[ind]['Age']=tmp['Age'];
-				ind++;
-			}
-			$('#table4').handsontable('render');
-		}
-		else if (game.game_mode=='aqualibrium'){
+		if (game.game_mode=='aqualibrium'){
 			var ind=0;
 			//console.log(diameters_2_index)
 			for( var elem in all_pipes) {
@@ -1978,28 +1488,7 @@
 	}
 	
 	function resetSpreadSheet(){
-		if (game.game_mode=='modena'){
-			var ind=0;
-			//console.log(diameters_2_index)
-			for( var elem in all_pipes) {
-				mlistPipes[ind]['cost']='?';
-				mlistPipes[ind]['leakage']='?';
-				
-				ind++;
-			}
-			$('#table1').handsontable('render');
-			ind=0;
-			for( var elem in all_junctions) {
-				mlistJunctions[ind]['StartPressDiff']='?';
-				mlistJunctions[ind]['EndPressDiff']='?';
-				mlistJunctions[ind]['Age']='?';
-				ind++;
-			}
-			$('#table4').handsontable('render');
-		}
-		else if (game.game_mode=='aqualibrium'){
-			// nothing
-		}
+		
 		//var hd = $('#table1').handsontable();
 		//hd.render();
 		//console.log(mlistPipes)
@@ -2010,11 +1499,7 @@
 		container = document.getElementById("3d-graph");//document.createElement('div');
 		camera = new THREE.PerspectiveCamera( 70, (window.innerWidth*0.9) /( window.innerHeight-200), 1, 100000000 );
 		
-		if (game.game_mode=='modena'){
-			camera.position.z = 160;
-			camera.position.y = 290;
-		}
-		else if (game.game_mode=='aqualibrium'){
+		if (game.game_mode=='aqualibrium'){
 			camera.position.z = 105;
 			camera.position.y = 105;
 		}
@@ -2170,13 +1655,7 @@
 		if (isWebGl==false){
 			var string_hex_color;
 			var mycolor;
-			if (game.game_mode=='modena'){
-				mycolor = range_p_color(team_junctions_data[junction][0]);
-				if (user_junctions_data.hasOwnProperty(junction)){
-					mycolor = range_p_color(user_junctions_data[junction][0]);
-				}
-			}
-			else if (game.game_mode=='aqualibrium'){
+			if (game.game_mode=='aqualibrium'){
 				mycolor = '#cccccc';
 				//mycolor = range_p_color(0);
 			}
@@ -2194,17 +1673,7 @@
 			} );
 			textmaterial.map.minFilter = THREE.LinearFilter;
 			
-			if (game.game_mode=='modena'){
-				var particleText = new THREE.Sprite(textmaterial);
-				particleText.position.x = ((all_junctions[junction]['X-Coord']-left_coord)*scale_3d)-(max_3d_width*0.5);//Math.random() * 2 - 1;
-				particleText.position.y = 0;//Math.random() * 2 - 1;
-				particleText.position.z = ((all_junctions[junction]['Y-Coord']-low_coord)*scale_3d)-(max_3d_width*0.5);//Math.random() * 2 - 1;
-				particleText.scale.y=22;
-				particleText.scale.x=22;
-				particleText.name="t-"+junction;
-				lines.add(particleText);
-			}
-			else if (game.game_mode=='aqualibrium'){
+			if (game.game_mode=='aqualibrium'){
 				// nothing
 			}
 			
@@ -2214,13 +1683,7 @@
 			if (detailLevel==1){
 				var geometry = new THREE.SphereGeometry( scale_nodes/2, 10, 10 );
 				var mycolor;
-				if (game.game_mode=='modena'){
-					mycolor = range_p_color(team_junctions_data[junction][0]);
-					if (user_junctions_data.hasOwnProperty(junction)){
-						mycolor = range_p_color(user_junctions_data[junction][0]);
-					}
-				}
-				else if (game.game_mode=='aqualibrium'){
+				if (game.game_mode=='aqualibrium'){
 					mycolor = '#cccccc';
 				}
 				var smaterial = new THREE.MeshLambertMaterial( { color: mycolor, shading: THREE.SmoothShading } ) ;//new THREE.MeshPhongMaterial( { color: 0x00ff00, specular: 0xffffff, shininess: 1, shading: THREE.FlatShading } )//new THREE.MeshNormalMaterial( ) ;//new THREE.MeshLambertMaterial( { color: 0xcccccc, shading: THREE.FlatShading } );//new THREE.MeshBasicMaterial( {color:0xff0000});
@@ -2230,37 +1693,12 @@
 				sphere.position.z = ((all_junctions[junction]['Y-Coord']-low_coord)*scale_3d)-(max_3d_width*0.5);//Math.random() * 2 - 1;
 				sphere.name = "j-"+junction;
 				lines.add( sphere );
-				if (game.game_mode=='modena'){
-					var textmaterial = new THREE.SpriteMaterial( {
-						map: new THREE.CanvasTexture( generateSprite({message:''+(1+nj), fontsize:40}) ),
-					} );
-					textmaterial.map.minFilter = THREE.LinearFilter;
-					textmaterial.depthWrite = false;
-					textmaterial.depthTest = false;
-					var particleText = new THREE.Sprite(textmaterial);
-					particleText.position.x = ((parseFloat(all_junctions[junction]['X-Coord'])-left_coord)*scale_3d)-(max_3d_width*0.5);//Math.random() * 2 - 1;
-					particleText.position.y = 0;//Math.random() * 2 - 1;
-					particleText.position.z = ((all_junctions[junction]['Y-Coord']-low_coord)*scale_3d)-(max_3d_width*0.5);//Math.random() * 2 - 1;
-					particleText.scale.y=22;
-					particleText.scale.x=22;
-					
-					particleText.name="t-"+junction;
-					lines.add(particleText);
-				}
-				else if (game.game_mode=='aqualibrium'){
-					// nothing
-				}
+				
 			}
 			else {
 				var geometry = new THREE.SphereGeometry( scale_nodes/2, 10, 10 );
 				var mycolor;
-				if (game.game_mode=='modena'){
-					mycolor = range_p_color(team_junctions_data[junction][0]);
-					if (user_junctions_data.hasOwnProperty(junction)){
-						mycolor = range_p_color(user_junctions_data[junction][0]);
-					}
-				}
-				else if (game.game_mode=='aqualibrium'){
+				if (game.game_mode=='aqualibrium'){
 					mycolor = '#cccccc';
 				}
 				var smaterial = new THREE.MeshLambertMaterial( { color: mycolor, shading: THREE.SmoothShading } ) ;//new THREE.MeshPhongMaterial( { color: 0x00ff00, specular: 0xffffff, shininess: 1, shading: THREE.FlatShading } )//new THREE.MeshNormalMaterial( ) ;//new THREE.MeshLambertMaterial( { color: 0xcccccc, shading: THREE.FlatShading } );//new THREE.MeshBasicMaterial( {color:0xff0000});
@@ -3187,18 +2625,13 @@
 	
 	lines.rotateX(Math.PI);
 	// to be modified : should have for each network or game a rotation , and zoom parameter as well as different image backgrounds in use
-	if (game.game_mode=='modena'){
-		lines.rotateY(Math.PI*0.15);
-	}
+	
 	scene.add( lines );
 	
 	if (isWebGl==false){
 			var lgeometry = new THREE.Geometry();
 			var size_plane=(max_3d_width*2);
-			if (game.game_mode=='modena'){
-				size_plane=(max_3d_width*2);
-			}
-			else if (game.game_mode=='aqualibrium'){
+			if (game.game_mode=='aqualibrium'){
 				size_plane=(max_3d_width);
 			}
 			lgeometry.vertices.push( new THREE.Vector3( -(size_plane/2), 0, (size_plane/2) ) );
@@ -3220,11 +2653,7 @@
 			lower_plane.position.x=-25;
 			lower_plane.position.z=0;
 			lower_plane.position.y=-20;
-			if (game.game_mode=='modena'){
-				line.position.z=50;
-				line.position.x=-25;
-			}
-			else if (game.game_mode=='aqualibrium'){
+			if (game.game_mode=='aqualibrium'){
 				line.position.z=8;
 				line.position.x=8;
 				line.position.y=5;
@@ -3252,10 +2681,7 @@
 		else{
 			if (detailLevel==1){var lgeometry = new THREE.Geometry();
 				var size_plane=(max_3d_width*2);
-				if (game.game_mode=='modena'){
-					size_plane=(max_3d_width*2);
-				}
-				else if (game.game_mode=='aqualibrium'){
+				if (game.game_mode=='aqualibrium'){
 					size_plane=280;
 				}
 				var buid_color="";
@@ -3287,11 +2713,7 @@
 				lower_plane.position.x=-25;
 				lower_plane.position.z=0;
 				lower_plane.position.y=-25;
-				if (game.game_mode=='modena'){
-					line.position.z=50;
-					line.position.x=-25;
-				}
-				else if (game.game_mode=='aqualibrium'){
+				if (game.game_mode=='aqualibrium'){
 					line.position.z=8;
 					line.position.x=8;
 					line.position.y=5;
@@ -3459,10 +2881,7 @@
 			else{
 				var lgeometry = new THREE.Geometry();
 				var size_plane=(max_3d_width*2);
-				if (game.game_mode=='modena'){
-					size_plane=(max_3d_width*2);
-				}
-				else if (game.game_mode=='aqualibrium'){
+				if (game.game_mode=='aqualibrium'){
 					size_plane=280;
 				}
 				var buid_color="";
@@ -3494,11 +2913,7 @@
 				lower_plane.position.x=-25;
 				lower_plane.position.z=0;
 				lower_plane.position.y=-25;
-				if (game.game_mode=='modena'){
-					line.position.z=50;
-					line.position.x=-25;
-				}
-				else if (game.game_mode=='aqualibrium'){
+				if (game.game_mode=='aqualibrium'){
 					line.position.z=8;
 					line.position.x=8;
 					line.position.y=5;
@@ -3991,10 +3406,7 @@
 								myinfo +='<div style="border-radius: 10px;border-style: solid;border-color: '+mycol+';">';
 								myinfo +='<table class="table table-condensed" style="font-size:20px;color:'+mycol+'">';
 								myinfo +='<thead><tr><th>Reservoir &nbsp; &nbsp;'+INTERSECTED.name.split("r-")[1]+'</th><th></th></tr></thead>'
-								if (game.game_mode=='modena'){
-									myinfo +='<tr><td></td><td></td></tr></table>'
-								}
-								else if (game.game_mode=='aqualibrium'){
+								if (game.game_mode=='aqualibrium'){
 									if (INTERSECTED.name.split("r-")[1]=='Res1'){
 									myinfo +='<tr><td>'+reservoir_1+'</td><td></td></tr></table>'
 									}
@@ -4015,35 +3427,7 @@
 							else if (INTERSECTED.name.startsWith('j-')){
 								var jid=INTERSECTED.name.split("j-")[1];
 								var myinfo = '';
-								if (game.game_mode=='modena'){
-									myinfo +='<div style="border-radius: 10px;border-style: solid;border-color: '+mycol+';">';
-									myinfo +='<table class="table table-condensed" style="font-size:20px;color:'+mycol+'">';
-									myinfo +='<thead><tr><th>Junction &nbsp; &nbsp;'+jid+'</th><th></th></tr></thead>'
-									
-									if(needEvaluation){
-										myinfo +='<tr><td>Starting pressure diff:</td><td>?</td></tr>' //team_junctions_data[][0]
-										myinfo +='<tr><td>End pressure diff:</td><td>?</td></tr>' // team_junctions_data[][1]
-										myinfo +='<tr><td>Water age:</td><td>?</td></tr></table>' // team_junctions_data[][2]
-									}
-									else{
-										if (user_junctions_data.hasOwnProperty(jid)){
-											
-											myinfo +='<tr><td>Starting pressure diff:</td><td>'+user_junctions_data[jid][0]+'</td></tr>' //team_junctions_data[][0]
-											myinfo +='<tr><td>End pressure diff:</td><td>'+user_junctions_data[jid][1]+'</td></tr>' // team_junctions_data[][1]
-											myinfo +='<tr><td>Water age:</td><td>'+user_junctions_data[jid][2]+'</td></tr></table>' // team_junctions_data[][2]
-										}
-										else{
-											myinfo +='<tr><td>Starting pressure diff:</td><td>'+team_junctions_data[jid][0]+'</td></tr>' //team_junctions_data[][0]
-											myinfo +='<tr><td>End pressure diff:</td><td>'+team_junctions_data[jid][1]+'</td></tr>' // team_junctions_data[][1]
-											myinfo +='<tr><td>Water age:</td><td>'+team_junctions_data[jid][2]+'</td></tr></table>' // team_junctions_data[][2]
-										}
-									}
-									
-									myinfo +='</div>'
-								}
-								else if (game.game_mode=='aqualibrium'){
-									// nothing
-								}
+								
 								document.getElementById('info-win').innerHTML=myinfo;
 							}
 						}
@@ -4089,38 +3473,7 @@
 								}
 								//console.log(index_diameter)
 								myinfo +='<tr><td>Diameter:</td><td>'+index_2_diameters[index_diameter]+'</td></tr>';
-								if (game.game_mode=='modena'){
-									if (diameters_costs.length>0){
-										var pcost = 0;//
-										if (user_latest_diameters.hasOwnProperty(pcid)==false){
-											pcost = 0;
-										}
-										else{
-											if (user_latest_diameters[pcid]==-1){
-												pcost = 0;
-											}
-											else{
-												if (diameters_costs[index_diameter-1]){
-												pcost = format(parseFloat(diameters_costs[index_diameter-1])*parseFloat(network['pipes'][pcid]['Length']))
-											}
-											}
-										}
-										myinfo +='<tr><td>Cost:</td><td>'+pcost+'</td></tr>'
-									}
-									//myinfo +='<tr><td>Cost:</td><td></td></tr>';
-									if(needEvaluation){
-										myinfo +='<tr><td>Leakage:</td><td>?</td></tr></table>';
-									}
-									else{
-										if (user_pipes_leakage.hasOwnProperty(pcid)){
-											myinfo +='<tr><td>Leakage:</td><td>'+parseFloat(user_pipes_leakage[pcid]).toFixed(2)+'</td></tr></table>';
-										}
-										else{
-											myinfo +='<tr><td>Leakage:</td><td>'+parseFloat(team_pipes_leakage[pcid]).toFixed(2)+'</td></tr></table>';
-										}
-									}
-								}
-								else if (game.game_mode=='aqualibrium'){
+								if (game.game_mode=='aqualibrium'){
 									myinfo +='</table>';
 								}
 								myinfo +='</div>'
@@ -4277,10 +3630,7 @@
 								myinfo +='<thead><tr><th>Reservoir &nbsp; &nbsp;'+INTERSECTED.name.split("r-")[1]+'</th><th></th></tr></thead>'
 								//myinfo +='<tr><td></td><td></td></tr></table>'
 								
-								if (game.game_mode=='modena'){
-									myinfo +='<tr><td></td><td></td></tr></table>'
-								}
-								else if (game.game_mode=='aqualibrium'){
+								if (game.game_mode=='aqualibrium'){
 									if (INTERSECTED.name.split("r-")[1]=='Res1'){
 									myinfo +='<tr><td>'+reservoir_1+'</td><td></td></tr></table>'
 									}
@@ -4316,33 +3666,7 @@
 							else if (INTERSECTED.name.startsWith('j-')){
 								var jid=INTERSECTED.name.split("j-")[1];
 								var myinfo = '';
-								if (game.game_mode=='modena'){
-									myinfo +='<div style="border-radius: 10px;border-style: solid;border-color: '+mycol+';">';
-									myinfo +='<table class="table table-condensed" style="font-size:20px;color:'+mycol+'">';
-									myinfo +='<thead><tr><th>Junction &nbsp; &nbsp;'+jid+'</th><th></th></tr></thead>'
-									if(needEvaluation){
-										myinfo +='<tr><td>Starting pressure diff:</td><td>?</td></tr>' //team_junctions_data[][0]
-										myinfo +='<tr><td>End pressure diff:</td><td>?</td></tr>' // team_junctions_data[][1]
-										myinfo +='<tr><td>Water age:</td><td>?</td></tr></table>' // team_junctions_data[][2]
-									}
-									else{
-										if (user_junctions_data.hasOwnProperty(jid)){
-											
-											myinfo +='<tr><td>Starting pressure diff:</td><td>'+user_junctions_data[jid][0]+'</td></tr>' //team_junctions_data[][0]
-											myinfo +='<tr><td>End pressure diff:</td><td>'+user_junctions_data[jid][1]+'</td></tr>' // team_junctions_data[][1]
-											myinfo +='<tr><td>Water age:</td><td>'+user_junctions_data[jid][2]+'</td></tr></table>' // team_junctions_data[][2]
-										}
-										else{
-											myinfo +='<tr><td>Starting pressure diff:</td><td>'+team_junctions_data[jid][0]+'</td></tr>' //team_junctions_data[][0]
-											myinfo +='<tr><td>End pressure diff:</td><td>'+team_junctions_data[jid][1]+'</td></tr>' // team_junctions_data[][1]
-											myinfo +='<tr><td>Water age:</td><td>'+team_junctions_data[jid][2]+'</td></tr></table>' // team_junctions_data[][2]
-										}
-									}
-									myinfo +='</div>'
-								}
-								else if (game.game_mode=='aqualibrium'){
-									// nothing
-								}
+								
 								document.getElementById('info-win').innerHTML=myinfo;
 							}
 							else if (INTERSECTED.name.startsWith("pc-")){
@@ -4384,50 +3708,7 @@
 								//console.log(index_diameter)
 								//console.log(index_2_diameters)
 								myinfo +='<tr><td>Diameter:</td><td>'+index_2_diameters[index_diameter]+'</td></tr>';
-								if (game.game_mode=='modena'){
-									if (diameters_costs.length>0){
-										var pcost = 0;//
-										//console.log(all_pipes[INTERSECTED.name.split("pc-")[1]]['Diameter'])
-										//console.log(parseFloat(index_2_diameters[index_diameter]))
-										if (user_latest_diameters.hasOwnProperty(pcid)==false){
-											pcost = 0;
-										}
-										else{
-											if (user_latest_diameters[pcid]==-1){
-												pcost = 0;
-											}
-											else{
-												if (diameters_costs[index_diameter-1]){
-												pcost = format(parseFloat(diameters_costs[index_diameter-1])*parseFloat(network['pipes'][pcid]['Length']))
-											}
-											}
-										}
-										// if (all_pipes[pcid]['Diameter']!=parseFloat(index_2_diameters[index_diameter])){
-											// //console.log(index_diameter)
-											// //console.log(diameters_costs)
-											// //console.log(diameters_costs[index_diameter-1])
-											// if (diameters_costs[index_diameter-1]){
-												// pcost = format(parseFloat(diameters_costs[index_diameter-1])*parseFloat(network['pipes'][pcid]['Length']))
-											// }
-											
-											 // //pcost = format((diameters_costs[index_diameter]*network['pipes'][INTERSECTED.name.split("pc-")[1]]['Length']));
-										// }
-										myinfo +='<tr><td>Cost:</td><td>'+pcost+'</td></tr>'
-									}
-									//myinfo +='<tr><td>Cost:</td><td></td></tr>';
-									if(needEvaluation){
-										myinfo +='<tr><td>Leakage:</td><td>?</td></tr></table>';
-									}
-									else{
-										if (user_pipes_leakage.hasOwnProperty(pcid)){
-											myinfo +='<tr><td>Leakage:</td><td>'+parseFloat(user_pipes_leakage[pcid]).toFixed(2)+'</td></tr></table>';
-										}
-										else{
-											myinfo +='<tr><td>Leakage:</td><td>'+parseFloat(team_pipes_leakage[pcid]).toFixed(2)+'</td></tr></table>';
-										}
-									}
-								}
-								else if (game.game_mode=='aqualibrium'){
+								if (game.game_mode=='aqualibrium'){
 									myinfo +='</table>';
 								}
 								myinfo +='</div>'
@@ -4882,10 +4163,7 @@
 			//var topinfo = '';
 
 			topinfo +='<table class="table-condensed" style="font-size:16px;border-style: solid;border-color: '+mycol+';border-width: 0px;color:'+mycol+'">';
-			if (game.game_mode=='modena'){
-				topinfo +='<tr><td>Cost: </td><td>$'+d3.format(",.0f")(overall_cost)+'</td><td>Leakage: </td><td>'+leakage+'</td><td>Max age: </td><td>'+(water_age).toFixed(2)+'</td><td>Pressure deficit: </td><td>'+(pressure_deficit).toFixed(2)+'</td><td>No. deficit nodes: </td><td>'+nb_deficit_nodes+'</td></tr></table>'
-			}
-			else if (game.game_mode=='aqualibrium'){
+			if (game.game_mode=='aqualibrium'){
 				topinfo +='<tr><td>Score: </td><td>'+parseFloat(overall_score).toFixed(3)+'</td><td>Reservoir 1: </td><td>'+(reservoir_1).toFixed(5)+'</td><td>Reservoir 2: </td><td>'+(reservoir_2).toFixed(5)+'</td><td>Reservoir 3: </td><td>'+(reservoir_3).toFixed(5)+'</td></tr></table>'
 			}
 			document.getElementById('info-top').innerHTML=topinfo;
@@ -4906,10 +4184,7 @@
 			var topinfo = '';
 
 			topinfo +='<table class="table-condensed" style="font-size:16px;border-style: solid;border-color: '+mycol+';border-width: 0px;color:'+mycol+'">';
-			if (game.game_mode=='modena'){
-				topinfo +='<tr><td>Cost: </td><td>$'+d3.format(",.0f")(overall_cost)+'</td><td>Leakage: </td><td>'+leakage+'</td><td>Max age: </td><td>'+(water_age).toFixed(2)+'</td><td>Pressure deficit: </td><td>'+(pressure_deficit).toFixed(2)+'</td><td>No. deficit nodes: </td><td>'+nb_deficit_nodes+'</td></tr></table>'
-			}
-			else if (game.game_mode=='aqualibrium'){
+			if (game.game_mode=='aqualibrium'){
 				topinfo +='<tr><td>Score: </td><td>'+parseFloat(overall_score).toFixed(3)+'</td><td>Reservoir 1: </td><td>'+(reservoir_1).toFixed(5)+'</td><td>Reservoir 2: </td><td>'+(reservoir_2).toFixed(5)+'</td><td>Reservoir 3: </td><td>'+(reservoir_3).toFixed(5)+'</td></tr></table>'
 			}
 			document.getElementById('info-top').innerHTML=topinfo;
@@ -5380,122 +4655,7 @@
 				.attr("y", 25)
 				.attr("height", 100)
 				.attr("width", 100);
-			if (game.game_mode=='modena'){
-				legend_psi.selectAll('g').data(["gdp"])
-				.enter()
-				.append('g')
-				.each(function(d, i) {
-					var g = d3.select(this);
-					//var myx =(d3_width*0.29)-150;
-					//var myy =20;
-					
-					var myx =100
-					var myy =10;
-					g.append("rect")
-					  .attr("x", (window.innerWidth*0.05)+200)
-					  .attr("y", (10))//.attr("y", (7))
-					  .attr("width", (d3_width *0.2))
-					  .attr("height", 15)
-					  //.attr("width", (d3_width *0.05))
-					  //.attr("height", d3_height *0.8)
-					  .style("fill", c4gradient);	
-					g.append("text")
-					  .attr("x",(window.innerWidth*0.05)+5) 
-					  .attr("y", 20)
-					  .attr("height",30)
-					  .attr("width",100)
-					  .style("fill", mycol).style("font-weight", "bold")//.style("font-style", "italic")
-					  .style("font-size","small")
-					  .text("Junctions color scale:");
-					g.append("text")
-					  .attr("x",(window.innerWidth*0.05)+5) 
-					  .attr("y", 35)
-					  .attr("height",30)
-					  .attr("width",100)
-					  .style("fill", mycol).style("font-weight", "bold")//.style("font-style", "italic")
-					  .style("font-size","small")
-					  .text("Pressure surplus/deficit");
-					g.append("text")
-					  //.attr("x",(window.innerWidth*0.05)+30) 
-					  //.attr("y", 55+ d3_height *0.0)
-					  .attr("x", (window.innerWidth*0.05)+(d3_width *0.2)+200-10)
-					  .attr("y", (40))//.attr("y", (7))
-					  .attr("height",30)
-					  .attr("width",100)
-					  .style("fill", mycol).style("font-weight", "bold")//.style("font-style", "italic")
-					  .style("font-size","small")
-					  .text(min_max_diff_pressure[1]);
-					g.append("text")
-					  //.attr("x",(window.innerWidth*0.05)+30) 
-					  //.attr("y", 55+ d3_height *0.4)
-					  .attr("x", (window.innerWidth*0.05)+(d3_width *0.1)+200-3)
-					  .attr("y", (40))
-					  .attr("height",30)
-					  .attr("width",100)
-					  .style("fill", mycol).style("font-weight", "bold")//.style("font-style", "italic")
-					  .style("font-size","small")
-					  .text("0"); 
-					g.append("text")
-					  //.attr("x",(window.innerWidth*0.05)+30) 
-					  //.attr("y", 55+ d3_height *0.8)
-					  .attr("x", (window.innerWidth*0.05)+(d3_width *0.0)+200-15)
-					  .attr("y", (40))
-					  .attr("height",30)
-					  .attr("width",100)
-					  .style("fill", mycol).style("font-weight", "bold")//.style("font-style", "italic")
-					  .style("font-size","small")
-					  .text(min_max_diff_pressure[0]);
-					if(default_coloring_pipe==false){
-						var myx =100
-						var myy =10;
-						g.append("rect")
-						  .attr("x", (window.innerWidth*0.05)+200)
-						  .attr("y", (50))//.attr("y", (7))
-						  .attr("width", (d3_width *0.2))
-						  .attr("height", 15)
-						  //.attr("width", (d3_width *0.05))
-						  //.attr("height", d3_height *0.8)
-						  .style("fill", c6gradient);	
-						g.append("text")
-						  .attr("x",(window.innerWidth*0.05)+5) 
-						  .attr("y", 60)
-						  .attr("height",30)
-						  .attr("width",100)
-						  .style("fill", mycol).style("font-weight", "bold")//.style("font-style", "italic")
-						  .style("font-size","small")
-						  .text("Pipes color scale:");
-						g.append("text")
-						  .attr("x",(window.innerWidth*0.05)+5) 
-						  .attr("y", 75)
-						  .attr("height",30)
-						  .attr("width",100)
-						  .style("fill", mycol).style("font-weight", "bold")//.style("font-style", "italic")
-						  .style("font-size","small")
-						  .text("Leakage");
-						g.append("text")
-						  //.attr("x",(window.innerWidth*0.05)+30) 
-						  //.attr("y", 55+ d3_height *0.0)
-						  .attr("x", (window.innerWidth*0.05)+(d3_width *0.2)+200-10)
-						  .attr("y", (80))//.attr("y", (7))
-						  .attr("height",30)
-						  .attr("width",100)
-						  .style("fill", mycol).style("font-weight", "bold")//.style("font-style", "italic")
-						  .style("font-size","small")
-						  .text(min_max_leakage[1]);
-						g.append("text")
-						  //.attr("x",(window.innerWidth*0.05)+30) 
-						  //.attr("y", 55+ d3_height *0.8)
-						  .attr("x", (window.innerWidth*0.05)+(d3_width *0.0)+200-15)
-						  .attr("y", (80))
-						  .attr("height",30)
-						  .attr("width",100)
-						  .style("fill", mycol).style("font-weight", "bold")//.style("font-style", "italic")
-						  .style("font-size","small")
-						  .text(min_max_leakage[0]);
-					}
-				});
-			}
-			else if (game.game_mode=='aqualibrium'){
+			if (game.game_mode=='aqualibrium'){
 				legend_bars.remove();
 				legend_bars = d3_svg.append("g")
 					.attr("class", "legend_bars")
@@ -5604,74 +4764,7 @@
 				.attr("y", 25)
 				.attr("height", 100)
 				.attr("width", 100);
-			if (game.game_mode=='modena'){
-				legend_psi.selectAll('g').data(["gdp"])
-				.enter()
-				.append('g')
-				.each(function(d, i) {
-					var g = d3.select(this);
-					//var myx =(d3_width*0.29)-150;
-					//var myy =20;
-					
-					var myx =100
-					var myy =10;
-					g.append("rect")
-					  .attr("x", (window.innerWidth*0.05)+200)
-					  .attr("y", (10))//.attr("y", (7))
-					  .attr("width", (d3_width *0.2))
-					  .attr("height", 15)
-					  //.attr("width", (d3_width *0.05))
-					  //.attr("height", d3_height *0.8)
-					  .style("fill", c5gradient);	
-					g.append("text")
-					  .attr("x",(window.innerWidth*0.05)+5) 
-					  .attr("y", 20)
-					  .attr("height",30)
-					  .attr("width",100)
-					  .style("fill", mycol).style("font-weight", "bold")//.style("font-style", "italic")
-					  .style("font-size","small")
-					  .text("Junctions color scale:");
-					g.append("text")
-					  .attr("x",(window.innerWidth*0.05)+5) 
-					  .attr("y", 35)
-					  .attr("height",30)
-					  .attr("width",100)
-					  .style("fill", mycol).style("font-weight", "bold")//.style("font-style", "italic")
-					  .style("font-size","small")
-					  .text("Water age (hours)");
-					g.append("text")
-					  //.attr("x",(window.innerWidth*0.05)+30) 
-					  //.attr("y", 55+ d3_height *0.0)
-					  .attr("x", (window.innerWidth*0.05)+(d3_width *0.2)+200-10)
-					  .attr("y", (40))//.attr("y", (7))
-					  .attr("height",30)
-					  .attr("width",100)
-					  .style("fill", mycol).style("font-weight", "bold")//.style("font-style", "italic")
-					  .style("font-size","small")
-					  .text(min_max_age[1]);
-					g.append("text")
-					  //.attr("x",(window.innerWidth*0.05)+30) 
-					  //.attr("y", 55+ d3_height *0.4)
-					  .attr("x", (window.innerWidth*0.05)+(d3_width *0.1)+200-5)
-					  .attr("y", (40))
-					  .attr("height",30)
-					  .attr("width",100)
-					  .style("fill", mycol).style("font-weight", "bold")//.style("font-style", "italic")
-					  .style("font-size","small")
-					  .text(((min_max_age[1]+min_max_age[0])/2.0).toFixed(0)); 
-					g.append("text")
-					  //.attr("x",(window.innerWidth*0.05)+30) 
-					  //.attr("y", 55+ d3_height *0.8)
-					  .attr("x", (window.innerWidth*0.05)+(d3_width *0.0)+200-3)
-					  .attr("y", (40))
-					  .attr("height",30)
-					  .attr("width",100)
-					  .style("fill", mycol).style("font-weight", "bold")//.style("font-style", "italic")
-					  .style("font-size","small")
-					  .text(min_max_age[0]);
-
-				});
-			}
+			
 		}
 		
 		
@@ -5746,44 +4839,7 @@
 	}
 	
 	function displayCostInfo(elem){
-		if (game.game_mode=='modena'){
-			var nb= parseInt(elem.id.split('c')[1]);
-			
-			var myinfo = '';
-			if (nb==0){
-				myinfo +='<div style="border-radius: 10px;border-style: solid;border-color: '+mycol+';">';
-				myinfo +='<table class="table table-condensed" style="font-size:18px;color:'+mycol+'">';
-				myinfo +='<thead><tr><th>Pipe &nbsp; &nbsp;'+editedPipe+'</th><th></th></tr></thead>'
-				myinfo +='<tr><td >Action:<br>Close pipe</td><td></td></tr></table>'
-				myinfo +='</div>';
-			}
-			else if (nb==1){
-				myinfo +='<div style="border-radius: 10px;border-style: solid;border-color: '+mycol+';">';
-				myinfo +='<table class="table table-condensed" style="font-size:18px;color:'+mycol+'">';
-				myinfo +='<thead><tr><th>Pipe &nbsp; &nbsp;'+editedPipe+'</th><th></th></tr></thead>'
-				myinfo +='<tr><td>Revert to default:<br>(diameter '+all_changeable_pipes[editedPipe]['Diameter']+')<br>(default diameter '+network['pipes'][editedPipe]['Diameter']+')</td><td></td></tr>'
-				myinfo +='<tr><td>Cost of change: 0</td><td></td></tr></table>'
-				myinfo +='</div>';
-			}
-			else{
-				myinfo +='<div style="border-radius: 10px;border-style: solid;border-color: '+mycol+';">';
-				myinfo +='<table class="table table-condensed" style="font-size:18px;color:'+mycol+'">';
-				myinfo +='<thead><tr><th>Pipe &nbsp; &nbsp;'+editedPipe+'</th><th></th></tr></thead>'
-				if(_.isEmpty(user_latest_diameters)){
-					myinfo +='<tr><td>Replace pipe:<br>(diameter '+index_2_diameters[team_latest_diameters[editedPipe]]+')<br>(new diameter '+network['pipe_diameters'][(nb-1)]+')</td><td></td></tr>'
-				}
-				else{
-					myinfo +='<tr><td>Replace pipe:<br>(diameter )<br>(new diameter '+network['pipe_diameters'][(nb-1)]+')</td><td></td></tr>'
-					
-				}
-				if (diameters_costs.length>0 && diameters_costs[nb-1] ){
-					myinfo +='<tr><td>Replacement cost: '+format((diameters_costs[nb-1]*network['pipes'][editedPipe]['Length']))+'</td><td></td></tr></table>'
-				}
-				
-				myinfo +='</div>';
-			}
-		}
-		else if (game.game_mode=='aqualibrium'){
+		if (game.game_mode=='aqualibrium'){
 			var nb= parseInt(elem.id.split('c')[1]);
 			
 			var myinfo = '';
@@ -5836,308 +4892,7 @@
 				}
 			}
 		}
-		if (game.game_mode=='modena'){
-			var get_default_pipe=false;
-			if (editedPipe != -1){
-				
-				if (listEditedPipes.length>0){
-					for (var idnb=0; idnb<listEditedPipes.length;idnb++){
-						
-						var selection= parseInt(elem.id.split("c")[1]);
-						if (selection==0){
-							user_latest_diameters[listEditedPipes[idnb]]=selection;
-							needEvaluation=true;
-						}
-						else if (selection==1){
-							user_latest_diameters[listEditedPipes[idnb]]=0;
-							get_default_pipe=true;
-							needEvaluation=true;
-						}
-						else{
-							user_latest_diameters[listEditedPipes[idnb]]=selection-1;
-							needEvaluation=true;
-						}
-					}
-				}
-				else{
-					var selection= parseInt(elem.id.split("c")[1]);
-					if (selection==0){
-						user_latest_diameters[editedPipe]=selection;
-						needEvaluation=true;
-					}
-					else if (selection==1){
-						user_latest_diameters[editedPipe]=0;
-						get_default_pipe=true;
-						needEvaluation=true;
-					}
-					else{
-						user_latest_diameters[editedPipe]=selection-1;
-						needEvaluation=true;
-					}
-				}
-				
-			}
-			//if (user_latest_diameters.hasOwnProperty("")){
-				delete user_latest_diameters[""];
-			//}
-			//console.log(user_latest_diameters)
-			var input_obj={};
-			for (pipe in team_latest_diameters){
-				//console.log(pipe)
-				//console.log(team_latest_diameters)
-				//console.log(all_pipes[pipe])
-				if (team_latest_diameters[pipe] != diameters_2_index[all_pipes[pipe]['Diameter']]){
-					if (user_latest_diameters.hasOwnProperty(pipe)){
-						input_obj[pipe]=user_latest_diameters[pipe];
-					}
-					else{
-						input_obj[pipe]=team_latest_diameters[pipe];
-					}
-				}
-			}
-			for (pipe in user_latest_diameters){
-				if (input_obj.hasOwnProperty(pipe)==false){
-					input_obj[pipe]=user_latest_diameters[pipe];
-				}
-			}
-			for (mpipe in game.modified_pipes){
-					input_obj[mpipe]=game.modified_pipes[mpipe]
-			}
-			latest_input = ' pipes';
-			for (pipe in input_obj){
-				latest_input +=' "'+pipe+'" '+input_obj[pipe]
-			}
-			//console.log(latest_input)
-			input_obj=null;
-			if (listEditedPipes.length>0){
-				if (isWebGl==false){
-					var l_scene = scene.children[0].children.length;		
-					for (var s =0;s<l_scene;s++){
-						if (scene.children[0].children[s].name.startsWith('j-')){							
-							scene.children[0].children[s].material.color = new THREE.Color( 0xdddddd );						
-						}
-						else if (scene.children[0].children[s].name.startsWith('pc-')){
-						//else if (scene.children[0].children[s].name=='pc-'+editedPipe){	
-							var namep = scene.children[0].children[s].name.split('pc-')[1]
-							if (listEditedPipes.indexOf(namep)!=-1){
-								var index_diameter=0;
-								if (get_default_pipe){
-									index_diameter=diameters_2_index[network['pipes'][namep]['Diameter']];
-									user_latest_diameters[namep]=-1;
-								}
-								else{
-									if (_.isEmpty(user_latest_diameters)){
-										index_diameter=team_latest_diameters[namep];
-									}
-									else{
-										if (user_latest_diameters.hasOwnProperty(namep)){
-											index_diameter=user_latest_diameters[namep];
-										}
-										else{
-											index_diameter=team_latest_diameters[namep];
-										}
-										
-									}
-								}
-								var default_col = 0xff0000;
-								if (default_coloring_pipe){
-									if (index_diameter!=0){
-										default_col= 0x00ff00;
-									}
-								}
-								else{
-									default_col= 0x888888;
-									
-								}
-								var material = new THREE.LineBasicMaterial( { color : default_col, linewidth:2+(index_diameter/4), opacity: 0.7 } );
-								scene.children[0].children[s].material=material;
-							}
-						}
-					}
-				}
-				else{
-					
-						var m_group= scene.children[3].children;
-						var l_scene = m_group.length;
-						for (var s =0;s<l_scene;s++){
-							if (m_group[s].type=="Mesh" ){
-								if (m_group[s].name && (m_group[s].name.startsWith('pc-'))) {
-									var namep = m_group[s].name.split('pc-')[1];
-									
-									if (listEditedPipes.indexOf(namep)!=-1){
-										var array_points=[];
-										for (var i=0;i< all_changeable_pipes[namep]['Vertices'].length;i++ ){
-											array_points.push( new THREE.Vector3(((parseFloat(all_changeable_pipes[namep]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),0, ((parseFloat(all_changeable_pipes[namep]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
-										}
-										var curve = new THREE.CatmullRomCurve3(array_points);
-										var index_diameter=0;
-										if (get_default_pipe){
-											index_diameter=diameters_2_index[network['pipes'][namep]['Diameter']];
-											user_latest_diameters[namep]=-1;
-										}
-										else{
-											if (_.isEmpty(user_latest_diameters)){
-												index_diameter=team_latest_diameters[namep];
-											}
-											else{
-												if (user_latest_diameters.hasOwnProperty(namep)){
-													index_diameter=user_latest_diameters[namep];
-												}
-												else{
-													index_diameter=team_latest_diameters[namep];
-												}
-												
-											}
-										}
-										var rad=0.8+(index_diameter/(network['pipe_diameters'].length/3));
-										var seg =1;
-										if (array_points.length>2){
-											seg = 12;
-										}
-										var geometry = new THREE.TubeGeometry(
-											curve,  //path
-											seg,    //segments
-											rad,     //radius
-											8,     //radiusSegments
-											false  //closed
-										);
-										geometry.dynamic = true;
-										m_group[s].geometry=geometry;
-										var default_col = 0xff0000;
-										if (default_coloring_pipe){
-											if (index_diameter!=0){
-												default_col= 0x00ff00;
-											}
-										}
-										else{
-											default_col= 0x888888;
-											
-										}
-										m_group[s].material.color=new THREE.Color( default_col );
-									}
-									
-								}
-								if (m_group[s].name.startsWith('j-')){
-									m_group[s].material.color=new THREE.Color( 0x888888 );
-								}
-							}
-						}		
-					
-				}
-				updateSpreadSheet();
-			}
-			else{
-				if (isWebGl==false){
-					var l_scene = scene.children[0].children.length;		
-					for (var s =0;s<l_scene;s++){
-						if (scene.children[0].children[s].name.startsWith('j-')){							
-							scene.children[0].children[s].material.color = new THREE.Color( 0xdddddd );						
-						}
-						else if (scene.children[0].children[s].name=='pc-'+editedPipe){
-							var index_diameter=0;
-							if (get_default_pipe){
-								index_diameter=diameters_2_index[network['pipes'][editedPipe]['Diameter']];
-								user_latest_diameters[editedPipe]=-1;
-							}
-							else{
-								if (_.isEmpty(user_latest_diameters)){
-									index_diameter=team_latest_diameters[editedPipe];
-								}
-								else{
-									if (user_latest_diameters.hasOwnProperty(editedPipe)){
-										index_diameter=user_latest_diameters[editedPipe];
-									}
-									else{
-										index_diameter=team_latest_diameters[editedPipe];
-									}
-									
-								}
-							}
-							var default_col = 0xff0000;
-							if (default_coloring_pipe){
-								if (index_diameter!=0){
-									default_col= 0x00ff00;
-								}
-							}
-							else{
-								default_col= 0x888888;
-								
-							}
-							var material = new THREE.LineBasicMaterial( { color : default_col, linewidth:2+(index_diameter/4), opacity: 0.7 } );
-							scene.children[0].children[s].material=material;
-						}
-					}
-				}
-				else{
-					
-						var m_group= scene.children[3].children;
-						var l_scene = m_group.length;
-						for (var s =0;s<l_scene;s++){
-							if (m_group[s].type=="Mesh" ){
-								if (m_group[s].name && (m_group[s].name=='pc-'+editedPipe)) {
-									var array_points=[];
-									for (var i=0;i< all_changeable_pipes[editedPipe]['Vertices'].length;i++ ){
-										array_points.push( new THREE.Vector3(((parseFloat(all_changeable_pipes[editedPipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),0, ((parseFloat(all_changeable_pipes[editedPipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
-									}
-									var curve = new THREE.CatmullRomCurve3(array_points);
-									var index_diameter=0;
-									if (get_default_pipe){
-										index_diameter=diameters_2_index[network['pipes'][editedPipe]['Diameter']];
-										user_latest_diameters[editedPipe]=-1;
-									}
-									else{
-										if (_.isEmpty(user_latest_diameters)){
-											index_diameter=team_latest_diameters[editedPipe];
-										}
-										else{
-											if (user_latest_diameters.hasOwnProperty(editedPipe)){
-												index_diameter=user_latest_diameters[editedPipe];
-											}
-											else{
-												index_diameter=team_latest_diameters[editedPipe];
-											}
-											
-										}
-									}
-									var rad=0.8+(index_diameter/(network['pipe_diameters'].length/3));
-									var seg =1;
-									if (array_points.length>2){
-										seg = 12;
-									}
-									var geometry = new THREE.TubeGeometry(
-										curve,  //path
-										seg,    //segments
-										rad,     //radius
-										8,     //radiusSegments
-										false  //closed
-									);
-									geometry.dynamic = true;
-									m_group[s].geometry=geometry;
-									var default_col = 0xff0000;
-									if (default_coloring_pipe){
-										if (index_diameter!=0){
-											default_col= 0x00ff00;
-										}
-									}
-									else{
-										default_col= 0x888888;
-										
-									}
-									m_group[s].material.color=new THREE.Color( default_col );
-									
-								}
-								if (m_group[s].name.startsWith('j-')){
-									m_group[s].material.color=new THREE.Color( 0x888888 );
-								}
-							}
-						}		
-					
-				}
-				updateSpreadSheet();
-				listEditedPipes=[];
-			}
-			
-		}
+		
 		if (game.game_mode=='aqualibrium'){
 			var get_default_pipe=false;
 			if (editedPipe != -1){
@@ -6510,10 +5265,7 @@
 		var topinfo = '';
 
 		topinfo +='<table class="table-condensed" style="font-size:16px;border-style: solid;border-color: '+mycol+';border-width: 0px;color:'+mycol+'">';
-		if (game.game_mode=='modena'){
-			topinfo +='<tr><td>Cost: </td><td>$?</td><td>Leakage: </td><td>?</td><td>Max age: </td><td>?</td><td>Pressure deficit: </td><td>?</td><td>No. deficit nodes: </td><td>?</td></tr></table>'
-		}
-		else if (game.game_mode=='aqualibrium'){
+		if (game.game_mode=='aqualibrium'){
 			topinfo +='<tr><td>Score: </td><td>?</td><td>Reservoir 1: </td><td>?</td><td>Reservoir 2: </td><td>?</td><td>Reservoir 3: </td><td>?</td></tr></table>'
 		}
 		document.getElementById('info-top').innerHTML=topinfo;
@@ -6533,131 +5285,7 @@
 	}
 	
 	function lowCostReset(){
-		if (game.game_mode=='modena'){
-			user_latest_diameters={};
-				if (isWebGl==false){
-					var l_scene = scene.children[0].children.length;		
-					for (var s =0;s<l_scene;s++){
-						if (scene.children[0].children[s].name.startsWith('j-')){							
-							scene.children[0].children[s].material.color = new THREE.Color( 0xdddddd );						
-						}
-						else if (scene.children[0].children[s].name.startsWith('pc-')){
-							var cpipe= scene.children[0].children[s].name.split('pc-')[1];
-							var index_diameter=0;
-							if (game['pipes_roles'].hasOwnProperty(cpipe) && (game['pipes_roles'][cpipe]==member)){
-								index_diameter=diameters_2_index[network['pipes'][cpipe]['Diameter']];
-								user_latest_diameters[cpipe]=-1;
-								//delete user_latest_diameters[cpipe];
-								//console.log(cpipe+' : '+index_diameter)
-							}
-							else{
-								index_diameter=team_latest_diameters[cpipe];
-							}
-							var default_col = 0xff0000;
-							if (default_coloring_pipe){
-								if (index_diameter!=0){
-									default_col= 0x00ff00;
-								}
-							}
-							else{
-								default_col= 0x888888;
-								
-							}
-							var material = new THREE.LineBasicMaterial( { color : default_col, linewidth:2+(index_diameter/4), opacity: 0.7 } );
-							scene.children[0].children[s].material=material;
-						}
-					}
-				}
-				else{
-					
-					var m_group= scene.children[3].children;
-					var l_scene = m_group.length;
-					for (var s =0;s<l_scene;s++){
-						if (m_group[s].type=="Mesh" ){
-							if (m_group[s].name){ //&& (m_group[s].name=='pc-'+cpipe)) {
-								if(m_group[s].name.startsWith('pc-')) {
-									var cpipe= m_group[s].name.split('pc-')[1];
-									var array_points=[];
-									for (var i=0;i< all_changeable_pipes[cpipe]['Vertices'].length;i++ ){
-										array_points.push( new THREE.Vector3(((parseFloat(all_changeable_pipes[cpipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),0, ((parseFloat(all_changeable_pipes[cpipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
-									}
-									var curve = new THREE.CatmullRomCurve3(array_points);
-									var index_diameter=0;
-									if (game['pipes_roles'].hasOwnProperty(cpipe) && (game['pipes_roles'][cpipe]==member)){
-										//console.log('pb1')
-										index_diameter=diameters_2_index[network['pipes'][cpipe]['Diameter']];
-										//delete user_latest_diameters[cpipe];//user_latest_diameters[cpipe]=-1;
-										user_latest_diameters[cpipe]=-1;
-									}
-									else{
-										index_diameter=team_latest_diameters[cpipe];
-									}
-										
-									var rad=0.8+(index_diameter/(network['pipe_diameters'].length/3));
-									var seg =1;
-									if (array_points.length>2){
-										seg = 12;
-									}
-									var geometry = new THREE.TubeGeometry(
-										curve,  //path
-										seg,    //segments
-										rad,     //radius
-										8,     //radiusSegments
-										false  //closed
-									);
-									geometry.dynamic = true;
-									m_group[s].geometry=geometry;
-									var default_col = 0xff0000;
-									if (default_coloring_pipe){
-										if (index_diameter!=0){
-											default_col= 0x00ff00;
-										}
-									}
-									else{
-										default_col= 0x888888;
-										
-									}
-									m_group[s].material.color=new THREE.Color( default_col );
-								}
-							}
-							if (m_group[s].name.startsWith('j-')){
-								m_group[s].material.color=new THREE.Color( 0x888888 );
-							}
-						}
-					}		
-					
-				}
-			//}
-			var input_obj={};
-			for (pipe in team_latest_diameters){
-				if (team_latest_diameters[pipe] != diameters_2_index[all_pipes[pipe]['Diameter']]){
-					if (user_latest_diameters.hasOwnProperty(pipe)){
-						input_obj[pipe]=-1;
-					}
-					else{
-						input_obj[pipe]=team_latest_diameters[pipe];
-					}
-				}
-			}
-			for (pipe in user_latest_diameters){
-				if (input_obj.hasOwnProperty(pipe)==false){
-					input_obj[pipe]=-1;
-				}
-			}
-			for (mpipe in game.modified_pipes){
-					input_obj[mpipe]=game.modified_pipes[mpipe]
-			}
-			latest_input = ' pipes';
-			for (pipe in input_obj){
-				latest_input +=' "'+pipe+'" '+input_obj[pipe]
-			}
-			input_obj=null;
-			//console.log(latest_input)
-			// requestComputation();
-			needEvaluation=true;
-			resetSpreadSheet();
-		}
-		else if (game.game_mode=='aqualibrium'){
+		if (game.game_mode=='aqualibrium'){
 			
 			user_latest_diameters={};
 				if (isWebGl==false){
@@ -6774,10 +5402,7 @@
 		var topinfo = '';
 
 		topinfo +='<table class="table-condensed" style="font-size:16px;border-style: solid;border-color: '+mycol+';border-width: 0px;color:'+mycol+'">';
-		if (game.game_mode=='modena'){
-			topinfo +='<tr><td>Cost: </td><td>$?</td><td>Leakage: </td><td>?</td><td>Max age: </td><td>?</td><td>Pressure deficit: </td><td>?</td><td>No. deficit nodes: </td><td>?</td></tr></table>'
-		}
-		else if (game.game_mode=='aqualibrium'){
+		if (game.game_mode=='aqualibrium'){
 			topinfo +='<tr><td>Score: </td><td>?</td><td>Reservoir 1: </td><td>?</td><td>Reservoir 2: </td><td>?</td><td>Reservoir 3: </td><td>?</td></tr></table>'
 		}
 		document.getElementById('info-top').innerHTML=topinfo;
@@ -6925,10 +5550,7 @@
 		var topinfo = '';
 
 		topinfo +='<table class="table-condensed" style="font-size:16px;border-style: solid;border-color: '+mycol+';border-width: 0px;color:'+mycol+'">';
-		if (game.game_mode=='modena'){
-			topinfo +='<tr><td>Cost: </td><td>$?</td><td>Leakage: </td><td>?</td><td>Max age: </td><td>?</td><td>Pressure deficit: </td><td>?</td><td>No. deficit nodes: </td><td>?</td></tr></table>'
-		}
-		else if (game.game_mode=='aqualibrium'){
+		if (game.game_mode=='aqualibrium'){
 			topinfo +='<tr><td>Score: </td><td>?</td><td>Reservoir 1: </td><td>?</td><td>Reservoir 2: </td><td>?</td><td>Reservoir 3: </td><td>?</td></tr></table>'
 		}
 		document.getElementById('info-top').innerHTML=topinfo;
@@ -6937,19 +5559,7 @@
 	function requestComputation(){
 		
 		var input_obj={};
-		if (game.game_mode=='modena'){
-			for (pipe in team_latest_diameters){
-				if (team_latest_diameters[pipe] != diameters_2_index[all_pipes[pipe]['Diameter']]){
-					if (user_latest_diameters.hasOwnProperty(pipe)){
-						input_obj[pipe]=user_latest_diameters[pipe];
-					}
-					else{
-						input_obj[pipe]=team_latest_diameters[pipe];
-					}
-				}
-			}
-		}
-		else if (game.game_mode=='aqualibrium'){
+		if (game.game_mode=='aqualibrium'){
 			for (pipe in team_latest_diameters){
 				if (team_latest_diameters[pipe] && (team_latest_diameters[pipe] != diameters_2_index[all_pipes[pipe]['Diameter']])){
 					if (user_latest_diameters.hasOwnProperty(pipe)){
@@ -6971,7 +5581,9 @@
 		}
 		latest_input = ' pipes';
 		for (pipe in input_obj){
-			latest_input +=' "'+pipe+'" '+input_obj[pipe]
+			if (pipe!="" && isNaN(input_obj[pipe])==false){
+				latest_input +=' "'+pipe+'" '+input_obj[pipe]
+			}
 		}
 		var myparam = '"'+myuser.name+ '" "'+ game.game_mode+ '" "'+ game.name+ '" "'+ game.network_name+'" '+ game.time_points+ ' "evaluate" e'+ latest_input 
 		io.socket.put('/playerevaluate', {history: myparam, mode: game_mode },function gotResponse(body, response) { });
@@ -6985,19 +5597,7 @@
 			var n = d.getTime();
 			var input_obj={};
 			
-			if (game.game_mode=='modena'){
-				for (pipe in team_latest_diameters){
-					if (team_latest_diameters[pipe] != diameters_2_index[all_pipes[pipe]['Diameter']]){
-						if (user_latest_diameters.hasOwnProperty(pipe)){
-							input_obj[pipe]=user_latest_diameters[pipe];
-						}
-						else{
-							input_obj[pipe]=team_latest_diameters[pipe];
-						}
-					}
-				}
-			}
-			else if (game.game_mode=='aqualibrium'){
+			if (game.game_mode=='aqualibrium'){
 				for (pipe in team_latest_diameters){
 					if (pipe!=='NaN' && team_latest_diameters[pipe] && (team_latest_diameters[pipe] != diameters_2_index[all_pipes[pipe]['Diameter']])){
 						if (user_latest_diameters.hasOwnProperty(pipe)){
@@ -7019,9 +5619,13 @@
 					input_obj[mpipe]=game.modified_pipes[mpipe]
 			}
 			latest_input = ' pipes';
+			if (input_obj.hasOwnProperty("")){
+				delete input_obj[''];
+			}
 			for (pipe in input_obj){
-				if (pipe!=""){
+				if (pipe!="" && isNaN(input_obj[pipe])==false){
 					latest_input +=' "'+pipe+'" '+input_obj[pipe]
+					//console.log(pipe)
 				}
 			}
 			var pid = ""+myuser.name+n;
@@ -7029,6 +5633,8 @@
 			pid = pid.replace(/\s/g,"_"); 
 			//console.log(pid);
 			var myparam = '"'+myuser.name+ '" "'+ game.game_mode+ '" "'+ game.name+ '" "'+ game.network_name+'" '+ game.time_points+ ' "'+pid+'" c'+ latest_input; 
+			//console.log(myparam);
+			//console.log(input_obj);
 			var go_on=true;
 			if (game.game_mode=='aqualibrium'){
 				if (game.players_teams.hasOwnProperty(myuser.name) && game.players_teams[myuser.name]['team']==myuser.name){
@@ -7177,110 +5783,8 @@
 	}
 	
 	function updatePipesColors(){
-		if (game.game_mode=='modena'){
-			if (isWebGl==false){
-				var l_scene = scene.children[0].children.length;		
-				for (var s =0;s<l_scene;s++){
-					
-					if (scene.children[0].children[s].name.startsWith('pc-')){
-						var cpipe= scene.children[0].children[s].name.split('pc-')[1];
-						
-						var index_diameter=0;
-						if (_.isEmpty(user_latest_diameters)){
-							index_diameter=team_latest_diameters[cpipe];
-							//default_col= 0x00ff00;
-						}
-						else{
-							if (user_latest_diameters.hasOwnProperty(cpipe)){
-								index_diameter=user_latest_diameters[cpipe];
-							}
-							else{
-								index_diameter=team_latest_diameters[cpipe];
-							}
-							
-						}
-							
-						var default_col = 0xff0000;						
-						if (default_coloring_pipe){
-							if (index_diameter!=0){
-								default_col= 0x00ff00;
-							}
-						}
-						else{
-							if(needEvaluation){
-								default_col= 0x888888;
-							}
-							else{
-								
-								if (user_pipes_leakage.hasOwnProperty(cpipe)){
-									default_col=range_leakage_color(user_pipes_leakage[cpipe]);
-								}
-								else{
-									default_col=range_leakage_color(team_pipes_leakage[cpipe]);
-								}
-							}
-							
-						}
-						
-						var material = new THREE.LineBasicMaterial( { color : default_col, linewidth:2+(index_diameter/4), opacity: 0.7 } );
-						scene.children[0].children[s].material=material;
-						
-					}
-				}
-			}
-			else{
-				var m_group= scene.children[3].children;
-				var l_scene = m_group.length;
-				for (var s =0;s<l_scene;s++){
-					if (m_group[s].type=="Mesh" ){
-						if (m_group[s].name){ //&& (m_group[s].name=='pc-'+cpipe)) {
-							if(m_group[s].name.startsWith('pc-')) {
-								var cpipe= m_group[s].name.split('pc-')[1];
-								var index_diameter=0;
-								if (_.isEmpty(user_latest_diameters)){
-									index_diameter=team_latest_diameters[cpipe];
-									//default_col= 0x00ff00;
-								}
-								else{
-									if (user_latest_diameters.hasOwnProperty(cpipe)){
-										index_diameter=user_latest_diameters[cpipe];
-									}
-									else{
-										index_diameter=team_latest_diameters[cpipe];
-									}
-									
-								}
-									
-								var default_col = 0xff0000;
-								if (default_coloring_pipe){
-									if (index_diameter!=0){
-										default_col= 0x00ff00;
-									}
-								}
-								else{
-									if(needEvaluation){
-										default_col= 0x888888;
-									}
-									else{
-										
-										if (user_pipes_leakage.hasOwnProperty(cpipe)){
-											default_col=range_leakage_color(user_pipes_leakage[cpipe]);
-										}
-										else{
-											default_col=range_leakage_color(team_pipes_leakage[cpipe]);
-										}
-									}
-									
-								}
-								m_group[s].material.color=new THREE.Color( default_col );
-								
-							}
-						}
-					}
-				}		
-			}
-		}
-		else if (game.game_mode=='aqualibrium'){
+		
+		if (game.game_mode=='aqualibrium'){
 			if (isWebGl==false){
 				var l_scene = scene.children[0].children.length;		
 				for (var s =0;s<l_scene;s++){
@@ -7589,19 +6093,7 @@
 			
 		}
 		var input_obj={};
-		if (game.game_mode=='modena'){
-			for (pipe in team_latest_diameters){
-				if (team_latest_diameters[pipe] != diameters_2_index[all_pipes[pipe]['Diameter']]){
-					if (user_latest_diameters.hasOwnProperty(pipe)){
-						input_obj[pipe]=user_latest_diameters[pipe];
-					}
-					else{
-						input_obj[pipe]=team_latest_diameters[pipe];
-					}
-				}
-			}
-		}
-		else if (game.game_mode=='aqualibrium'){
+		if (game.game_mode=='aqualibrium'){
 			for (pipe in team_latest_diameters){
 				if (team_latest_diameters[pipe] && (team_latest_diameters[pipe] != diameters_2_index[all_pipes[pipe]['Diameter']])){
 					if (user_latest_diameters.hasOwnProperty(pipe)){
@@ -7633,11 +6125,7 @@
 		updateSpreadSheet();
 		
 		var topinfo = '';
-		if (game.game_mode=='modena'){
-			topinfo +='<table class="table-condensed" style="font-size:16px;border-style: solid;border-color: '+mycol+';border-width: 0px;color:'+mycol+'">';
-			topinfo +='<tr><td>Cost: </td><td>?</td><td>Leakage: </td><td>?</td><td>Max age: </td><td>?</td><td>Pressure deficit: </td><td>?</td><td>No. deficit nodes: </td><td>?</td></tr></table>'
-		}
-		else if (game.game_mode=='aqualibrium'){
+		if (game.game_mode=='aqualibrium'){
 			res1_bar0.transition(200)
 			  .attr("y", (((d3_height *0.4)-range_res((parseFloat(myhistory[this.value][0][4]))))+95))//.attr("y", (7))
 			  .attr("height", range_res((parseFloat(myhistory[this.value][0][4]))));
@@ -7684,10 +6172,7 @@
 		console.log('Team '+data['team']+' has just found the best solution so far')
 		if (updates_on){
 			document.getElementById('score-message').style.visibility="visible";
-			if (game.game_mode=='modena'){
-				document.getElementById('score-message').innerHTML='<span style="color:white">Best solution- Team <strong>'+ data['team']+'</strong>: cost '+parseFloat(data['overall_cost']).toFixed(2)+' - leakage '+parseFloat(data['leakage']).toFixed(0)+' - age '+parseFloat(data['water_age']).toFixed(0)+'</span>';
-			}
-			else if (game.game_mode=='aqualibrium'){
+			if (game.game_mode=='aqualibrium'){
 				document.getElementById('score-message').innerHTML='<span style="color:white">Best solution- User <strong>'+ data['team']+'</strong>: score '+parseFloat(data['overall_score']).toFixed(3)+'</span>';
 			}
 		}
@@ -7703,16 +6188,7 @@
 		var listnames=[];
 		var hs_object=[];
 		
-		if (game.game_mode=='modena'){
-			for (var i=0;i<data['board'].length;i++){
-				if (listnames.indexOf(data['board'][i]['team'])==-1){
-					listnames.push(data['board'][i]['team']);
-					hs_object.push('<span>'+(i+1)+' <strong>Team '+data['board'][i]['team']+'</strong> cost '+parseFloat(data['board'][i]['overall_cost']).toFixed(2)+' - leakage '+parseFloat(data['board'][i]['leakage']).toFixed(0)+' - age '+parseFloat(data['board'][i]['water_age']).toFixed(0)+'</span>');
-					
-				}
-			}
-		}
-		else if (game.game_mode=='aqualibrium'){
+		if (game.game_mode=='aqualibrium'){
 			for (var i=0;i<data['board'].length;i++){
 				if (listnames.indexOf(data['board'][i]['team'])==-1){
 					listnames.push(data['board'][i]['team']);
@@ -7734,271 +6210,14 @@
 	});
 	
 	io.socket.on('hellodm', function gotHelloMessage (data) {
-		if (game.game_mode=='modena'){
-			game.modified_pipes=data.change;
-			// tell the players that the game been changed by an external event
-			document.getElementById('high-score-table').style.visibility="visible";
-			document.getElementById('high-score-table').style.width="500px";
-			document.getElementById('list_hs').innerHTML='<strong>Dear player,</strong><br>Some event triggered a change in the water distribution network.<br> You now have to cope with the consequences...<br>Good luck!';
-			// discolor nodes 
-			for (mpipe in game.modified_pipes){
-				if (user_latest_diameters.hasOwnProperty(mpipe)){
-					user_latest_diameters[mpipe]=game.modified_pipes[mpipe];
-				}
-				if (team_latest_diameters.hasOwnProperty(mpipe)){
-					team_latest_diameters[mpipe]=game.modified_pipes[mpipe];
-				}
-			}
-			if (isWebGl==false){
-				var l_scene = scene.children[0].children.length;		
-				for (var s =0;s<l_scene;s++){
-					if (scene.children[0].children[s].name.startsWith('j-')){							
-						scene.children[0].children[s].material.color = new THREE.Color( 0xdddddd );						
-					}
-					else if (scene.children[0].children[s].name.startsWith('pc-')){
-						var cpipe=scene.children[0].children[s].name.split('pc-')[1];
-						var index_diameter=0;
-						if (game.modified_pipes.hasOwnProperty(cpipe)){
-							index_diameter=game.modified_pipes[cpipe]
-							var default_col = 0xff0000;						
-							if (default_coloring_pipe){
-								if (index_diameter!=0){
-									default_col= 0x00ff00;
-								}
-							}
-							else{
-								//team_pipes_leakage={};
-								//user_pipes_leakage={};
-								if (user_pipes_leakage.hasOwnProperty(cpipe)){
-									default_col=range_leakage_color(user_pipes_leakage[cpipe]);
-								}
-								else{
-									default_col=range_leakage_color(team_pipes_leakage[cpipe]);
-								}
-								
-							}
-							var material = new THREE.LineBasicMaterial( { color : default_col, linewidth:2+(index_diameter/4), opacity: 0.7 } );
-							scene.children[0].children[s].material=material;
-						}
-					}
-					else if (scene.children[0].children[s].name.startsWith('pf-')){
-						var cpipe= scene.children[0].children[s].name.split('pf-')[1];
-						var index_diameter=0;
-						if (game.modified_pipes.hasOwnProperty(cpipe)){
-							index_diameter=game.modified_pipes[cpipe]
-							var material = new THREE.LineBasicMaterial( { color : def_line_col, linewidth:2+(index_diameter/(network['pipe_diameters'].length/5)), opacity: 1.0 } );
-							scene.children[0].children[s].material=material;
-						}
-					}
-				}
-			}
-			else{
-				var m_group= scene.children[3].children;
-				var l_scene = m_group.length;
-				for (var s =0;s<l_scene;s++){
-					if (m_group[s].type=="Mesh" ){
-						if (m_group[s].name){ //&& (m_group[s].name=='pc-'+cpipe)) {
-							if(m_group[s].name.startsWith('pc-')) {
-								var cpipe= m_group[s].name.split('pc-')[1];
-								if (game.modified_pipes.hasOwnProperty(cpipe)){
-									var array_points=[];
-									for (var i=0;i< all_changeable_pipes[cpipe]['Vertices'].length;i++ ){
-										array_points.push( new THREE.Vector3(((parseFloat(all_changeable_pipes[cpipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),0, ((parseFloat(all_changeable_pipes[cpipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
-									}
-									var curve = new THREE.CatmullRomCurve3(array_points);
-									var index_diameter=0;
-									index_diameter=game.modified_pipes[cpipe]
-									var rad=0.8+(index_diameter/(network['pipe_diameters'].length/3));
-									var seg =1;
-									if (array_points.length>2){
-										seg = 12;
-									}
-									var geometry = new THREE.TubeGeometry(
-										curve,  //path
-										seg,    //segments
-										rad,     //radius
-										8,     //radiusSegments
-										false  //closed
-									);
-									geometry.dynamic = true;
-									m_group[s].geometry=geometry;
-									var default_col = 0xff0000;
-									if (default_coloring_pipe){
-										if (index_diameter!=0){
-											default_col= 0x00ff00;
-										}
-									}
-									else{
-										//team_pipes_leakage={};
-										//user_pipes_leakage={};
-										if (user_pipes_leakage.hasOwnProperty(cpipe)){
-											default_col=range_leakage_color(user_pipes_leakage[cpipe]);
-										}
-										else{
-											default_col=range_leakage_color(team_pipes_leakage[cpipe]);
-										}
-										
-									}
-									m_group[s].material.color=new THREE.Color( default_col );
-								}
-							}
-							if(m_group[s].name.startsWith('pf-')) {
-								var cpipe= m_group[s].name.split('pf-')[1];
-								if (game.modified_pipes.hasOwnProperty(cpipe)){
-									console.log('modified pipe has property' +cpipe)
-									var array_points=[];
-									for (var i=0;i< all_fixed_pipes[cpipe]['Vertices'].length;i++ ){
-										//array_points.push( new THREE.Vector3(((parseFloat(all_fixed_pipes[cpipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),0, ((parseFloat(all_fixed_pipes[cpipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
-										var ypos=0.0;
-										if (game.game_mode=='aqualibrium'){
-											if (i==0 && all_fixed_pipes[cpipe]['Node1']=='Source'){
-												ypos = -10-((20)*0.5);
-											}
-											else if (i==1 && all_fixed_pipes[cpipe]['Node2']=='Source'){
-												ypos = -10-((20)*0.5);
-											}
-											
-										}
-										else{
-											
-										}
-										array_points.push( new THREE.Vector3(((parseFloat(all_fixed_pipes[cpipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),ypos, ((parseFloat(all_fixed_pipes[cpipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
-									}
-									var curve = new THREE.CatmullRomCurve3(array_points);
-									var index_diameter=0;
-									index_diameter=game.modified_pipes[cpipe]
-									var rad=0.8+(index_diameter/(network['pipe_diameters'].length/3));
-									var seg =1;
-									if (array_points.length>2){
-										seg = 12;
-									}
-									var geometry = new THREE.TubeGeometry(
-										curve,  //path
-										seg,    //segments
-										rad,     //radius
-										8,     //radiusSegments
-										false  //closed
-									);
-									geometry.dynamic = true;
-									m_group[s].geometry=geometry;
-									
-									
-								}
-							}
-							if (m_group[s].name.startsWith('j-')){
-								m_group[s].material.color=new THREE.Color( 0x888888 );
-							}
-						}
-						
-					}
-				}		
-			}
-			// and take away score display like before an evaluation
-			var topinfo = '';
-			topinfo +='<table class="table-condensed" style="font-size:16px;border-style: solid;border-color: '+mycol+';border-width: 0px;color:'+mycol+'">';
-			topinfo +='<tr><td>Cost: </td><td>?</td><td>Leakage: </td><td>?</td><td>Max age: </td><td>?</td><td>Pressure deficit: </td><td>?</td><td>No. deficit nodes: </td><td>?</td></tr></table>'
-			document.getElementById('info-top').innerHTML=topinfo;	
-			
-			var input_obj={};
-			for (pipe in team_latest_diameters){
-				if (team_latest_diameters[pipe] != diameters_2_index[all_pipes[pipe]['Diameter']]){
-					if (user_latest_diameters.hasOwnProperty(pipe)){
-						input_obj[pipe]=user_latest_diameters[pipe];
-					}
-					else{
-						input_obj[pipe]=team_latest_diameters[pipe];
-					}
-				}
-			}
-			for (pipe in user_latest_diameters){
-				if (input_obj.hasOwnProperty(pipe)==false){
-					input_obj[pipe]=user_latest_diameters[pipe];
-				}
-			}
-			for (mpipe in game.modified_pipes){
-					input_obj[mpipe]=game.modified_pipes[mpipe]
-			}
-			latest_input = ' pipes';
-			for (pipe in input_obj){
-				latest_input +=' "'+pipe+'" '+input_obj[pipe]
-			}
-			input_obj=null;
-			
-			needEvaluation=true;
-			requestDMCommit();
-		}
+		
 	});
 	
 	io.socket.on('hello', function gotHelloMessage (data) {
 		needEvaluation=false;
 		if (data.name==myuser.name && (data.game==game.name) && (data.type=='e' || data.type=='E')){
 			console.log('User `' + data.name + '` changed his network status with a network evaluation - new result available');
-			if (game.game_mode=='modena'){
-				overall_cost=parseFloat(data.result[5]);
-				leakage=parseFloat(data.result[6]).toFixed(2);
-				water_age=parseFloat(data.result[7]);
-				pressure_deficit=parseFloat(data.result[8]);
-				nb_deficit_nodes=0;
-				user_junctions_data={}
-				var indp=11;
-				for (var i =0; i<junctions_nb;i++){
-					var jid= data.result[indp]
-					indp++;
-					var pmin = parseFloat(data.result[indp]);
-					indp++;
-					var pmax = parseFloat(data.result[indp]);
-					indp++;
-					var maxage= parseFloat(data.result[indp]);
-					indp++;
-					if (jid){
-						user_junctions_data[jid]=[pmin,pmax,maxage];
-						if (pmin<0){
-							nb_deficit_nodes++;
-						}
-					}
-				}
-				//console.log(user_junctions_data)
-				user_latest_diameters={};
-				user_pipes_leakage={};
-				for (var i =0; i<pipes_nb;i++){
-					var pid= data.result[indp];
-					//console.log(pid)
-					indp++;
-					var mleakage= parseFloat(data.result[indp]);
-					indp++;
-					var pipediam= parseInt(data.result[indp]);
-					//console.log(pipediam)
-					indp++;
-					if (pid){
-						if (all_changeable_pipes.hasOwnProperty(pid)){
-							if (pipediam!=-1 && pipediam!='-1' ){
-								user_latest_diameters[pid]=pipediam;
-							}
-							else{
-								
-								delete user_latest_diameters[pid];
-								team_latest_diameters[pid]=pipediam;
-							}
-						}
-						
-						user_pipes_leakage[pid]=mleakage;
-						team_pipes_leakage[pid]=mleakage;
-					}
-				}
-				//console.log(user_latest_diameters)
-				//console.log(user_pipes_leakage['114'])
-				//console.log(user_pipes_leakage['33'])
-				//console.log(team_pipes_leakage['33']);
-				// update color of junctions
-				updatePressureNodesColors();
-				// update topinfo message with total cost etc...
-				var topinfo = '';
-				topinfo +='<table class="table-condensed" style="font-size:16px;border-style: solid;border-color: '+mycol+';border-width: 0px;color:'+mycol+'">';
-				topinfo +='<tr><td>Cost: </td><td>$'+d3.format(",.0f")(overall_cost)+'</td><td>Leakage: </td><td>'+leakage+'</td><td>Max age: </td><td>'+(water_age).toFixed(2)+'</td><td>Pressure deficit: </td><td>'+(pressure_deficit).toFixed(2)+'</td><td>No. deficit nodes: </td><td>'+nb_deficit_nodes+'</td></tr></table>'
-				document.getElementById('info-top').innerHTML=topinfo;	
-				updatePipesColors();
-			}
-			else if (game.game_mode=='aqualibrium'){
+			if (game.game_mode=='aqualibrium'){
 				//console.log(data.result)
 				overall_score=parseFloat(data.result[8]);
 				reservoir_1=parseFloat(data.result[5]);
@@ -8103,178 +6322,8 @@
 				}
 			}
 			
-			if (game.game_mode=='modena'){
-				//console.log(data.result)
-				overall_cost=parseFloat(data.result[5]);
-				leakage=parseFloat(data.result[6]).toFixed(2);
-				water_age=parseFloat(data.result[7]);
-				pressure_deficit=parseFloat(data.result[8]);
-				nb_deficit_nodes=0;
-				user_junctions_data={}
-				var indp=11;
-				for (var i =0; i<junctions_nb;i++){
-					var jid= data.result[indp]
-					indp++;
-					var pmin = parseFloat(data.result[indp]);
-					indp++;
-					var pmax = parseFloat(data.result[indp]);
-					indp++;
-					var maxage= parseFloat(data.result[indp]);
-					indp++;
-					if (jid){
-						user_junctions_data[jid]=[pmin,pmax,maxage];
-						team_junctions_data[jid]=[pmin,pmax,maxage];
-						if (pmin<0){
-							nb_deficit_nodes++;
-						}
-					}
-				}
-				
-				//console.log(user_junctions_data)
-				user_latest_diameters={};
-				user_pipes_leakage={};
-				for (var i =0; i<pipes_nb;i++){
-					var pid= data.result[indp];
-					indp++;
-					var mleakage= parseFloat(data.result[indp]);
-					indp++;
-					var pipediam= parseInt(data.result[indp]);
-					indp++;
-					if (pid){
-						if (all_changeable_pipes.hasOwnProperty(pid)){
-							if (pipediam!=-1 && pipediam!='-1'){
-								user_latest_diameters[pid]=pipediam;
-								team_latest_diameters[pid]=pipediam;
-							}
-							else{
-								delete user_latest_diameters[pid];
-								team_latest_diameters[pid]=pipediam;
-							}
-						}
-						else{
-							if (pipediam!=-1 && pipediam!='-1'){
-								
-								team_latest_diameters[pid]=pipediam;
-							}
-							else{
-								team_latest_diameters[pid]=diameters_2_index[all_pipes[pid]['Diameter']];
-							}
-						}
-						user_pipes_leakage[pid]=mleakage;
-						team_pipes_leakage[pid]=mleakage;
-					}
-				}
-				//console.log(team_latest_diameters[163])
-				// update color of junctions
-				updatePressureNodesColors();
-				
-				// update pipes not under control of the user after the whole team network is changed
-				// the user pipes diameters should not be changed by the team update
-				var def_line_col;
-				// lines
-				if (UIColor=="black"){
-					def_line_col=0xffffff;
-				}
-				else if (UIColor=="white"){
-					def_line_col=0x888888;
-				}
-				if (isWebGl==false){
-					var l_scene = scene.children[0].children.length;		
-					for (var s =0;s<l_scene;s++){
-						if (scene.children[0].children[s].name){
-							if(scene.children[0].children[s].name.startsWith('pf-')) {
-								var cpipe= scene.children[0].children[s].name.split('pf-')[1];
-								var index_diameter=0;
-								if (_.isEmpty(user_latest_diameters)){
-									index_diameter=team_latest_diameters[cpipe];
-								}
-								else{
-									if (user_latest_diameters.hasOwnProperty(cpipe)){
-										index_diameter=user_latest_diameters[cpipe];
-									}
-									else{
-										index_diameter=team_latest_diameters[cpipe];
-									}
-									
-								}
-								var material = new THREE.LineBasicMaterial( { color : def_line_col, linewidth:2+(index_diameter/4), opacity: 0.7 } );
-								scene.children[0].children[s].material=material;
-							}
-						}
-					}
-				}
-				else{
-					var m_group= scene.children[3].children;
-					var l_scene = m_group.length;
-					//console.log(l_scene)
-					for (var s =0;s<l_scene;s++){
-						if (m_group[s].type=="Mesh" ){
-							if (m_group[s].name){ //&& (m_group[s].name=='pc-'+cpipe)) {
-								if(m_group[s].name.startsWith('pf-')) {
-									var cpipe= m_group[s].name.split('pf-')[1];
-									var array_points=[];
-									for (var i=0;i< all_pipes[cpipe]['Vertices'].length;i++ ){
-										 array_points.push( new THREE.Vector3(((parseFloat(all_pipes[cpipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),0, ((parseFloat(all_pipes[cpipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
-									}
-									var curve = new THREE.CatmullRomCurve3(array_points);
-									var index_diameter=0;
-									if (_.isEmpty(user_latest_diameters)){
-										 index_diameter=team_latest_diameters[cpipe];
-									}
-									else{
-										if (user_latest_diameters.hasOwnProperty(cpipe)){
-											index_diameter=user_latest_diameters[cpipe];
-										}
-										else{
-											index_diameter=team_latest_diameters[cpipe];
-										}
-										
-									}
-									var rad=0.8+(index_diameter/(network['pipe_diameters'].length/3));
-									var seg =1;
-									if (array_points.length>2){
-										seg = 12;
-									}
-									var geometry = new THREE.TubeGeometry(
-										curve,  //path
-										seg,    //segments
-										rad,     //radius
-										8,     //radiusSegments
-										false  //closed
-									);
-									geometry.dynamic = true;
-									m_group[s].geometry=geometry;
-									
-								}
-							}
-							
-						}
-					}
-				}
-				updatePipesColors();	
-				// update topinfo message with total cost etc...
-				var topinfo = '';
-				topinfo +='<table class="table-condensed" style="font-size:16px;border-style: solid;border-color: '+mycol+';border-width: 0px;color:'+mycol+'">';
-				topinfo +='<tr><td>Cost: </td><td>$'+d3.format(",.0f")(overall_cost)+'</td><td>Leakage: </td><td>'+leakage+'</td><td>Max age: </td><td>'+(water_age).toFixed(2)+'</td><td>Pressure deficit: </td><td>'+(pressure_deficit).toFixed(2)+'</td><td>No. deficit nodes: </td><td>'+nb_deficit_nodes+'</td></tr></table>'
-				document.getElementById('info-top').innerHTML=topinfo;	
-				// update myhistory + selectvar 
-				
-				var compact_history_start=data.result.slice(1, 10);
-				var compact_history_end= {};
-				for (var i=data.result.length-1-(pipes_nb*3),j=data.result.length-1;i<j;i+=3){
-					if (data.result[i+2]!=-1 && data.result[i]!="" && data.result[i]!=null){
-						compact_history_end[data.result[i]]=data.result[i+2];
-					}
-				}
-				myhistory.push([compact_history_start, compact_history_end])
-				var opt = document.createElement('option');
-				opt.value = myhistory.length-1;
-				//console.log(myhistory[myhistory.length-1][0][4])
-				opt.innerHTML = "result "+(myhistory.length)+" - cost "+parseFloat(myhistory[myhistory.length-1][0][4]).toFixed(1)+" - Pressure diff "+parseFloat(myhistory[myhistory.length-1][0][6]).toFixed(1)+"- age "+parseFloat(myhistory[myhistory.length-1][0][6]).toFixed(1)+" - leakage "+parseFloat(myhistory[myhistory.length-1][0][5]).toFixed(2);
-				mySelect.appendChild(opt);
-				mySelect.value = myhistory.length-1;
-			}
-			else if (game.game_mode=='aqualibrium'){
+			
+			if (game.game_mode=='aqualibrium'){
 				if (myuser.name==data.name){
 					console.log("active")
 					overall_score=parseFloat(data.result[8]);
@@ -8482,216 +6531,8 @@
 		}
 		else if ( ((team==myuser.name) ||(game.players_teams[data.name] && team==game.players_teams[data.name]['team'])) && (data.game==game.name) && (data.type=='d' || data.type=='D')){
 			console.log('User `' + data.name + '` changed dm team network status with a network evaluation - new result available');
-			if (game.game_mode=='modena'){
-			console.log(data.jobid)
-			if (myuser.name==data.name){
-				if (commit_id==data.jobid){
-					console.log(data.jobid)
-					document.getElementById('commit-btn').className = "btn btn-danger";
-					document.getElementById('commit-btn').style.pointerEvents = "auto";
-					commit_id='';
-					if (game.team_size==1){
-						io.socket.put('/committed', {jobid:data.jobid, game:game.name, team:myuser.name, mode: game_mode},function gotResponse(body, response) {
-						   console.log('Sending aknowledgment of receipt to server ');
-						});
-					}
-					else{
-						io.socket.put('/committed', {jobid:data.jobid, game:game.name, team:game.players_teams[data.name]['team'], mode: game_mode},function gotResponse(body, response) {
-						   console.log('Sending aknowledgment of receipt to server ');
-						});
-					}
-					
-				}
-				else{
-					//commit_id==''
-					if (game.team_size==1){
-						io.socket.put('/committed', {jobid:data.jobid, game:game.name, team:myuser.name, mode: game_mode},function gotResponse(body, response) {
-						   console.log('Sending aknowledgment of receipt to server ');
-						});
-					}
-					else{
-						io.socket.put('/committed', {jobid:data.jobid, game:game.name, team:game.players_teams[data.name]['team'], mode: game_mode},function gotResponse(body, response) {
-						   console.log('Sending aknowledgment of receipt to server ');
-						});
-					}
-					//console.log(' a forgotten commit with job id '+data.jobid+'was just sent by server. We will apply it anyway.')
-					//io.socket.put('/committed', {jobid:data.jobid},function gotResponse(body, response) {
-					//   console.log('Sending aknowledgment of receipt to server ');
-					//})
-				}
-			}
 			
 			
-				//console.log(data.result)
-				overall_cost=parseFloat(data.result[5]);
-				
-				leakage=parseFloat(data.result[6]).toFixed(2);
-				water_age=parseFloat(data.result[7]);
-				pressure_deficit=parseFloat(data.result[8]);
-				nb_deficit_nodes=0;
-				user_junctions_data={}
-				var indp=11;
-				for (var i =0; i<junctions_nb;i++){
-					var jid= data.result[indp]
-					indp++;
-					var pmin = parseFloat(data.result[indp]);
-					indp++;
-					var pmax = parseFloat(data.result[indp]);
-					indp++;
-					var maxage= parseFloat(data.result[indp]);
-					indp++;
-					if (jid){
-						user_junctions_data[jid]=[pmin,pmax,maxage];
-						team_junctions_data[jid]=[pmin,pmax,maxage];
-						if (pmin<0){
-							nb_deficit_nodes++;
-						}
-					}
-				}
-				
-				//console.log(user_junctions_data)
-				user_latest_diameters={};
-				user_pipes_leakage={};
-				for (var i =0; i<pipes_nb;i++){
-					var pid= data.result[indp];
-					indp++;
-					var mleakage= parseFloat(data.result[indp]);
-					indp++;
-					var pipediam= parseInt(data.result[indp]);
-					indp++;
-					if (pid){
-						if (all_changeable_pipes.hasOwnProperty(pid)){
-							if (pipediam!=-1 && pipediam!='-1'){
-								user_latest_diameters[pid]=pipediam;
-								team_latest_diameters[pid]=pipediam;
-							}
-							else{
-								delete user_latest_diameters[pid];
-								team_latest_diameters[pid]=pipediam;
-							}
-						}
-						else{
-							if (pipediam!=-1 && pipediam!='-1'){
-								
-								team_latest_diameters[pid]=pipediam;
-							}
-							else{
-								team_latest_diameters[pid]=diameters_2_index[all_pipes[pid]['Diameter']];
-							}
-						}
-						user_pipes_leakage[pid]=mleakage;
-						team_pipes_leakage[pid]=mleakage;
-					}
-				}
-				//console.log(team_latest_diameters[163])
-				// update color of junctions
-				updatePressureNodesColors();
-				
-				// update pipes not under control of the user after the whole team network is changed
-				// the user pipes diameters should not be changed by the team update
-				var def_line_col;
-				// lines
-				if (UIColor=="black"){
-					def_line_col=0xffffff;
-				}
-				else if (UIColor=="white"){
-					def_line_col=0x888888;
-				}
-				if (isWebGl==false){
-					var l_scene = scene.children[0].children.length;		
-					for (var s =0;s<l_scene;s++){
-						if (scene.children[0].children[s].name){
-							if(scene.children[0].children[s].name.startsWith('pf-')) {
-								var cpipe= scene.children[0].children[s].name.split('pf-')[1];
-								var index_diameter=0;
-								if (_.isEmpty(user_latest_diameters)){
-									index_diameter=team_latest_diameters[cpipe];
-								}
-								else{
-									if (user_latest_diameters.hasOwnProperty(cpipe)){
-										index_diameter=user_latest_diameters[cpipe];
-									}
-									else{
-										index_diameter=team_latest_diameters[cpipe];
-									}
-									
-								}
-								var material = new THREE.LineBasicMaterial( { color : def_line_col, linewidth:2+(index_diameter/4), opacity: 0.7 } );
-								scene.children[0].children[s].material=material;
-							}
-						}
-					}
-				}
-				else{
-					var m_group= scene.children[3].children;
-					var l_scene = m_group.length;
-					//console.log(l_scene)
-					for (var s =0;s<l_scene;s++){
-						if (m_group[s].type=="Mesh" ){
-							if (m_group[s].name){ //&& (m_group[s].name=='pc-'+cpipe)) {
-								if(m_group[s].name.startsWith('pf-')) {
-									var cpipe= m_group[s].name.split('pf-')[1];
-									var array_points=[];
-									for (var i=0;i< all_pipes[cpipe]['Vertices'].length;i++ ){
-										 array_points.push( new THREE.Vector3(((parseFloat(all_pipes[cpipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),0, ((parseFloat(all_pipes[cpipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
-									}
-									var curve = new THREE.CatmullRomCurve3(array_points);
-									var index_diameter=0;
-									if (_.isEmpty(user_latest_diameters)){
-										 index_diameter=team_latest_diameters[cpipe];
-									}
-									else{
-										if (user_latest_diameters.hasOwnProperty(cpipe)){
-											index_diameter=user_latest_diameters[cpipe];
-										}
-										else{
-											index_diameter=team_latest_diameters[cpipe];
-										}
-										
-									}
-									var rad=0.8+(index_diameter/(network['pipe_diameters'].length/3));
-									var seg =1;
-									if (array_points.length>2){
-										seg = 12;
-									}
-									var geometry = new THREE.TubeGeometry(
-										curve,  //path
-										seg,    //segments
-										rad,     //radius
-										8,     //radiusSegments
-										false  //closed
-									);
-									geometry.dynamic = true;
-									m_group[s].geometry=geometry;
-									
-								}
-							}
-							
-						}
-					}
-				}
-				updatePipesColors();	
-				// update topinfo message with total cost etc...
-				var topinfo = '';
-				topinfo +='<table class="table-condensed" style="font-size:16px;border-style: solid;border-color: '+mycol+';border-width: 0px;color:'+mycol+'">';
-				topinfo +='<tr><td>Cost: </td><td>$'+d3.format(",.0f")(overall_cost)+'</td><td>Leakage: </td><td>'+leakage+'</td><td>Max age: </td><td>'+(water_age).toFixed(2)+'</td><td>Pressure deficit: </td><td>'+(pressure_deficit).toFixed(2)+'</td><td>No. deficit nodes: </td><td>'+nb_deficit_nodes+'</td></tr></table>'
-				document.getElementById('info-top').innerHTML=topinfo;	
-				// update myhistory + selectvar 
-				
-				var compact_history_start=data.result.slice(1, 11);
-				var compact_history_end= {};
-				for (var i=data.result.length-1-(pipes_nb*3),j=data.result.length-1;i<j;i+=3){
-					if (data.result[i+2]!=-1 && data.result[i]!="" && data.result[i]!=null){
-						compact_history_end[data.result[i]]=data.result[i+2];
-					}
-				}
-				myhistory.push([compact_history_start, compact_history_end])
-				var opt = document.createElement('option');
-				opt.value = myhistory.length-1;
-				opt.innerHTML = "result "+(myhistory.length)+" - cost "+parseFloat(myhistory[myhistory.length-1][0][3]).toFixed(1)+" - Pressure diff "+parseFloat(myhistory[myhistory.length-1][0][6]).toFixed(1)+"- age "+parseFloat(myhistory[myhistory.length-1][0][5]).toFixed(1)+" - leakage "+parseFloat(myhistory[myhistory.length-1][0][4]).toFixed(2);
-				mySelect.appendChild(opt);
-				mySelect.value = myhistory.length-1;
-			}
 			updateSpreadSheet();
 		}
 		

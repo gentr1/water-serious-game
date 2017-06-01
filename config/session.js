@@ -41,7 +41,7 @@ module.exports.session = {
   * session store that can be shared across multiple Sails.js servers        *
   ***************************************************************************/
 
-  // adapter: 'redis',
+  adapter: 'redis',
 
   /***************************************************************************
   *                                                                          *
@@ -52,12 +52,12 @@ module.exports.session = {
   *                                                                          *
   ***************************************************************************/
 
-  // host: 'localhost',
-  // port: 6379,
-  // ttl: <redis session TTL in seconds>,
-  // db: 0,
-  // pass: <redis auth password>,
-  // prefix: 'sess:',
+  host: 'localhost',
+  port: 6379,
+  ttl: 7200,
+  db: 0,
+  pass: 'seriously123',
+  prefix: 'sess:',
 
 
   /***************************************************************************
@@ -67,14 +67,23 @@ module.exports.session = {
   *                                                                          *
   ***************************************************************************/
 
-   adapter: 'mongo',
-   host: 'localhost',
+   // adapter: 'mongo',
+   // host: 'localhost',
    
-   port: 27017,
-   db: 'sails',
-   collection: 'sessions',
-   url: "mongodb://localhost:27017/sails",
-   //url:'mongodb://gameadmin:mypassword@localhost:27017/sails',
+   // port: 27017,
+   // db: 'sails',
+   // collection: 'sessions',
+   // //url: "mongodb://localhost:27017/sails",
+   // url:'mongodb://gameadmin:seriously123@localhost:27017/sails',
+   
+  //adapter: 'sails-pg-session',
+ 
+  //database: 'wds',
+  //host: 'localhost',
+  //user: 'postgres',
+  //password: 'seriously123',
+  ////collection: 'sessions',
+  //port: 5432
   /***************************************************************************
   *                                                                          *
   * Optional Values:                                                         *

@@ -69,6 +69,8 @@
       </nav>
 
       <h1 id="maintitle" align="center" style="height:39px;">EPANET network uploader</h1>
+	  <div style="width:100%; text-align:center;" align="center"><strong>Select game mode</strong>:<select name="select-mode" id="select-mode"  onchange="OnSelectionChangeMode (this)"></div>
+			</select>
 	  <form action="uploadnetwork" enctype="multipart/form-data" method="post">
 		  <div style="width:100%; text-align:center;" align="center">
 		  <br><br>
@@ -149,6 +151,184 @@
     
 	<script src="/js/dependencies/handsontable.full.min.js"></script>
 	<script>
+	var pipe_diameters={'modena':[50,100,125,150,175,200,225,250,300,325,350,400,475],'aqualibrium':[3.7,7.1],'nyc':[36,48,60,72,84,96,108,120,132,144,156,168,180,192,204],'hydraulic':[50,100,125,150,175,200,225,250,300,325,350,400,475]};
+	var pipe_diameters_costs={'modena':[5.00,7.48,9.09,10.89,11.66,13.70,14.96,17.47,19.98,22.20,32.12,36.07,38.34],'aqualibrium':[1.0,1.0],'nyc':[93.58, 133.70, 176.31, 221.04, 267.60, 315.79, 365.45, 416.46, 468.71, 522.11, 576.59, 632.08, 688.54, 745.90, 804.14],'hydraulic':[5.00,7.48,9.09,10.89,11.66,13.70,14.96,17.47,19.98,22.20,32.12,36.07,38.34]};
+	var minMaxDiff={'modena':[-60.0,25.0],'aqualibrium':[-60.0,25.0],'nyc':[-200.0,100.0],'hydraulic':[-60.0,25.0]};
+	
+	
+	var listJunctions=[];
+	var NYC_Default_Pressures={
+			'2':{id: 2, minimumPressure:255, initialPressure:294.434},                             
+			'3':{id: 3, minimumPressure:255, initialPressure:286.729},        
+			'4':{id: 4, minimumPressure:255, initialPressure:284.485},           
+			'5':{id: 5, minimumPressure:255, initialPressure:282.513},           
+			'6':{id: 6, minimumPressure:255, initialPressure:280.998},         
+			'7':{id: 7, minimumPressure:255, initialPressure:278.643},         
+			'8':{id: 8, minimumPressure:255, initialPressure:275.2},            
+			'9':{id: 9, minimumPressure:255, initialPressure:272.696},     
+			'10':{id: 10,minimumPressure:255, initialPressure:272.664},           
+			'11':{id: 11, minimumPressure:255, initialPressure:272.842},           
+			'12':{id: 12,minimumPressure:255, initialPressure:274.214},           
+			'13':{id: 13, minimumPressure:255, initialPressure:277.308},        
+			'14':{id: 14, minimumPressure:255, initialPressure:285.065},            
+			'15':{id: 15, minimumPressure:255, initialPressure:293.106},          
+			'16':{id: 16, minimumPressure:260, initialPressure:211.476},            
+			'17':{id: 17, minimumPressure:272.80, initialPressure:265.401},         
+			'18':{id: 18, minimumPressure:255, initialPressure:158.564},          
+			'19':{id: 19, minimumPressure:255, initialPressure:98.6693},            
+			'20':{id: 20, minimumPressure:255, initialPressure:210.109}        
+	 };  
+	var NYC_Default_Replaceable={
+		'1':false,
+		'2':false,                             
+		'3':false,          
+		'4':false,            
+		'5':false,             
+		'6':false,          
+		'7':false,            
+		'8':false,               
+		'9':false,      
+		'10':false,        
+		'11':false,         
+		'12':false,         
+		'13':false,           
+		'14':false,            
+		'15':false,           
+		'16':false,             
+		'17':false,            
+		'18':false,         
+		'19':false,            
+		'20':false,  
+		'21':false,    		
+	};
+	
+	var AQUA_Default_Replaceable={
+		'1':false,    
+		'26':false,            
+		'27':false,  
+		'28':false,    		
+	};
+	//document.getElementById("game-mode").value='modena';
+	var game_mode = 'modena';
+	
+	// create game mode select
+	var rselect = document.getElementById('select-mode');
+	var opt1 = document.createElement('option');
+	opt1.value = 'modena';
+	opt1.innerHTML = 'modena';
+	rselect.appendChild(opt1);
+	var opt2 = document.createElement('option');
+	opt2.value = 'hydraulic';
+	opt2.innerHTML = 'hydraulic';
+	rselect.appendChild(opt2);
+	var opt3 = document.createElement('option');
+	opt3.value = 'nyc';
+	opt3.innerHTML = 'nyc';
+	rselect.appendChild(opt3);
+	var opt4 = document.createElement('option');
+	opt4.value = 'aqualibrium';
+	opt4.innerHTML = 'aqualibrium';
+	rselect.appendChild(opt4);
+	opt1.selected = true;
+	
+	function OnSelectionChangeMode(select){
+		var selectedOption = select.options[select.selectedIndex];
+		game_mode=selectedOption.value;
+		document.getElementById("pipe-diameters").value=JSON.stringify(pipe_diameters[game_mode]);
+		document.getElementById("pipe-diameters-costs").value=JSON.stringify(pipe_diameters_costs[game_mode]);
+		document.getElementById("min-max-diff-pressure").value=JSON.stringify(minMaxDiff[game_mode]);
+		var copy_diameters=[pipe_diameters[game_mode].slice(0)];
+					var $container0 = $("#table0");
+					$container0.handsontable({
+					  data: copy_diameters,
+					  stretchH: 'all',
+					  //width: 400,
+					  //height: 400,
+					  startRows: 1,
+					  startCols: 16,
+					  rowHeaders: false,
+					  colHeaders: false,
+					  //rowHeaders: ['Diameters'],
+					  //colWidths: [85],
+					  afterChange: function(changes, source) {
+							var listChanged =this.getData();
+							pipe_diameters[game_mode]=[];
+							for (var i=0, j=listChanged[0].length; i<j; i++){
+								if (listChanged[0][i]!=null && listChanged[0][i]!=""){
+									pipe_diameters[game_mode].push(listChanged[0][i])
+								}
+								
+							}							
+							document.getElementById("pipe-diameters").value=JSON.stringify(pipe_diameters[game_mode]);
+							//console.log(pipe_diameters)
+		 
+					  },
+					  minSpareRows: 0,
+					  minSpareCols: 1
+					});
+					
+					var copy_diameters_costs=[pipe_diameters_costs[game_mode].slice(0)];
+					var $container0c = $("#table0c");
+					$container0c.handsontable({
+					  data: copy_diameters_costs,
+					  stretchH: 'all',
+					  //width: 400,
+					  //height: 400,
+					  startRows: 1,
+					  startCols: 16,
+					  rowHeaders: false,
+					  colHeaders: false,
+					  //rowHeaders: ['Diameters'],
+					  //colWidths: [85],
+					  afterChange: function(changes, source) {
+							var listChanged =this.getData();
+							pipe_diameters_costs[game_mode]=[];
+							for (var i=0, j=listChanged[0].length; i<j; i++){
+								if (listChanged[0][i]!=null && listChanged[0][i]!=""){
+									pipe_diameters_costs[game_mode].push(listChanged[0][i])
+								}
+								//console.log(pipe_diameters)
+							}							
+							document.getElementById("pipe-diameters-costs").value=JSON.stringify(pipe_diameters_costs[game_mode]);
+		 
+		 
+					  },
+					  minSpareRows: 0,
+					  minSpareCols: 1
+					});
+					var copy_min_max_diff_pressure=[minMaxDiff[game_mode].slice(0)];
+					var $containermm = $("#tablemm");
+					$containermm.handsontable({
+					  data: copy_min_max_diff_pressure,
+					  stretchH: 'all',
+					  //width: 400,
+					  //height: 400,
+					  startRows: 1,
+					  startCols: 2,
+					  rowHeaders: false,
+					  colHeaders: false,
+					  //rowHeaders: ['Diameters'],
+					  //colWidths: [85],
+					  afterChange: function(changes, source) {
+							var listChanged =this.getData();
+							min_max_diff_pressure=[];
+							for (var i=0, j=listChanged[0].length; i<j; i++){
+								if(listChanged[0][i]=="0" || listChanged[0][i]==0){
+									min_max_diff_pressure.push(listChanged[0][i])
+								}
+								else if (listChanged[0][i]!=null && listChanged[0][i]!=""){
+									min_max_diff_pressure.push(listChanged[0][i])
+								}
+							}							
+							document.getElementById("min-max-diff-pressure").value=JSON.stringify(min_max_diff_pressure);
+		 
+		 
+					  },
+					  minSpareRows: 0//,
+					  //minSpareCols: 1
+					});
+	}
+	
 	function readSingleFile(evt) {
 		//Retrieve the first (and only!) File from the FileList object
 		//console.log(evt.files[0])
@@ -284,11 +464,11 @@
 					var tank_data={};
 					var coord_data=[];
 					var backdrop_data=[];
-					var pipe_diameters=[50,100,125,150,175,200,225,250,300,325,350,400,475];//var pipe_diameters=[36,48,60,72,84,96,108,120,132,144,156,168,180,192,204];
-					document.getElementById("pipe-diameters").value=JSON.stringify(pipe_diameters);
-					var pipe_diameters_costs=[5.00,7.48,9.09,10.89,11.66,13.70,14.96,17.47,19.98,22.20,32.12,36.07,38.34];//var pipe_diameters_costs=[93.58, 133.70, 176.31, 221.04, 267.60, 315.79, 365.45, 416.46, 468.71, 522.11, 576.59, 632.08, 688.54, 745.90, 804.14];
-					document.getElementById("pipe-diameters-costs").value=JSON.stringify(pipe_diameters_costs);
-					var min_max_diff_pressure=[-60.0,25.0];
+					document.getElementById("pipe-diameters").value=JSON.stringify(pipe_diameters[game_mode]);
+					document.getElementById("pipe-diameters-costs").value=JSON.stringify(pipe_diameters_costs[game_mode]);
+					
+					
+					var min_max_diff_pressure=minMaxDiff[game_mode];
 					document.getElementById("min-max-diff-pressure").value=JSON.stringify(min_max_diff_pressure);
 					var min_max_age=[0.0,168.0];
 					document.getElementById("min-max-age").value=JSON.stringify(min_max_age);
@@ -499,7 +679,7 @@
 					else{
 						alert('File does nor seem to contain an enumeration of pipes between [PIPES] and line starting with "[" ');
 					}
-					//console.log(obj_pipes)
+					console.log(obj_pipes)
 					// find pumps
 					if (index_lines['pumps'].length==2){
 						for (var i=index_lines['pumps'][0], j=index_lines['pumps'][1];i<=j;i++){
@@ -813,7 +993,7 @@
 					//console.log(obj_valves)
 					// print list of all different curves parameters applied to pumps
 					//console.log(list_pump_curves)
-					
+					//console.log(game_mode)
 					var listPumps=[];//jQuery.makeArray(obj_pumps);
 					for( var elem in obj_pumps) {
 						var tmp={};
@@ -836,22 +1016,84 @@
 						listValves.push(tmp);
 					}
 					var listPipes=[];//jQuery.makeArray(obj_pumps);
-					for( var elem in obj_pipes) {
-						var tmp={};
-						tmp['ID']=elem;
-						tmp['Status']=obj_pipes[elem]['Status'];
-						tmp['Diameter']=obj_pipes[elem]['Diameter'];
-						tmp['Replaceable']=true;					
-						listPipes.push(tmp);
+					if (game_mode == 'nyc'){
+						for( var elem in obj_pipes) {
+							var tmp={};
+							tmp['ID']=elem;
+							tmp['Status']=obj_pipes[elem]['Status'];
+							tmp['Diameter']=obj_pipes[elem]['Diameter'];
+							if (NYC_Default_Replaceable.hasOwnProperty(elem)){
+								tmp['Replaceable']=NYC_Default_Replaceable[elem];
+							}
+							else{
+								tmp['Replaceable']=true;
+							}					
+							listPipes.push(tmp);
+						}
+						// for (var i=0, j=listPipes.length; i<j; i++){
+							// if (obj_pipes.hasOwnProperty(listPipes[i][0])){
+								// obj_pipes[listPipes[i][0]]['Status']=listPipes[i][1];
+								// obj_pipes[listPipes[i][0]]['Diameter']=listPipes[i][2];
+								// obj_pipes[listPipes[i][0]]['Replaceable']=listPipes[i][3];
+							// }
+						// }
+						// document.getElementById("network-pipes").value=JSON.stringify(obj_pipes);
+					}
+					else if (game_mode == 'aqualibrium'){
+						for( var elem in obj_pipes) {
+							var tmp={};
+							tmp['ID']=elem;
+							tmp['Status']=obj_pipes[elem]['Status'];
+							tmp['Diameter']=obj_pipes[elem]['Diameter'];
+							if (AQUA_Default_Replaceable.hasOwnProperty(elem)){
+								tmp['Replaceable']=AQUA_Default_Replaceable[elem];
+							}
+							else{
+								tmp['Replaceable']=true;
+							}					
+							listPipes.push(tmp);
+						}
+						// for (var i=0, j=listPipes.length; i<j; i++){
+							// if (obj_pipes.hasOwnProperty(listPipes[i][0])){
+								// obj_pipes[listPipes[i][0]]['Status']=listPipes[i][1];
+								// obj_pipes[listPipes[i][0]]['Diameter']=listPipes[i][2];
+								// obj_pipes[listPipes[i][0]]['Replaceable']=listPipes[i][3];
+							// }
+							// document.getElementById("network-pipes").value=JSON.stringify(obj_pipes);
+						// }
+					}
+					else{
+						for( var elem in obj_pipes) {
+							var tmp={};
+							tmp['ID']=elem;
+							tmp['Status']=obj_pipes[elem]['Status'];
+							tmp['Diameter']=obj_pipes[elem]['Diameter'];
+							tmp['Replaceable']=true;					
+							listPipes.push(tmp);
+						}
 					}
 					
-					var listJunctions=[];//jQuery.makeArray(obj_pumps);
-					for( var elem in obj_junctions) {
-						var tmp={};
-						tmp['ID']=elem;
-						tmp['MinPressure']="200.0";		
-						listJunctions.push(tmp);
+					listJunctions=[];//jQuery.makeArray(obj_pumps);
+					if (game_mode == 'nyc'){
+						for( var elem in obj_junctions) {
+							//console.log(elem)
+							//console.log(NYC_Default_Pressures[elem]['minimumPressure'])
+							var tmp={};
+							tmp['ID']=elem;
+							
+							tmp['MinPressure']=""+NYC_Default_Pressures[elem]['minimumPressure'];		
+							listJunctions.push(tmp);
+						}
 					}
+					else{
+						for( var elem in obj_junctions) {
+							var tmp={};
+							tmp['ID']=elem;
+							tmp['MinPressure']="200.0";		
+							listJunctions.push(tmp);
+						}
+					}
+					
 					//obj_pumps=null;
 					//console.log(listPumps)
 					
@@ -883,7 +1125,7 @@
 					});
 					
 					
-					var copy_diameters=[pipe_diameters.slice(0)];
+					var copy_diameters=[pipe_diameters[game_mode].slice(0)];
 					var $container0 = $("#table0");
 					$container0.handsontable({
 					  data: copy_diameters,
@@ -898,14 +1140,14 @@
 					  //colWidths: [85],
 					  afterChange: function(changes, source) {
 							var listChanged =this.getData();
-							pipe_diameters=[];
+							pipe_diameters[game_mode]=[];
 							for (var i=0, j=listChanged[0].length; i<j; i++){
 								if (listChanged[0][i]!=null && listChanged[0][i]!=""){
-									pipe_diameters.push(listChanged[0][i])
+									pipe_diameters[game_mode].push(listChanged[0][i])
 								}
 								
 							}							
-							document.getElementById("pipe-diameters").value=JSON.stringify(pipe_diameters);
+							document.getElementById("pipe-diameters").value=JSON.stringify(pipe_diameters[game_mode]);
 							//console.log(pipe_diameters)
 		 
 					  },
@@ -913,7 +1155,7 @@
 					  minSpareCols: 1
 					});
 					
-					var copy_diameters_costs=[pipe_diameters_costs.slice(0)];
+					var copy_diameters_costs=[pipe_diameters_costs[game_mode].slice(0)];
 					var $container0c = $("#table0c");
 					$container0c.handsontable({
 					  data: copy_diameters_costs,
@@ -928,14 +1170,14 @@
 					  //colWidths: [85],
 					  afterChange: function(changes, source) {
 							var listChanged =this.getData();
-							pipe_diameters_costs=[];
+							pipe_diameters_costs[game_mode]=[];
 							for (var i=0, j=listChanged[0].length; i<j; i++){
 								if (listChanged[0][i]!=null && listChanged[0][i]!=""){
-									pipe_diameters_costs.push(listChanged[0][i])
+									pipe_diameters_costs[game_mode].push(listChanged[0][i])
 								}
 								//console.log(pipe_diameters)
 							}							
-							document.getElementById("pipe-diameters-costs").value=JSON.stringify(pipe_diameters_costs);
+							document.getElementById("pipe-diameters-costs").value=JSON.stringify(pipe_diameters_costs[game_mode]);
 		 
 		 
 					  },
@@ -1079,7 +1321,7 @@
 					  columns: [
 						{data: "ID",editor: false},
 						{data: "Status",type: 'checkbox', checkedTemplate: 'Open', uncheckedTemplate: 'Closed',label: {position: 'before',value: 'Open ? '}},
-						{data: "Diameter", type: 'autocomplete', source: pipe_diameters, strict: false}, 
+						{data: "Diameter", type: 'autocomplete', source: pipe_diameters[game_mode], strict: false}, 
 						{data: "Type",type: 'dropdown', source: ["PRV","PSV","PBV","FCV","TCV","GPV"]},
 						{data: "Setting"}
 					  ],
@@ -1119,13 +1361,15 @@
 							var listChanged =this.getData();
 							//console.log(listChanged)
 							for (var i=0, j=listChanged.length; i<j; i++){
-								if (obj_pipes.hasOwnProperty(listChanged[i][0])){
+								if (obj_pipes.hasOwnProperty(''+listChanged[i][0])){
 									obj_pipes[listChanged[i][0]]['Status']=listChanged[i][1];
 									obj_pipes[listChanged[i][0]]['Diameter']=listChanged[i][2];
 									obj_pipes[listChanged[i][0]]['Replaceable']=listChanged[i][3];
 								}
 							}
+							//console.log(obj_pipes)
 							document.getElementById("network-pipes").value=JSON.stringify(obj_pipes);
+							console.log(obj_pipes)
 					  },
 					  minSpareRows: 0
 					});

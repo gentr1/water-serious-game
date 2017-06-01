@@ -88,8 +88,10 @@
 	var tbl  = document.getElementById('listAllGames');
     //tbl.style.width  = '100px';
     //tbl.style.border = '1px solid black';
+	//console.log(games);
 	for(var i = 0; i < games.length; i++){
 		//console.log(games[i])
+		
 		//console.log(games[i]['players_teams'])
 		//console.log(myuser['name'])
 		var go_on=true;
@@ -103,11 +105,49 @@
 				go_on=false;
 			}
 		}
+		else if (games[i]['game_mode']=='modena'){
+			if (games[i]['players_teams'].hasOwnProperty(myuser['name'])==false){
+				go_on=false;
+			}
+			else{
+				if (games[i]['players_teams'][myuser['name']]['team']==-1 || games[i]['players_teams'][myuser['name']]['team']=='-1'){
+					go_on=false;
+				}
+			}
+				// if (games[i]['players_teams'][myuser['name']]['team']!=myuser['name']){
+					// go_on=false;
+				// }
+			// }
+			// else{
+				// go_on=false;
+			// }
+			// if (games[i]['players_teams'].hasOwnProperty(myuser['name'])){
+				// if (games[i]['players_teams'][myuser['name']]['team']!=myuser['name']){
+					// go_on=false;
+				// }
+			// }
+			// else{
+				// go_on=false;
+			// }
+		}
+		else if (games[i]['game_mode']=='nyc'){
+			if (games[i]['players_teams'].hasOwnProperty(myuser['name'])){
+			//console.log(games[i]['players_teams'])
+			//console.log(games[i]['players_teams'][myuser['name']])
+			//console.log(myuser['name'])
+				if (games[i]['players_teams'][myuser['name']]['team']!=myuser['name']){
+					go_on=false;
+				}
+			}
+			else{
+				go_on=false;
+			}
+		}
 		//var myform = document.createElement("form");
     //myform.action = "myForm.aspx";
    // myform.method = "post";
-
-
+	//console.log(games);
+	//console.log(games[i]['players_teams'][myuser['name']])
     //product = document.createElement("input");
     //product.value = "value";
     //product.name = "name";

@@ -40,13 +40,13 @@ module.exports.connections = {
   * Run: npm install sails-mysql                                             *
   *                                                                          *
   ***************************************************************************/
-  someMysqlServer: {
-    adapter: 'sails-mysql',
-    host: 'YOUR_MYSQL_SERVER_HOSTNAME_OR_IP_ADDRESS',
-    user: 'YOUR_MYSQL_USER',
-    password: 'YOUR_MYSQL_PASSWORD',
-    database: 'YOUR_MYSQL_DB'
-  },
+  // someMysqlServer: {
+    // adapter: 'sails-mysql',
+    // host: 'YOUR_MYSQL_SERVER_HOSTNAME_OR_IP_ADDRESS',
+    // user: 'YOUR_MYSQL_USER',
+    // password: 'YOUR_MYSQL_PASSWORD',
+    // database: 'YOUR_MYSQL_DB'
+  // },
 
   /***************************************************************************
   *                                                                          *
@@ -56,15 +56,21 @@ module.exports.connections = {
   * Run: npm install sails-mongo                                             *
   *                                                                          *
   ***************************************************************************/
-  someMongodbServer: {
-    adapter: 'sails-mongo',
-    host: 'localhost',
-    port: 27017,
-    //user: 'gameadmin',
-    //password: 'mypassword',
-   database: 'sails'
-  },
-
+  // someMongodbServer: {
+    // adapter: 'sails-mongo',
+    // host: 'localhost',
+    // port: 27017,
+    // user: 'gameadmin',
+    // password: 'seriously123',
+   // database: 'wds'
+  // },
+  // someRedisServer: {
+	  // adapter: 'sails-redis',
+	  // port: 6379,
+	  // host: 'localhost',
+	  // password: 'seriously123',
+	  // database: 0,
+  // },
   /***************************************************************************
   *                                                                          *
   * PostgreSQL is another officially supported relational database.          *
@@ -76,10 +82,13 @@ module.exports.connections = {
   ***************************************************************************/
   somePostgresqlServer: {
     adapter: 'sails-postgresql',
-    host: 'YOUR_POSTGRES_SERVER_HOSTNAME_OR_IP_ADDRESS',
-    user: 'YOUR_POSTGRES_USER',
-    password: 'YOUR_POSTGRES_PASSWORD',
-    database: 'YOUR_POSTGRES_DB'
+    host: 'localhost',
+    user: 'postgres',
+	port: 5432,
+	poolSize: 10,
+	ssl: false,
+    password: 'seriously123',
+    database: 'wds'
   }
 
 

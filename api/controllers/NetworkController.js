@@ -7,7 +7,7 @@
 var fs = require('fs');
 module.exports = {
 	create: function(req, res) {
-		//console.log(req.param('network-name'));
+		//console.log(req.param('network-pipes'));
 		var fname=req.param('network-name');
 		Network.find({select: ['name']}).exec(function(err, results) {
 			if(err) {
@@ -157,7 +157,7 @@ module.exports = {
 			return res.view('homepage');
 		  }
 		  if (user.admin==true){
-			  Network.find({select: ['name']}).exec(function(err, results) {
+			  Network.find({select: ['name','id']}).exec(function(err, results) {
 				  return res.view('network/index', {
 					me: {
 					  id: user.id,
@@ -187,15 +187,18 @@ module.exports = {
 	show: function(req, res) {
 		if (req.session.me) {
 			User.findOne(req.session.me, function (err, user){
+				
 			  if (err) {
 				return res.negotiate(err);
 			  }
-
+	
 			  if (!user) {
 				sails.log.verbose('Session refers to a user who no longer exists- did you delete a user, then try to refresh the page with an open tab logged-in as that user?');
 				return res.view('homepage');
 			  }
+			  //console.log(user.name);
 			  if (user.admin==true){
+				
 				  Network.findOne(req.param('nid')).exec(function(err, result) {
 					  return res.view('network/show', {
 						me: {
