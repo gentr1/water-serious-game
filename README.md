@@ -54,47 +54,47 @@ sudo mkdir /etc/redis
 
 . . .
 
-# If you run Redis from upstart or systemd, Redis can interact with your
-# supervision tree. Options:
-#   supervised no      - no supervision interaction
-#   supervised upstart - signal upstart by putting Redis into SIGSTOP mode
-#   supervised systemd - signal systemd by writing READY=1 to $NOTIFY_SOCKET
-#   supervised auto    - detect upstart or systemd method based on
-#                        UPSTART_JOB or NOTIFY_SOCKET environment variables
-# Note: these supervision methods only signal "process is ready."
-#       They do not enable continuous liveness pings back to your supervisor.
+/ If you run Redis from upstart or systemd, Redis can interact with your
+/ supervision tree. Options:
+/   supervised no      - no supervision interaction
+/   supervised upstart - signal upstart by putting Redis into SIGSTOP mode
+/   supervised systemd - signal systemd by writing READY=1 to $NOTIFY_SOCKET
+/   supervised auto    - detect upstart or systemd method based on
+/                        UPSTART_JOB or NOTIFY_SOCKET environment variables
+/ Note: these supervision methods only signal "process is ready."
+/       They do not enable continuous liveness pings back to your supervisor.
 supervised systemd
 
 . . .
 
 . . .
 
-# The working directory.
-#
-# The DB will be written inside this directory, with the filename specified
-# above using the 'dbfilename' configuration directive.
-#
-# The Append Only File will also be created inside this directory.
-#
-# Note that you must specify a directory here, not a file name.
+/ The working directory.
+/
+/ The DB will be written inside this directory, with the filename specified
+/ above using the 'dbfilename' configuration directive.
+/
+/ The Append Only File will also be created inside this directory.
+/
+/ Note that you must specify a directory here, not a file name.
 dir /var/lib/redis
 
 . . .
 
 . . .
-################################## SECURITY ###################################
+/################################# SECURITY ###################################
 
-# Require clients to issue AUTH <PASSWORD> before processing any other
-# commands.  This might be useful in environments in which you do not trust
-# others with access to the host running redis-server.
-#
-# This should stay commented out for backward compatibility and because most
-# people do not need auth (e.g. they run their own servers).
-#
-# Warning: since Redis is pretty fast an outside user can try up to
-# 150k passwords per second against a good box. This means that you should
-# use a very strong password otherwise it will be very easy to break.
-#
+/ Require clients to issue AUTH <PASSWORD> before processing any other
+/ commands.  This might be useful in environments in which you do not trust
+/ others with access to the host running redis-server.
+/
+/ This should stay commented out for backward compatibility and because most
+/ people do not need auth (e.g. they run their own servers).
+/
+/ Warning: since Redis is pretty fast an outside user can try up to
+/ 150k passwords per second against a good box. This means that you should
+/ use a very strong password otherwise it will be very easy to break.
+/
 requirepass <mypassword>
 
 . . .
