@@ -98,7 +98,7 @@ adapter: 'redis',
 You can either use:
 sudo sails lift --port 80
 or 
-sudo forever node app.js --port 80
+sudo forever start app.js --port 80
 if you want the game server to start in a forever process that would restart immmediately if the server was to close because of a problem...
 
 You can now try the game if you open your chrome or chromium browser at the address: localhost.
