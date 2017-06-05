@@ -205,7 +205,9 @@ adapter: 'redis',
 ```
 ...
 
-16 - (finally) run the game server.
+16 - check that all the executables whose name finishes with "-lin.exe" in the folder /assets/game-engine/ have the permission to be executable by the user. e.g. righ clik on executable, get to properties, permissions, and then click on the checkbox "allow executing file as program".
+
+17 - (finally) run the game server.
 You can either use:
 ```sudo sails lift --port 80```
 or 
