@@ -221,7 +221,9 @@ For further steps on how to configure and play games see youtube video https://y
 ///////////////////////
 installation on WINDOWS
 ///////////////////////
+
 1- You have decided to use the same password called ***mypassword*** that you will use for both the redis and the postgresql database servers.
+
 2- install a REDIS database server for windows 
 Go to and download at :
 https://github.com/MSOpenTech/redis/releases
