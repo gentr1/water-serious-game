@@ -56,7 +56,7 @@ process.chdir(__dirname);
 	
   // Start server
   sails.lift(rc('sails'));
-   setInterval(function() {
-	    global.gc(); 
-	 }, 30000);
+   //setInterval(function() {
+	//    global.gc(); 
+	// }, 30000);
 })();
