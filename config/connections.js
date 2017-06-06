@@ -61,14 +61,14 @@ module.exports.connections = {
     // host: 'localhost',
     // port: 27017,
     // user: 'gameadmin',
-    // password: 'seriously123',
+    // password: 'mypassword',
    // database: 'wds'
   // },
   // someRedisServer: {
 	  // adapter: 'sails-redis',
 	  // port: 6379,
 	  // host: 'localhost',
-	  // password: 'seriously123',
+	  // password: 'mypassword',
 	  // database: 0,
   // },
   /***************************************************************************
@@ -87,7 +87,7 @@ module.exports.connections = {
 	port: 5432,
 	poolSize: 10,
 	ssl: false,
-    password: 'seriously123',
+    password: 'mypassword',
     database: 'wds'
   }
 

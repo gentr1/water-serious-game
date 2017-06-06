@@ -56,7 +56,7 @@ module.exports.session = {
   port: 6379,
   ttl: 7200,
   db: 0,
-  pass: 'seriously123',
+  pass: 'mypassword',
   prefix: 'sess:',
 
 
@@ -81,7 +81,7 @@ module.exports.session = {
   //database: 'wds',
   //host: 'localhost',
   //user: 'postgres',
-  //password: 'seriously123',
+  //password: 'mypassword',
   ////collection: 'sessions',
   //port: 5432
   /***************************************************************************
