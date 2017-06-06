@@ -258,8 +258,8 @@ postgres=# create database wds;
 You can now connect to the database "wds"
 ```
 postgres=# \c wds;
-You are now connected to database "mydb" as user "postgres".
-mydb=#
+You are now connected to database "wds" as user "postgres".
+wds=#
 ```
 type \q to exit the database command line.
 
