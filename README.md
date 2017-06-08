@@ -268,8 +268,8 @@ e.g. cd Documents/myseriousgame/
 Go to  https://nodejs.org/en/ and download and install a recent stable version of node.js.
 Open a command line and type:
 ```
-sudo npm install sails -g
-sudo npm install forever -g
+npm install sails -g
+npm install forever -g
 npm install
 ```
 15- in the serious game folder, edit 2 files:
