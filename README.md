@@ -329,7 +329,7 @@ You can either use:
 ```sudo sails lift --port 80```
 or 
 ```forever start app.js --port 80```
-if you want the game server to start in a forever process that would restart immmediately if the server was to close because of a problem... to stop a forever process you would need to do ```forever stop app.js```. To stop the sails lift process, just do control C on the command line and type y to confirm. Note that depending on the amount of memeory you have on your server, you might want to increase or decrease the maximum size of the memory (in mb) the game server is allowed to use. e.g. ```sudo forever start -c "node --max-old-space-size=8000" app.js --port 80```  or   ```node --max-old-space-size=8000 app.js --port 80```...
+if you want the game server to start in a forever process that would restart immmediately if the server was to close because of a problem... to stop a forever process you would need to do ```forever stop app.js```. To stop the sails lift process, just do control C on the command line and type y to confirm. Note that depending on the amount of memeory you have on your server, you might want to increase or decrease the maximum size of the memory (in mb) the game server is allowed to use. e.g. ```forever start -c "node --max-old-space-size=8000" app.js --port 80```  or   ```node --max-old-space-size=8000 app.js --port 80```...
 
 You can now try the game if you open your chrome or chromium browser at the address: localhost.
 For further steps on how to configure and play games see youtube video https://youtu.be/GushFK9RWBs
