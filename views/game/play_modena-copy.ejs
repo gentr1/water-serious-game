@@ -1750,8 +1750,7 @@
 			
 			particle.position.x = ((all_junctions[junction]['X-Coord']-left_coord)*scale_3d)-(max_3d_width*0.5);//Math.random() * 2 - 1;
 			
-			//particle.position.y = 0;//Math.random() * 2 - 1;
-			particle.position.y = ((parseFloat(all_junctions[junction]['Elev']))*scale_3d*-2.0);
+			particle.position.y = 0;//Math.random() * 2 - 1;
 			particle.position.z = ((all_junctions[junction]['Y-Coord']-low_coord)*scale_3d)-(max_3d_width*0.5);//Math.random() * 2 - 1;
 			particle.scale.x = particle.scale.y = scale_nodes;
 			particle.name = "j-"+junction;
@@ -1764,8 +1763,7 @@
 			if (game.game_mode=='modena'){
 				var particleText = new THREE.Sprite(textmaterial);
 				particleText.position.x = ((all_junctions[junction]['X-Coord']-left_coord)*scale_3d)-(max_3d_width*0.5);//Math.random() * 2 - 1;
-				//particleText.position.y = 0;//Math.random() * 2 - 1;
-				particleText.position.y = ((parseFloat(all_junctions[junction]['Elev']))*scale_3d*-2.0);
+				particleText.position.y = 0;//Math.random() * 2 - 1;
 				particleText.position.z = ((all_junctions[junction]['Y-Coord']-low_coord)*scale_3d)-(max_3d_width*0.5);//Math.random() * 2 - 1;
 				particleText.scale.y=22;
 				particleText.scale.x=22;
@@ -1790,8 +1788,7 @@
 				var smaterial = new THREE.MeshLambertMaterial( { color: mycolor, shading: THREE.SmoothShading } ) ;//new THREE.MeshPhongMaterial( { color: 0x00ff00, specular: 0xffffff, shininess: 1, shading: THREE.FlatShading } )//new THREE.MeshNormalMaterial( ) ;//new THREE.MeshLambertMaterial( { color: 0xcccccc, shading: THREE.FlatShading } );//new THREE.MeshBasicMaterial( {color:0xff0000});
 				var sphere = new THREE.Mesh( geometry, smaterial );
 				sphere.position.x = ((parseFloat(all_junctions[junction]['X-Coord'])-left_coord)*scale_3d)-(max_3d_width*0.5);//Math.random() * 2 - 1;
-				//sphere.position.y = 0;//Math.random() * 2 - 1;
-				sphere.position.y = ((parseFloat(all_junctions[junction]['Elev']))*scale_3d*-2.0);
+				sphere.position.y = 0;//Math.random() * 2 - 1;
 				sphere.position.z = ((all_junctions[junction]['Y-Coord']-low_coord)*scale_3d)-(max_3d_width*0.5);//Math.random() * 2 - 1;
 				sphere.name = "j-"+junction;
 				lines.add( sphere );
@@ -1804,8 +1801,7 @@
 					textmaterial.depthTest = false;
 					var particleText = new THREE.Sprite(textmaterial);
 					particleText.position.x = ((parseFloat(all_junctions[junction]['X-Coord'])-left_coord)*scale_3d)-(max_3d_width*0.5);//Math.random() * 2 - 1;
-					//particleText.position.y = 0;//Math.random() * 2 - 1;
-					particleText.position.y = ((parseFloat(all_junctions[junction]['Elev']))*scale_3d*-2.0);
+					particleText.position.y = 0;//Math.random() * 2 - 1;
 					particleText.position.z = ((all_junctions[junction]['Y-Coord']-low_coord)*scale_3d)-(max_3d_width*0.5);//Math.random() * 2 - 1;
 					particleText.scale.y=22;
 					particleText.scale.x=22;
@@ -1828,8 +1824,7 @@
 				var smaterial = new THREE.MeshLambertMaterial( { color: mycolor, shading: THREE.SmoothShading } ) ;//new THREE.MeshPhongMaterial( { color: 0x00ff00, specular: 0xffffff, shininess: 1, shading: THREE.FlatShading } )//new THREE.MeshNormalMaterial( ) ;//new THREE.MeshLambertMaterial( { color: 0xcccccc, shading: THREE.FlatShading } );//new THREE.MeshBasicMaterial( {color:0xff0000});
 				var sphere = new THREE.Mesh( geometry, smaterial );
 				sphere.position.x = ((parseFloat(all_junctions[junction]['X-Coord'])-left_coord)*scale_3d)-(max_3d_width*0.5);//Math.random() * 2 - 1;
-				//sphere.position.y = 0;//Math.random() * 2 - 1;
-				sphere.position.y = ((parseFloat(all_junctions[junction]['Elev']))*scale_3d*-2.0);
+				sphere.position.y = 0;//Math.random() * 2 - 1;
 				sphere.position.z = ((all_junctions[junction]['Y-Coord']-low_coord)*scale_3d)-(max_3d_width*0.5);//Math.random() * 2 - 1;
 				sphere.name = "j-"+junction;
 				lines.add( sphere );
@@ -1841,8 +1836,7 @@
 				textmaterial.depthTest = false;
 				var particleText = new THREE.Sprite(textmaterial);
 				particleText.position.x = ((parseFloat(all_junctions[junction]['X-Coord'])-left_coord)*scale_3d)-(max_3d_width*0.5);//Math.random() * 2 - 1;
-				//particleText.position.y = 0;//Math.random() * 2 - 1;
-				particleText.position.y = ((parseFloat(all_junctions[junction]['Elev']))*scale_3d*-2.0);
+				particleText.position.y = 0;//Math.random() * 2 - 1;
 				particleText.position.z = ((all_junctions[junction]['Y-Coord']-low_coord)*scale_3d)-(max_3d_width*0.5);//Math.random() * 2 - 1;
 				particleText.scale.y=22;
 				particleText.scale.x=22;
@@ -1875,8 +1869,7 @@
 			
 			particle.position.x = ((all_reservoirs[reservoir]['X-Coord']-left_coord)*scale_3d)-(max_3d_width*0.5);//Math.random() * 2 - 1;
 			
-			//particle.position.y = 0;//Math.random() * 2 - 1;
-			particle.position.y = ((parseFloat(all_reservoirs[reservoir]['Head']))*scale_3d*-2.0)-6.0;
+			particle.position.y = 0;//Math.random() * 2 - 1;
 			particle.position.z = ((all_reservoirs[reservoir]['Y-Coord']-low_coord)*scale_3d)-(max_3d_width*0.5);//Math.random() * 2 - 1;
 			particle.scale.x = particle.scale.y = 15;
 			particle.name = "r-"+reservoir;
@@ -1895,8 +1888,7 @@
 				else{
 					particleText.position.x = ((all_reservoirs[reservoir]['X-Coord']-left_coord)*scale_3d)-(max_3d_width*0.5)-15;//Math.random() * 2 - 1;
 				}
-				//particleText.position.y = 0;//Math.random() * 2 - 1;
-				particleText.position.y = ((parseFloat(all_reservoirs[reservoir]['Head']))*scale_3d*-2.0)-6.0;
+				particleText.position.y = 0;//Math.random() * 2 - 1;
 				particleText.position.z = ((all_reservoirs[reservoir]['Y-Coord']-low_coord)*scale_3d)-(max_3d_width*0.5);//Math.random() * 2 - 1;
 				particleText.scale.y=22;
 				particleText.scale.x=22;
@@ -1950,8 +1942,8 @@
 				var sphere = new THREE.Mesh( geometry, smaterial );
 				sphere.position.x = ((parseFloat(all_reservoirs[reservoir]['X-Coord'])-left_coord)*scale_3d)-(max_3d_width*0.5);//Math.random() * 2 - 1;
 				
-				//sphere.position.y = -6;//Math.random() * 2 - 1;
-				sphere.position.y = ((parseFloat(all_reservoirs[reservoir]['Head']))*scale_3d*-2.0)-6.0;
+				sphere.position.y = -6;//Math.random() * 2 - 1;
+				
 				
 				sphere.position.z = ((all_reservoirs[reservoir]['Y-Coord']-low_coord)*scale_3d)-(max_3d_width*0.5);//Math.random() * 2 - 1;
 				sphere.name = "r-"+reservoir;
@@ -1982,8 +1974,7 @@
 				else{
 					particleText.position.x = particleText.position.x = ((parseFloat(all_reservoirs[reservoir]['X-Coord'])-left_coord)*scale_3d)-(max_3d_width*0.5)-15;//Math.random() * 2 - 1;
 				}
-				//particleText.position.y = 0;//Math.random() * 2 - 1;
-				particleText.position.y = ((parseFloat(all_reservoirs[reservoir]['Head']))*scale_3d*-2.0)-6.0;
+				particleText.position.y = 0;//Math.random() * 2 - 1;
 				particleText.position.z = ((all_reservoirs[reservoir]['Y-Coord']-low_coord)*scale_3d)-(max_3d_width*0.5);//Math.random() * 2 - 1;
 				particleText.scale.y=22;
 				particleText.scale.x=22;
@@ -2008,8 +1999,8 @@
 				var sphere = new THREE.Mesh( geometry, smaterial );
 				sphere.position.x = ((parseFloat(all_reservoirs[reservoir]['X-Coord'])-left_coord)*scale_3d)-(max_3d_width*0.5);//Math.random() * 2 - 1;
 				
-				//sphere.position.y = -6;//Math.random() * 2 - 1;
-				sphere.position.y = ((parseFloat(all_reservoirs[reservoir]['Head']))*scale_3d*-2.0)-6.0;
+				sphere.position.y = -6;//Math.random() * 2 - 1;
+				
 				
 				sphere.position.z = ((all_reservoirs[reservoir]['Y-Coord']-low_coord)*scale_3d)-(max_3d_width*0.5);//Math.random() * 2 - 1;
 				sphere.name = "r-"+reservoir;
@@ -2038,8 +2029,7 @@
 				else{
 					particleText.position.x = particleText.position.x = ((parseFloat(all_reservoirs[reservoir]['X-Coord'])-left_coord)*scale_3d)-(max_3d_width*0.5)-15;//Math.random() * 2 - 1;
 				}
-				//particleText.position.y = 0;//Math.random() * 2 - 1;
-				particleText.position.y = ((parseFloat(all_reservoirs[reservoir]['Head']))*scale_3d*-2.0)-6.0;
+				particleText.position.y = 0;//Math.random() * 2 - 1;
 				particleText.position.z = ((all_reservoirs[reservoir]['Y-Coord']-low_coord)*scale_3d)-(max_3d_width*0.5);//Math.random() * 2 - 1;
 				particleText.scale.y=22;
 				particleText.scale.x=22;
@@ -2186,46 +2176,19 @@
 			for (var i=0;i< all_changeable_pipes[pipe]['Vertices'].length;i++ ){
 				array_points.push( new THREE.Vector2(((parseFloat(all_changeable_pipes[pipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5), ((parseFloat(all_changeable_pipes[pipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
 			}
-			var height1=0.0;
-			var height2=0.0;
-			if (all_junctions[parseInt(all_changeable_pipes[pipe]['Node1'])] && all_junctions[parseInt(all_changeable_pipes[pipe]['Node1'])].hasOwnProperty('Elev')){
-				height1=((parseFloat(all_junctions[all_changeable_pipes[pipe]['Node1']]['Elev']))*scale_3d*-2.0);
-				//console.log('success')
-			}
-			else if (all_reservoirs[parseInt(all_changeable_pipes[pipe]['Node1'])] && all_reservoirs[parseInt(all_changeable_pipes[pipe]['Node1'])].hasOwnProperty('Head')){
-				height1=((parseFloat(all_reservoirs[all_changeable_pipes[pipe]['Node1']]['Head']))*scale_3d*-2.0)-6.0;
-				//console.log('success2')
-			}
-			else{
-				height1=0.0;
-			}
-			if (all_junctions[parseInt(all_changeable_pipes[pipe]['Node2'])] && all_junctions[parseInt(all_changeable_pipes[pipe]['Node2'])].hasOwnProperty('Elev')){
-				height2=((parseFloat(all_junctions[all_changeable_pipes[pipe]['Node2']]['Elev']))*scale_3d*-2.0);
-			}
-			else if (all_reservoirs[parseInt(all_changeable_pipes[pipe]['Node2'])] && all_reservoirs[parseInt(all_changeable_pipes[pipe]['Node2'])].hasOwnProperty('Head')){
-				height2=((parseFloat(all_reservoirs[all_changeable_pipes[pipe]['Node2']]['Head']))*scale_3d*-2.0)-6.0;
-			}
-			else{
-				height2=0.0;
-			}
-			var nbpts = all_changeable_pipes[pipe]['Vertices'].length;
+			
 			var curve = new THREE.SplineCurve( array_points);
 			
 			var path; 
-			var geometry;
-			if (array_points.length==2){
-				path = new THREE.Path( curve.getPoints( 1 ) );
-				geometry = path.createPointsGeometry( 1);
-			}
-			else{
-				path = new THREE.Path( curve.getPoints( 10 ) );
-				geometry = path.createPointsGeometry( 10 );
-			}
-			
-			for (var nbv= 0;nbv<geometry.vertices.length;nbv++){
-				geometry.vertices[nbv]['z'] = -(height1+ (((nbv)/(nbpts-1.0))*(height2-height1)));
-			}
-			
+				var geometry;
+				if (array_points.length==2){
+					path = new THREE.Path( curve.getPoints( 1 ) );
+					geometry = path.createPointsGeometry( 1);
+				}
+				else{
+					path = new THREE.Path( curve.getPoints( 10 ) );
+					geometry = path.createPointsGeometry( 10 );
+				}
 			geometry.dynamic = true
 			var default_col = 0xff0000;
 			//if (user_latest_diameters[i]!=0){
@@ -2291,29 +2254,6 @@
 			
 			// create curve
 			var array_points=[];
-			var height1=0.0;
-			var height2=0.0;
-			if (all_junctions[parseInt(all_fixed_pipes[pipe]['Node1'])] && all_junctions[parseInt(all_fixed_pipes[pipe]['Node1'])].hasOwnProperty('Elev')){
-				height1=((parseFloat(all_junctions[all_fixed_pipes[pipe]['Node1']]['Elev']))*scale_3d*-2.0);
-				//console.log('success')
-			}
-			else if (all_reservoirs[parseInt(all_fixed_pipes[pipe]['Node1'])] && all_reservoirs[parseInt(all_fixed_pipes[pipe]['Node1'])].hasOwnProperty('Head')){
-				height1=((parseFloat(all_reservoirs[all_fixed_pipes[pipe]['Node1']]['Head']))*scale_3d*-2.0)-6.0;
-				//console.log('success2')
-			}
-			else{
-				height1=0.0;
-			}
-			if (all_junctions[parseInt(all_fixed_pipes[pipe]['Node2'])] && all_junctions[parseInt(all_fixed_pipes[pipe]['Node2'])].hasOwnProperty('Elev')){
-				height2=((parseFloat(all_junctions[all_fixed_pipes[pipe]['Node2']]['Elev']))*scale_3d*-2.0);
-			}
-			else if (all_reservoirs[parseInt(all_fixed_pipes[pipe]['Node2'])] && all_reservoirs[parseInt(all_fixed_pipes[pipe]['Node2'])].hasOwnProperty('Head')){
-				height2=((parseFloat(all_reservoirs[all_fixed_pipes[pipe]['Node2']]['Head']))*scale_3d*-2.0)-6.0;
-			}
-			else{
-				height2=0.0;
-			}
-			var nbpts = all_fixed_pipes[pipe]['Vertices'].length;
 			for (var i=0;i< all_fixed_pipes[pipe]['Vertices'].length;i++ ){
 				array_points.push( new THREE.Vector2(((parseFloat(all_fixed_pipes[pipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5), ((parseFloat(all_fixed_pipes[pipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
 			}
@@ -2321,18 +2261,15 @@
 			var curve = new THREE.SplineCurve( array_points);
 			
 			var path; 
-			var geometry;
-			if (array_points.length==2){
-				path = new THREE.Path( curve.getPoints( 1 ) );
-				geometry = path.createPointsGeometry( 1);
-			}
-			else{
-				path = new THREE.Path( curve.getPoints( 10 ) );
-				geometry = path.createPointsGeometry( 10 );
-			}
-			for (var nbv= 0;nbv<geometry.vertices.length;nbv++){
-				geometry.vertices[nbv]['z'] = -(height1+ (((nbv)/(nbpts-1.0))*(height2-height1)));
-			}
+				var geometry;
+				if (array_points.length==2){
+					path = new THREE.Path( curve.getPoints( 1 ) );
+					geometry = path.createPointsGeometry( 1);
+				}
+				else{
+					path = new THREE.Path( curve.getPoints( 10 ) );
+					geometry = path.createPointsGeometry( 10 );
+				}
 			geometry.dynamic = true
 			//var default_col = 0xff0000;
 			//if (user_latest_diameters[i]!=0){
@@ -2357,38 +2294,11 @@
 	else{
 
 		if (detailLevel==1){
-			//console.log(all_junctions)
-			//console.log(all_changeable_pipes)
 			for (pipe in all_changeable_pipes) {
 				var array_points=[];
-				var height1=0.0;
-				var height2=0.0;
-				if (all_junctions[parseInt(all_changeable_pipes[pipe]['Node1'])] && all_junctions[parseInt(all_changeable_pipes[pipe]['Node1'])].hasOwnProperty('Elev')){
-					height1=((parseFloat(all_junctions[all_changeable_pipes[pipe]['Node1']]['Elev']))*scale_3d*-2.0);
-					//console.log('success')
-				}
-				else if (all_reservoirs[parseInt(all_changeable_pipes[pipe]['Node1'])] && all_reservoirs[parseInt(all_changeable_pipes[pipe]['Node1'])].hasOwnProperty('Head')){
-					height1=((parseFloat(all_reservoirs[all_changeable_pipes[pipe]['Node1']]['Head']))*scale_3d*-2.0)-6.0;
-					//console.log('success2')
-				}
-				else{
-					height1=0.0;
-				}
-				if (all_junctions[parseInt(all_changeable_pipes[pipe]['Node2'])] && all_junctions[parseInt(all_changeable_pipes[pipe]['Node2'])].hasOwnProperty('Elev')){
-					height2=((parseFloat(all_junctions[all_changeable_pipes[pipe]['Node2']]['Elev']))*scale_3d*-2.0);
-				}
-				else if (all_reservoirs[parseInt(all_changeable_pipes[pipe]['Node2'])] && all_reservoirs[parseInt(all_changeable_pipes[pipe]['Node2'])].hasOwnProperty('Head')){
-					height2=((parseFloat(all_reservoirs[all_changeable_pipes[pipe]['Node2']]['Head']))*scale_3d*-2.0)-6.0;
-				}
-				else{
-					height2=0.0;
-				}
-				//var height1=((parseFloat(all_junctions[all_changeable_pipes[pipe]['Node1']]['Elev']))*scale_3d*-2.0);
-				//var height2=((parseFloat(all_junctions[all_changeable_pipes[pipe]['Node2']]['Elev']))*scale_3d*-2.0);
-				var nbpts = all_changeable_pipes[pipe]['Vertices'].length;
 				for (var i=0;i< all_changeable_pipes[pipe]['Vertices'].length;i++ ){
 					//array_points.push( new THREE.Vector3(((parseFloat(all_changeable_pipes[pipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),0, ((parseFloat(all_changeable_pipes[pipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
-					array_points.push( new THREE.Vector3(((parseFloat(all_changeable_pipes[pipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),height1+ (((i)/(nbpts-1.0))*(height2-height1)), ((parseFloat(all_changeable_pipes[pipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
+					array_points.push( new THREE.Vector3(((parseFloat(all_changeable_pipes[pipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),0, ((parseFloat(all_changeable_pipes[pipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
 				}
 				var curve = new THREE.CatmullRomCurve3(array_points);
 				var index_diameter=0;
@@ -2456,36 +2366,12 @@
 				mesh.name="pc-"+pipe;
 				lines.add(mesh);
 			}
-			
 			for (pipe in all_fixed_pipes) {
 				var array_points=[];
-				var height1=0.0;
-				var height2=0.0;
-				if (all_junctions[parseInt(all_fixed_pipes[pipe]['Node1'])] && all_junctions[parseInt(all_fixed_pipes[pipe]['Node1'])].hasOwnProperty('Elev')){
-					height1=((parseFloat(all_junctions[all_fixed_pipes[pipe]['Node1']]['Elev']))*scale_3d*-2.0);
-					//console.log('success')
-				}
-				else if (all_reservoirs[parseInt(all_fixed_pipes[pipe]['Node1'])] && all_reservoirs[parseInt(all_fixed_pipes[pipe]['Node1'])].hasOwnProperty('Head')){
-					height1=((parseFloat(all_reservoirs[all_fixed_pipes[pipe]['Node1']]['Head']))*scale_3d*-2.0)-6.0;
-					//console.log('success2')
-				}
-				else{
-					height1=0.0;
-				}
-				if (all_junctions[parseInt(all_fixed_pipes[pipe]['Node2'])] && all_junctions[parseInt(all_fixed_pipes[pipe]['Node2'])].hasOwnProperty('Elev')){
-					height2=((parseFloat(all_junctions[all_fixed_pipes[pipe]['Node2']]['Elev']))*scale_3d*-2.0);
-				}
-				else if (all_reservoirs[parseInt(all_fixed_pipes[pipe]['Node2'])] && all_reservoirs[parseInt(all_fixed_pipes[pipe]['Node2'])].hasOwnProperty('Head')){
-					height2=((parseFloat(all_reservoirs[all_fixed_pipes[pipe]['Node2']]['Head']))*scale_3d*-2.0)-6.0;
-				}
-				else{
-					height2=0.0;
-				}
-				var nbpts = all_fixed_pipes[pipe]['Vertices'].length;
 				for (var i=0;i< all_fixed_pipes[pipe]['Vertices'].length;i++ ){
 					//console.log(all_fixed_pipes[pipe]['Node1'])
 					//console.log(all_fixed_pipes[pipe]['Node2'])
-					var ypos=height1+ (((i)/(nbpts-1.0))*(height2-height1));
+					var ypos=0.0;
 					
 					array_points.push( new THREE.Vector3(((parseFloat(all_fixed_pipes[pipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),ypos, ((parseFloat(all_fixed_pipes[pipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
 				}
@@ -2548,31 +2434,8 @@
 			// }
 			for (pipe in all_changeable_pipes) {
 				var array_points=[];
-				var height1=0.0;
-				var height2=0.0;
-				if (all_junctions[parseInt(all_changeable_pipes[pipe]['Node1'])] && all_junctions[parseInt(all_changeable_pipes[pipe]['Node1'])].hasOwnProperty('Elev')){
-					height1=((parseFloat(all_junctions[all_changeable_pipes[pipe]['Node1']]['Elev']))*scale_3d*-2.0);
-					//console.log('success')
-				}
-				else if (all_reservoirs[parseInt(all_changeable_pipes[pipe]['Node1'])] && all_reservoirs[parseInt(all_changeable_pipes[pipe]['Node1'])].hasOwnProperty('Head')){
-					height1=((parseFloat(all_reservoirs[all_changeable_pipes[pipe]['Node1']]['Head']))*scale_3d*-2.0)-6.0;
-					//console.log('success2')
-				}
-				else{
-					height1=0.0;
-				}
-				if (all_junctions[parseInt(all_changeable_pipes[pipe]['Node2'])] && all_junctions[parseInt(all_changeable_pipes[pipe]['Node2'])].hasOwnProperty('Elev')){
-					height2=((parseFloat(all_junctions[all_changeable_pipes[pipe]['Node2']]['Elev']))*scale_3d*-2.0);
-				}
-				else if (all_reservoirs[parseInt(all_changeable_pipes[pipe]['Node2'])] && all_reservoirs[parseInt(all_changeable_pipes[pipe]['Node2'])].hasOwnProperty('Head')){
-					height2=((parseFloat(all_reservoirs[all_changeable_pipes[pipe]['Node2']]['Head']))*scale_3d*-2.0)-6.0;
-				}
-				else{
-					height2=0.0;
-				}
-				var nbpts = all_changeable_pipes[pipe]['Vertices'].length;
 				for (var i=0;i< all_changeable_pipes[pipe]['Vertices'].length;i++ ){
-					array_points.push( new THREE.Vector3(((parseFloat(all_changeable_pipes[pipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),height1+ (((i)/(nbpts-1.0))*(height2-height1)), ((parseFloat(all_changeable_pipes[pipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
+					array_points.push( new THREE.Vector3(((parseFloat(all_changeable_pipes[pipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),0, ((parseFloat(all_changeable_pipes[pipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
 				}
 				var curve = new THREE.CatmullRomCurve3(array_points);
 				var index_diameter=0;
@@ -2639,33 +2502,10 @@
 			}
 			for (pipe in all_fixed_pipes) {
 				var array_points=[];
-				var height1=0.0;
-				var height2=0.0;
-				if (all_junctions[parseInt(all_fixed_pipes[pipe]['Node1'])] && all_junctions[parseInt(all_fixed_pipes[pipe]['Node1'])].hasOwnProperty('Elev')){
-					height1=((parseFloat(all_junctions[all_fixed_pipes[pipe]['Node1']]['Elev']))*scale_3d*-2.0);
-					//console.log('success')
-				}
-				else if (all_reservoirs[parseInt(all_fixed_pipes[pipe]['Node1'])] && all_reservoirs[parseInt(all_fixed_pipes[pipe]['Node1'])].hasOwnProperty('Head')){
-					height1=((parseFloat(all_reservoirs[all_fixed_pipes[pipe]['Node1']]['Head']))*scale_3d*-2.0)-6.0;
-					//console.log('success2')
-				}
-				else{
-					height1=0.0;
-				}
-				if (all_junctions[parseInt(all_fixed_pipes[pipe]['Node2'])] && all_junctions[parseInt(all_fixed_pipes[pipe]['Node2'])].hasOwnProperty('Elev')){
-					height2=((parseFloat(all_junctions[all_fixed_pipes[pipe]['Node2']]['Elev']))*scale_3d*-2.0);
-				}
-				else if (all_reservoirs[parseInt(all_fixed_pipes[pipe]['Node2'])] && all_reservoirs[parseInt(all_fixed_pipes[pipe]['Node2'])].hasOwnProperty('Head')){
-					height2=((parseFloat(all_reservoirs[all_fixed_pipes[pipe]['Node2']]['Head']))*scale_3d*-2.0)-6.0;
-				}
-				else{
-					height2=0.0;
-				}
-				var nbpts = all_fixed_pipes[pipe]['Vertices'].length;
 				for (var i=0;i< all_fixed_pipes[pipe]['Vertices'].length;i++ ){
 					//console.log(all_fixed_pipes[pipe]['Node1'])
 					//console.log(all_fixed_pipes[pipe]['Node2'])
-					var ypos=height1+ (((i)/(nbpts-1.0))*(height2-height1));
+					var ypos=0.0;
 					
 					array_points.push( new THREE.Vector3(((parseFloat(all_fixed_pipes[pipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),ypos, ((parseFloat(all_fixed_pipes[pipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
 				}
@@ -3208,33 +3048,8 @@
 								var cpipe= m_group[s].name.split('pc-')[1];
 								if (game.modified_pipes.hasOwnProperty(cpipe)){
 									var array_points=[];
-									var height1=0.0;
-									var height2=0.0;
-									if (all_junctions[parseInt(all_changeable_pipes[cpipe]['Node1'])] && all_junctions[parseInt(all_changeable_pipes[cpipe]['Node1'])].hasOwnProperty('Elev')){
-										height1=((parseFloat(all_junctions[all_changeable_pipes[cpipe]['Node1']]['Elev']))*scale_3d*-2.0);
-										//console.log('success')
-									}
-									else if (all_reservoirs[parseInt(all_changeable_pipes[cpipe]['Node1'])] && all_reservoirs[parseInt(all_changeable_pipes[cpipe]['Node1'])].hasOwnProperty('Head')){
-										height1=((parseFloat(all_reservoirs[all_changeable_pipes[cpipe]['Node1']]['Head']))*scale_3d*-2.0)-6.0;
-										//console.log('success2')
-									}
-									else{
-										height1=0.0;
-									}
-									if (all_junctions[parseInt(all_changeable_pipes[cpipe]['Node2'])] && all_junctions[parseInt(all_changeable_pipes[cpipe]['Node2'])].hasOwnProperty('Elev')){
-										height2=((parseFloat(all_junctions[all_changeable_pipes[cpipe]['Node2']]['Elev']))*scale_3d*-2.0);
-									}
-									else if (all_reservoirs[parseInt(all_changeable_pipes[cpipe]['Node2'])] && all_reservoirs[parseInt(all_changeable_pipes[cpipe]['Node2'])].hasOwnProperty('Head')){
-										height2=((parseFloat(all_reservoirs[all_changeable_pipes[cpipe]['Node2']]['Head']))*scale_3d*-2.0)-6.0;
-									}
-									else{
-										height2=0.0;
-									}
-									//var height1=((parseFloat(all_junctions[all_changeable_pipes[pipe]['Node1']]['Elev']))*scale_3d*-2.0);
-									//var height2=((parseFloat(all_junctions[all_changeable_pipes[pipe]['Node2']]['Elev']))*scale_3d*-2.0);
-									var nbpts = all_changeable_pipes[cpipe]['Vertices'].length;
 									for (var i=0;i< all_changeable_pipes[cpipe]['Vertices'].length;i++ ){
-										array_points.push( new THREE.Vector3(((parseFloat(all_changeable_pipes[cpipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),height1+ (((i)/(nbpts-1.0))*(height2-height1)), ((parseFloat(all_changeable_pipes[cpipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
+										array_points.push( new THREE.Vector3(((parseFloat(all_changeable_pipes[cpipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),0, ((parseFloat(all_changeable_pipes[cpipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
 									}
 									var curve = new THREE.CatmullRomCurve3(array_points);
 									var index_diameter=0;
@@ -3278,31 +3093,8 @@
 								if (game.modified_pipes.hasOwnProperty(cpipe)){
 									console.log('modified pipe has property' +cpipe)
 									var array_points=[];
-									var height1=0.0;
-									var height2=0.0;
-									if (all_junctions[parseInt(all_fixed_pipes[cpipe]['Node1'])] && all_junctions[parseInt(all_fixed_pipes[cpipe]['Node1'])].hasOwnProperty('Elev')){
-										height1=((parseFloat(all_junctions[all_fixed_pipes[cpipe]['Node1']]['Elev']))*scale_3d*-2.0);
-										//console.log('success')
-									}
-									else if (all_reservoirs[parseInt(all_fixed_pipes[cpipe]['Node1'])] && all_reservoirs[parseInt(all_fixed_pipes[cpipe]['Node1'])].hasOwnProperty('Head')){
-										height1=((parseFloat(all_reservoirs[all_fixed_pipes[cpipe]['Node1']]['Head']))*scale_3d*-2.0)-6.0;
-										//console.log('success2')
-									}
-									else{
-										height1=0.0;
-									}
-									if (all_junctions[parseInt(all_fixed_pipes[cpipe]['Node2'])] && all_junctions[parseInt(all_fixed_pipes[cpipe]['Node2'])].hasOwnProperty('Elev')){
-										height2=((parseFloat(all_junctions[all_fixed_pipes[cpipe]['Node2']]['Elev']))*scale_3d*-2.0);
-									}
-									else if (all_reservoirs[parseInt(all_fixed_pipes[cpipe]['Node2'])] && all_reservoirs[parseInt(all_fixed_pipes[cpipe]['Node2'])].hasOwnProperty('Head')){
-										height2=((parseFloat(all_reservoirs[all_fixed_pipes[cpipe]['Node2']]['Head']))*scale_3d*-2.0)-6.0;
-									}
-									else{
-										height2=0.0;
-									}
-									var nbpts = all_fixed_pipes[cpipe]['Vertices'].length;
 									for (var i=0;i< all_fixed_pipes[cpipe]['Vertices'].length;i++ ){
-										array_points.push( new THREE.Vector3(((parseFloat(all_fixed_pipes[cpipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),height1+ (((i)/(nbpts-1.0))*(height2-height1)), ((parseFloat(all_fixed_pipes[cpipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
+										array_points.push( new THREE.Vector3(((parseFloat(all_fixed_pipes[cpipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),0, ((parseFloat(all_fixed_pipes[cpipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
 									}
 									var curve = new THREE.CatmullRomCurve3(array_points);
 									var index_diameter=0;
@@ -5201,7 +4993,7 @@
 	}
 	
 	function activate(elem){
-		
+		//console.log(elem.id)
 		for (var b=0;b<items.length;b++){
 			if (document.getElementById('c'+b)){
 									
@@ -5333,7 +5125,7 @@
 					}
 				}
 				else{
-						//console.log(elem.id)
+					
 						var m_group= scene.children[3].children;
 						var l_scene = m_group.length;
 						for (var s =0;s<l_scene;s++){
@@ -5343,31 +5135,8 @@
 									
 									if (listEditedPipes.indexOf(namep)!=-1){
 										var array_points=[];
-										var height1=0.0;
-										var height2=0.0;
-										if (all_junctions[parseInt(all_changeable_pipes[namep]['Node1'])] && all_junctions[parseInt(all_changeable_pipes[namep]['Node1'])].hasOwnProperty('Elev')){
-											height1=((parseFloat(all_junctions[all_changeable_pipes[namep]['Node1']]['Elev']))*scale_3d*-2.0);
-											//console.log('success')
-										}
-										else if (all_reservoirs[parseInt(all_changeable_pipes[namep]['Node1'])] && all_reservoirs[parseInt(all_changeable_pipes[namep]['Node1'])].hasOwnProperty('Head')){
-											height1=((parseFloat(all_reservoirs[all_changeable_pipes[namep]['Node1']]['Head']))*scale_3d*-2.0)-6.0;
-											//console.log('success2')
-										}
-										else{
-											height1=0.0;
-										}
-										if (all_junctions[parseInt(all_changeable_pipes[namep]['Node2'])] && all_junctions[parseInt(all_changeable_pipes[namep]['Node2'])].hasOwnProperty('Elev')){
-											height2=((parseFloat(all_junctions[all_changeable_pipes[namep]['Node2']]['Elev']))*scale_3d*-2.0);
-										}
-										else if (all_reservoirs[parseInt(all_changeable_pipes[namep]['Node2'])] && all_reservoirs[parseInt(all_changeable_pipes[namep]['Node2'])].hasOwnProperty('Head')){
-											height2=((parseFloat(all_reservoirs[all_changeable_pipes[namep]['Node2']]['Head']))*scale_3d*-2.0)-6.0;
-										}
-										else{
-											height2=0.0;
-										}
-										var nbpts = all_changeable_pipes[namep]['Vertices'].length;
 										for (var i=0;i< all_changeable_pipes[namep]['Vertices'].length;i++ ){
-											array_points.push( new THREE.Vector3(((parseFloat(all_changeable_pipes[namep]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),height1+ (((i)/(nbpts-1.0))*(height2-height1)), ((parseFloat(all_changeable_pipes[namep]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
+											array_points.push( new THREE.Vector3(((parseFloat(all_changeable_pipes[namep]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),0, ((parseFloat(all_changeable_pipes[namep]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
 										}
 										var curve = new THREE.CatmullRomCurve3(array_points);
 										var index_diameter=0;
@@ -5476,33 +5245,8 @@
 							if (m_group[s].type=="Mesh" ){
 								if (m_group[s].name && (m_group[s].name=='pc-'+editedPipe)) {
 									var array_points=[];
-									var height1=0.0;
-									var height2=0.0;
-									if (all_junctions[parseInt(all_changeable_pipes[editedPipe]['Node1'])] && all_junctions[parseInt(all_changeable_pipes[editedPipe]['Node1'])].hasOwnProperty('Elev')){
-										height1=((parseFloat(all_junctions[all_changeable_pipes[editedPipe]['Node1']]['Elev']))*scale_3d*-2.0);
-										//console.log('success')
-									}
-									else if (all_reservoirs[parseInt(all_changeable_pipes[editedPipe]['Node1'])] && all_reservoirs[parseInt(all_changeable_pipes[editedPipe]['Node1'])].hasOwnProperty('Head')){
-										height1=((parseFloat(all_reservoirs[all_changeable_pipes[editedPipe]['Node1']]['Head']))*scale_3d*-2.0)-6.0;
-										//console.log('success2')
-									}
-									else{
-										height1=0.0;
-									}
-									if (all_junctions[parseInt(all_changeable_pipes[editedPipe]['Node2'])] && all_junctions[parseInt(all_changeable_pipes[editedPipe]['Node2'])].hasOwnProperty('Elev')){
-										height2=((parseFloat(all_junctions[all_changeable_pipes[editedPipe]['Node2']]['Elev']))*scale_3d*-2.0);
-									}
-									else if (all_reservoirs[parseInt(all_changeable_pipes[editedPipe]['Node2'])] && all_reservoirs[parseInt(all_changeable_pipes[editedPipe]['Node2'])].hasOwnProperty('Head')){
-										height2=((parseFloat(all_reservoirs[all_changeable_pipes[editedPipe]['Node2']]['Head']))*scale_3d*-2.0)-6.0;
-									}
-									else{
-										height2=0.0;
-									}
-									//var height1=((parseFloat(all_junctions[all_changeable_pipes[pipe]['Node1']]['Elev']))*scale_3d*-2.0);
-									//var height2=((parseFloat(all_junctions[all_changeable_pipes[pipe]['Node2']]['Elev']))*scale_3d*-2.0);
-									var nbpts = all_changeable_pipes[editedPipe]['Vertices'].length;
 									for (var i=0;i< all_changeable_pipes[editedPipe]['Vertices'].length;i++ ){
-										array_points.push( new THREE.Vector3(((parseFloat(all_changeable_pipes[editedPipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),height1+ (((i)/(nbpts-1.0))*(height2-height1)), ((parseFloat(all_changeable_pipes[editedPipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
+										array_points.push( new THREE.Vector3(((parseFloat(all_changeable_pipes[editedPipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),0, ((parseFloat(all_changeable_pipes[editedPipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
 									}
 									var curve = new THREE.CatmullRomCurve3(array_points);
 									var index_diameter=0;
@@ -5633,33 +5377,8 @@
 								if(m_group[s].name.startsWith('pc-')) {
 									var cpipe= m_group[s].name.split('pc-')[1];
 									var array_points=[];
-									var height1=0.0;
-									var height2=0.0;
-									if (all_junctions[parseInt(all_changeable_pipes[cpipe]['Node1'])] && all_junctions[parseInt(all_changeable_pipes[cpipe]['Node1'])].hasOwnProperty('Elev')){
-										height1=((parseFloat(all_junctions[all_changeable_pipes[cpipe]['Node1']]['Elev']))*scale_3d*-2.0);
-										//console.log('success')
-									}
-									else if (all_reservoirs[parseInt(all_changeable_pipes[cpipe]['Node1'])] && all_reservoirs[parseInt(all_changeable_pipes[cpipe]['Node1'])].hasOwnProperty('Head')){
-										height1=((parseFloat(all_reservoirs[all_changeable_pipes[cpipe]['Node1']]['Head']))*scale_3d*-2.0)-6.0;
-										//console.log('success2')
-									}
-									else{
-										height1=0.0;
-									}
-									if (all_junctions[parseInt(all_changeable_pipes[cpipe]['Node2'])] && all_junctions[parseInt(all_changeable_pipes[cpipe]['Node2'])].hasOwnProperty('Elev')){
-										height2=((parseFloat(all_junctions[all_changeable_pipes[cpipe]['Node2']]['Elev']))*scale_3d*-2.0);
-									}
-									else if (all_reservoirs[parseInt(all_changeable_pipes[cpipe]['Node2'])] && all_reservoirs[parseInt(all_changeable_pipes[cpipe]['Node2'])].hasOwnProperty('Head')){
-										height2=((parseFloat(all_reservoirs[all_changeable_pipes[cpipe]['Node2']]['Head']))*scale_3d*-2.0)-6.0;
-									}
-									else{
-										height2=0.0;
-									}
-									//var height1=((parseFloat(all_junctions[all_changeable_pipes[pipe]['Node1']]['Elev']))*scale_3d*-2.0);
-									//var height2=((parseFloat(all_junctions[all_changeable_pipes[pipe]['Node2']]['Elev']))*scale_3d*-2.0);
-									var nbpts = all_changeable_pipes[cpipe]['Vertices'].length;
 									for (var i=0;i< all_changeable_pipes[cpipe]['Vertices'].length;i++ ){
-										array_points.push( new THREE.Vector3(((parseFloat(all_changeable_pipes[cpipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),height1+ (((i)/(nbpts-1.0))*(height2-height1)), ((parseFloat(all_changeable_pipes[cpipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
+										array_points.push( new THREE.Vector3(((parseFloat(all_changeable_pipes[cpipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),0, ((parseFloat(all_changeable_pipes[cpipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
 									}
 									var curve = new THREE.CatmullRomCurve3(array_points);
 									var index_diameter=0;
@@ -5806,33 +5525,8 @@
 									var cpipe= m_group[s].name.split('pc-')[1];
 									//if (m_group[s].name && (m_group[s].name=='pc-'+cpipe)) {
 									var array_points=[];
-									var height1=0.0;
-									var height2=0.0;
-									if (all_junctions[parseInt(all_changeable_pipes[cpipe]['Node1'])] && all_junctions[parseInt(all_changeable_pipes[cpipe]['Node1'])].hasOwnProperty('Elev')){
-										height1=((parseFloat(all_junctions[all_changeable_pipes[cpipe]['Node1']]['Elev']))*scale_3d*-2.0);
-										//console.log('success')
-									}
-									else if (all_reservoirs[parseInt(all_changeable_pipes[cpipe]['Node1'])] && all_reservoirs[parseInt(all_changeable_pipes[cpipe]['Node1'])].hasOwnProperty('Head')){
-										height1=((parseFloat(all_reservoirs[all_changeable_pipes[cpipe]['Node1']]['Head']))*scale_3d*-2.0)-6.0;
-										//console.log('success2')
-									}
-									else{
-										height1=0.0;
-									}
-									if (all_junctions[parseInt(all_changeable_pipes[cpipe]['Node2'])] && all_junctions[parseInt(all_changeable_pipes[cpipe]['Node2'])].hasOwnProperty('Elev')){
-										height2=((parseFloat(all_junctions[all_changeable_pipes[cpipe]['Node2']]['Elev']))*scale_3d*-2.0);
-									}
-									else if (all_reservoirs[parseInt(all_changeable_pipes[cpipe]['Node2'])] && all_reservoirs[parseInt(all_changeable_pipes[cpipe]['Node2'])].hasOwnProperty('Head')){
-										height2=((parseFloat(all_reservoirs[all_changeable_pipes[cpipe]['Node2']]['Head']))*scale_3d*-2.0)-6.0;
-									}
-									else{
-										height2=0.0;
-									}
-									//var height1=((parseFloat(all_junctions[all_changeable_pipes[pipe]['Node1']]['Elev']))*scale_3d*-2.0);
-									//var height2=((parseFloat(all_junctions[all_changeable_pipes[pipe]['Node2']]['Elev']))*scale_3d*-2.0);
-									var nbpts = all_changeable_pipes[cpipe]['Vertices'].length;
 									for (var i=0;i< all_changeable_pipes[cpipe]['Vertices'].length;i++ ){
-										array_points.push( new THREE.Vector3(((parseFloat(all_changeable_pipes[cpipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),height1+ (((i)/(nbpts-1.0))*(height2-height1)), ((parseFloat(all_changeable_pipes[cpipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
+										array_points.push( new THREE.Vector3(((parseFloat(all_changeable_pipes[cpipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),0, ((parseFloat(all_changeable_pipes[cpipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
 									}
 									var curve = new THREE.CatmullRomCurve3(array_points);
 									var index_diameter=0;
@@ -6197,7 +5891,6 @@
 	
 	
 	function updatePressureNodesColors(){
-		//console.log("update nodes colors")
 		if (default_coloring_node){
 			if (isWebGl==false){
 				var l_scene = scene.children[0].children.length;	
@@ -6342,33 +6035,8 @@
 							if(m_group[s].name.startsWith('pc-')) {
 								var cpipe= m_group[s].name.split('pc-')[1];
 								var array_points=[];
-								var height1=0.0;
-								var height2=0.0;
-								if (all_junctions[parseInt(all_changeable_pipes[cpipe]['Node1'])] && all_junctions[parseInt(all_changeable_pipes[cpipe]['Node1'])].hasOwnProperty('Elev')){
-									height1=((parseFloat(all_junctions[all_changeable_pipes[cpipe]['Node1']]['Elev']))*scale_3d*-2.0);
-									//console.log('success')
-								}
-								else if (all_reservoirs[parseInt(all_changeable_pipes[cpipe]['Node1'])] && all_reservoirs[parseInt(all_changeable_pipes[cpipe]['Node1'])].hasOwnProperty('Head')){
-									height1=((parseFloat(all_reservoirs[all_changeable_pipes[cpipe]['Node1']]['Head']))*scale_3d*-2.0)-6.0;
-									//console.log('success2')
-								}
-								else{
-									height1=0.0;
-								}
-								if (all_junctions[parseInt(all_changeable_pipes[cpipe]['Node2'])] && all_junctions[parseInt(all_changeable_pipes[cpipe]['Node2'])].hasOwnProperty('Elev')){
-									height2=((parseFloat(all_junctions[all_changeable_pipes[cpipe]['Node2']]['Elev']))*scale_3d*-2.0);
-								}
-								else if (all_reservoirs[parseInt(all_changeable_pipes[cpipe]['Node2'])] && all_reservoirs[parseInt(all_changeable_pipes[cpipe]['Node2'])].hasOwnProperty('Head')){
-									height2=((parseFloat(all_reservoirs[all_changeable_pipes[cpipe]['Node2']]['Head']))*scale_3d*-2.0)-6.0;
-								}
-								else{
-									height2=0.0;
-								}
-								//var height1=((parseFloat(all_junctions[all_changeable_pipes[pipe]['Node1']]['Elev']))*scale_3d*-2.0);
-								//var height2=((parseFloat(all_junctions[all_changeable_pipes[pipe]['Node2']]['Elev']))*scale_3d*-2.0);
-								var nbpts = all_changeable_pipes[cpipe]['Vertices'].length;
 								for (var i=0;i< all_changeable_pipes[cpipe]['Vertices'].length;i++ ){
-									array_points.push( new THREE.Vector3(((parseFloat(all_changeable_pipes[cpipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),height1+ (((i)/(nbpts-1.0))*(height2-height1)), ((parseFloat(all_changeable_pipes[cpipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
+									array_points.push( new THREE.Vector3(((parseFloat(all_changeable_pipes[cpipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),0, ((parseFloat(all_changeable_pipes[cpipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
 								}
 								var curve = new THREE.CatmullRomCurve3(array_points);
 								var index_diameter=0;
@@ -6541,15 +6209,7 @@
 				}
 			}
 			if (isWebGl==false){
-				var l_scene = scene.children[0].children.length;	
-				var def_line_col;
-				// lines
-				if (UIColor=="black"){
-					def_line_col=0xffffff;
-				}
-				else if (UIColor=="white"){
-					def_line_col=0x888888;
-				}
+				var l_scene = scene.children[0].children.length;		
 				for (var s =0;s<l_scene;s++){
 					if (scene.children[0].children[s].name.startsWith('j-')){							
 						scene.children[0].children[s].material.color = new THREE.Color( 0xdddddd );						
@@ -6592,7 +6252,6 @@
 				}
 			}
 			else{
-			
 				var m_group= scene.children[3].children;
 				var l_scene = m_group.length;
 				for (var s =0;s<l_scene;s++){
@@ -6602,33 +6261,8 @@
 								var cpipe= m_group[s].name.split('pc-')[1];
 								if (game.modified_pipes.hasOwnProperty(cpipe)){
 									var array_points=[];
-									var height1=0.0;
-									var height2=0.0;
-									if (all_junctions[parseInt(all_changeable_pipes[cpipe]['Node1'])] && all_junctions[parseInt(all_changeable_pipes[cpipe]['Node1'])].hasOwnProperty('Elev')){
-										height1=((parseFloat(all_junctions[all_changeable_pipes[cpipe]['Node1']]['Elev']))*scale_3d*-2.0);
-										//console.log('success')
-									}
-									else if (all_reservoirs[parseInt(all_changeable_pipes[cpipe]['Node1'])] && all_reservoirs[parseInt(all_changeable_pipes[cpipe]['Node1'])].hasOwnProperty('Head')){
-										height1=((parseFloat(all_reservoirs[all_changeable_pipes[cpipe]['Node1']]['Head']))*scale_3d*-2.0)-6.0;
-										//console.log('success2')
-									}
-									else{
-										height1=0.0;
-									}
-									if (all_junctions[parseInt(all_changeable_pipes[cpipe]['Node2'])] && all_junctions[parseInt(all_changeable_pipes[cpipe]['Node2'])].hasOwnProperty('Elev')){
-										height2=((parseFloat(all_junctions[all_changeable_pipes[cpipe]['Node2']]['Elev']))*scale_3d*-2.0);
-									}
-									else if (all_reservoirs[parseInt(all_changeable_pipes[cpipe]['Node2'])] && all_reservoirs[parseInt(all_changeable_pipes[cpipe]['Node2'])].hasOwnProperty('Head')){
-										height2=((parseFloat(all_reservoirs[all_changeable_pipes[cpipe]['Node2']]['Head']))*scale_3d*-2.0)-6.0;
-									}
-									else{
-										height2=0.0;
-									}
-									//var height1=((parseFloat(all_junctions[all_changeable_pipes[pipe]['Node1']]['Elev']))*scale_3d*-2.0);
-									//var height2=((parseFloat(all_junctions[all_changeable_pipes[pipe]['Node2']]['Elev']))*scale_3d*-2.0);
-									var nbpts = all_changeable_pipes[cpipe]['Vertices'].length;
 									for (var i=0;i< all_changeable_pipes[cpipe]['Vertices'].length;i++ ){
-										array_points.push( new THREE.Vector3(((parseFloat(all_changeable_pipes[cpipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),height1+ (((i)/(nbpts-1.0))*(height2-height1)), ((parseFloat(all_changeable_pipes[cpipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
+										array_points.push( new THREE.Vector3(((parseFloat(all_changeable_pipes[cpipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),0, ((parseFloat(all_changeable_pipes[cpipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
 									}
 									var curve = new THREE.CatmullRomCurve3(array_points);
 									var index_diameter=0;
@@ -6672,32 +6306,9 @@
 								if (game.modified_pipes.hasOwnProperty(cpipe)){
 									console.log('modified pipe has property' +cpipe)
 									var array_points=[];
-									var height1=0.0;
-									var height2=0.0;
-									if (all_junctions[parseInt(all_fixed_pipes[cpipe]['Node1'])] && all_junctions[parseInt(all_fixed_pipes[cpipe]['Node1'])].hasOwnProperty('Elev')){
-										height1=((parseFloat(all_junctions[all_fixed_pipes[cpipe]['Node1']]['Elev']))*scale_3d*-2.0);
-										//console.log('success')
-									}
-									else if (all_reservoirs[parseInt(all_fixed_pipes[cpipe]['Node1'])] && all_reservoirs[parseInt(all_fixed_pipes[cpipe]['Node1'])].hasOwnProperty('Head')){
-										height1=((parseFloat(all_reservoirs[all_fixed_pipes[cpipe]['Node1']]['Head']))*scale_3d*-2.0)-6.0;
-										//console.log('success2')
-									}
-									else{
-										height1=0.0;
-									}
-									if (all_junctions[parseInt(all_fixed_pipes[cpipe]['Node2'])] && all_junctions[parseInt(all_fixed_pipes[cpipe]['Node2'])].hasOwnProperty('Elev')){
-										height2=((parseFloat(all_junctions[all_fixed_pipes[cpipe]['Node2']]['Elev']))*scale_3d*-2.0);
-									}
-									else if (all_reservoirs[parseInt(all_fixed_pipes[cpipe]['Node2'])] && all_reservoirs[parseInt(all_fixed_pipes[cpipe]['Node2'])].hasOwnProperty('Head')){
-										height2=((parseFloat(all_reservoirs[all_fixed_pipes[cpipe]['Node2']]['Head']))*scale_3d*-2.0)-6.0;
-									}
-									else{
-										height2=0.0;
-									}
-									var nbpts = all_fixed_pipes[cpipe]['Vertices'].length;
 									for (var i=0;i< all_fixed_pipes[cpipe]['Vertices'].length;i++ ){
 										//array_points.push( new THREE.Vector3(((parseFloat(all_fixed_pipes[cpipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),0, ((parseFloat(all_fixed_pipes[cpipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
-										var ypos=height1+ (((i)/(nbpts-1.0))*(height2-height1));
+										var ypos=0.0;
 										
 										
 										array_points.push( new THREE.Vector3(((parseFloat(all_fixed_pipes[cpipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),ypos, ((parseFloat(all_fixed_pipes[cpipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
@@ -6722,9 +6333,6 @@
 									
 									
 								}
-								//else{
-								//	console.log('non modified fixed pipe : ' +cpipe)
-								//}
 							}
 							if (m_group[s].name.startsWith('j-')){
 								m_group[s].material.color=new THREE.Color( 0x888888 );
@@ -6995,31 +6603,8 @@
 								if(m_group[s].name.startsWith('pf-')) {
 									var cpipe= m_group[s].name.split('pf-')[1];
 									var array_points=[];
-									var height1=0.0;
-									var height2=0.0;
-									if (all_junctions[parseInt(all_fixed_pipes[cpipe]['Node1'])] && all_junctions[parseInt(all_fixed_pipes[cpipe]['Node1'])].hasOwnProperty('Elev')){
-										height1=((parseFloat(all_junctions[all_fixed_pipes[cpipe]['Node1']]['Elev']))*scale_3d*-2.0);
-										//console.log('success')
-									}
-									else if (all_reservoirs[parseInt(all_fixed_pipes[cpipe]['Node1'])] && all_reservoirs[parseInt(all_fixed_pipes[cpipe]['Node1'])].hasOwnProperty('Head')){
-										height1=((parseFloat(all_reservoirs[all_fixed_pipes[cpipe]['Node1']]['Head']))*scale_3d*-2.0)-6.0;
-										//console.log('success2')
-									}
-									else{
-										height1=0.0;
-									}
-									if (all_junctions[parseInt(all_fixed_pipes[cpipe]['Node2'])] && all_junctions[parseInt(all_fixed_pipes[cpipe]['Node2'])].hasOwnProperty('Elev')){
-										height2=((parseFloat(all_junctions[all_fixed_pipes[cpipe]['Node2']]['Elev']))*scale_3d*-2.0);
-									}
-									else if (all_reservoirs[parseInt(all_fixed_pipes[cpipe]['Node2'])] && all_reservoirs[parseInt(all_fixed_pipes[cpipe]['Node2'])].hasOwnProperty('Head')){
-										height2=((parseFloat(all_reservoirs[all_fixed_pipes[cpipe]['Node2']]['Head']))*scale_3d*-2.0)-6.0;
-									}
-									else{
-										height2=0.0;
-									}
-									var nbpts = all_fixed_pipes[cpipe]['Vertices'].length;
 									for (var i=0;i< all_pipes[cpipe]['Vertices'].length;i++ ){
-										 array_points.push( new THREE.Vector3(((parseFloat(all_pipes[cpipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),height1+ (((i)/(nbpts-1.0))*(height2-height1)), ((parseFloat(all_pipes[cpipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
+										 array_points.push( new THREE.Vector3(((parseFloat(all_pipes[cpipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),0, ((parseFloat(all_pipes[cpipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
 									}
 									var curve = new THREE.CatmullRomCurve3(array_points);
 									var index_diameter=0;
@@ -7234,31 +6819,8 @@
 								if(m_group[s].name.startsWith('pf-')) {
 									var cpipe= m_group[s].name.split('pf-')[1];
 									var array_points=[];
-									var height1=0.0;
-									var height2=0.0;
-									if (all_junctions[parseInt(all_fixed_pipes[cpipe]['Node1'])] && all_junctions[parseInt(all_fixed_pipes[cpipe]['Node1'])].hasOwnProperty('Elev')){
-										height1=((parseFloat(all_junctions[all_fixed_pipes[cpipe]['Node1']]['Elev']))*scale_3d*-2.0);
-										//console.log('success')
-									}
-									else if (all_reservoirs[parseInt(all_fixed_pipes[cpipe]['Node1'])] && all_reservoirs[parseInt(all_fixed_pipes[cpipe]['Node1'])].hasOwnProperty('Head')){
-										height1=((parseFloat(all_reservoirs[all_fixed_pipes[cpipe]['Node1']]['Head']))*scale_3d*-2.0)-6.0;
-										//console.log('success2')
-									}
-									else{
-										height1=0.0;
-									}
-									if (all_junctions[parseInt(all_fixed_pipes[cpipe]['Node2'])] && all_junctions[parseInt(all_fixed_pipes[cpipe]['Node2'])].hasOwnProperty('Elev')){
-										height2=((parseFloat(all_junctions[all_fixed_pipes[cpipe]['Node2']]['Elev']))*scale_3d*-2.0);
-									}
-									else if (all_reservoirs[parseInt(all_fixed_pipes[cpipe]['Node2'])] && all_reservoirs[parseInt(all_fixed_pipes[cpipe]['Node2'])].hasOwnProperty('Head')){
-										height2=((parseFloat(all_reservoirs[all_fixed_pipes[cpipe]['Node2']]['Head']))*scale_3d*-2.0)-6.0;
-									}
-									else{
-										height2=0.0;
-									}
-									var nbpts = all_fixed_pipes[cpipe]['Vertices'].length;
 									for (var i=0;i< all_pipes[cpipe]['Vertices'].length;i++ ){
-										 array_points.push( new THREE.Vector3(((parseFloat(all_pipes[cpipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),height1+ (((i)/(nbpts-1.0))*(height2-height1)), ((parseFloat(all_pipes[cpipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
+										 array_points.push( new THREE.Vector3(((parseFloat(all_pipes[cpipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),0, ((parseFloat(all_pipes[cpipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
 									}
 									var curve = new THREE.CatmullRomCurve3(array_points);
 									var index_diameter=0;
