@@ -150,6 +150,13 @@
 	
 	
 	<div id="score-message" style="position:absolute;z-index:40000"></div>
+	
+	<div id="high-score-table" style="position:absolute;visibility:hidden;z-index:40000;height:400px;overflow-y: scroll;   " class="alert alert-warning alert-dismissible fade in" role="alert">
+	  <button type="button" class="close" onclick="closeAlert();">
+		<span aria-hidden="true">&times;</span>
+	  </button>
+	  <div id="list_hs"></div>
+	</div>
 	<br><br>
 	<div align="center">
 		<div style="font-size:25px;">Start/stop game:</div>
@@ -290,7 +297,16 @@
 		})
 	}
 	io.socket.on('betterscore', function gotHelloMessage (data) {
-		document.getElementById('score-message').innerHTML='<span style="color:white">Best solution- Team <strong>'+ data['team']+'</strong>: cost '+parseFloat(data['overall_cost']).toFixed(2)+' - leakage '+parseFloat(data['leakage']).toFixed(0)+' - age '+parseFloat(data['water_age']).toFixed(0)+'</span>';
+		//document.getElementById('score-message').innerHTML='<span style="color:white">Best solution- Team <strong>'+ data['team']+'</strong>: cost '+parseFloat(data['overall_cost']).toFixed(2)+' - leakage '+parseFloat(data['leakage']).toFixed(0)+' - age '+parseFloat(data['water_age']).toFixed(0)+'</span>';
+		if (game.game_mode=='modena'){
+			document.getElementById('score-message').innerHTML='<span style="color:white">Best solution- Team <strong>'+ data['team']+'</strong>: cost '+parseFloat(data['overall_cost']).toFixed(2)+' - leakage '+parseFloat(data['leakage']).toFixed(0)+' - age '+parseFloat(data['water_age']).toFixed(0)+'</span>';
+		}
+		else if (game.game_mode=='aqualibrium'){
+			document.getElementById('score-message').innerHTML='<span style="color:white">Best solution- User <strong>'+ data['team']+'</strong>: score '+parseFloat(data['overall_score']).toFixed(3)+'</span>';
+		}
+		else if (game.game_mode=='nyc'){
+			document.getElementById('score-message').innerHTML='<span style="color:white">Best solution- User <strong>'+ data['team']+'</strong>: score '+d3.format(",.0f")(parseFloat(data['cost']))+'</span>';
+		}
 		//$("#score-message").delay().hide(10000);
 		//console.log("User "+ data['user']+" found lowest present total cost at :" +data['score'])
 	});
@@ -323,6 +339,55 @@
 	document.getElementById('info-top').style.top=120+"px";
 	document.getElementById('info-top').style.width=((window.innerWidth*0.9*0.6))+"px";
 	
+	
+	io.socket.on('endscore', function gotEndMessage (data) {
+		//console.log(data.sessionBests);
+		document.getElementById('high-score-table').style.visibility="visible";
+		document.getElementById('high-score-table').style.width="500px";
+		
+		//document.getElementById('high-score-table').innerHTML=""+data;
+		var hs_values=[];
+		var listnames=[];
+		var hs_object=[];
+		
+		if (game.game_mode=='modena'){
+			for (var i=0;i<data['board'].length;i++){
+				if (listnames.indexOf(data['board'][i]['team'])==-1){
+					listnames.push(data['board'][i]['team']);
+					hs_object.push('<span>'+(i+1)+' <strong>Team '+data['board'][i]['team']+'</strong> cost '+parseFloat(data['board'][i]['overall_cost']).toFixed(2)+' - leakage '+parseFloat(data['board'][i]['leakage']).toFixed(0)+' - age '+parseFloat(data['board'][i]['water_age']).toFixed(0)+'</span>');
+					
+				}
+			}
+		}
+		else if (game.game_mode=='aqualibrium'){
+			for (var i=0;i<data['board'].length;i++){
+				if (listnames.indexOf(data['board'][i]['team'])==-1){
+					listnames.push(data['board'][i]['team']);
+					hs_object.push('<span>'+(i+1)+' <strong>Player '+data['board'][i]['team']+'</strong> score '+parseFloat(data['board'][i]['overall_score']).toFixed(3)+'</span>');
+					
+				}
+			}
+		}
+		else if (game.game_mode=='nyc'){
+			for (var i=0;i<data['board'].length;i++){
+				if (listnames.indexOf(data['board'][i]['team'])==-1){
+					listnames.push(data['board'][i]['team']);
+					hs_object.push('<span>'+(i+1)+' <strong>Player '+data['board'][i]['team']+'</strong> score '+d3.format(",.0f")(parseFloat(data['board'][i]['cost']))+'</span>');
+					
+				}
+			}
+		}
+		var final_hs="<strong>The best scores</strong><br>";
+		var limit = hs_object.length;
+		if (limit>10){
+		limit=10;
+		}
+		for (var i=0;i<hs_object.length;i++){
+			final_hs+=hs_object[i]+"<br>"
+		}
+		
+		document.getElementById('list_hs').innerHTML=final_hs;
+	});
 	
 
 	</script>

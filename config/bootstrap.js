@@ -1196,6 +1196,7 @@ module.exports.bootstrap = function(cb) {
 															Game.update({name:mgame.name},{game_state : mgame.game_state , last_solution: mgame.last_solution, overallBest:mgame.overallBest, sessionBests:mgame.sessionBests}).exec(function afterwards(errg, updated){
 																mfile_data=null;
 																socket1.put('/update', {name: myuser.name , game:mgame.name, team:myteam, last_result: initial_result, type:commit_evaluate, jobid:mjobid,history:['ok'], changedbest:newbest, changedbestdetail: mgame.overallBest});
+																
 															});
 														}
 														else if (mgame.game_mode=='aqualibrium'){
@@ -1283,9 +1284,9 @@ module.exports.bootstrap = function(cb) {
 																			mgame.overallBest['res1']=mgame.sessionBests[0]['res1'];
 																			mgame.overallBest['res2']=mgame.sessionBests[0]['res2'];
 																			mgame.overallBest['res3']=mgame.sessionBests[0]['res3'];
-																			if (firstbest!= mgame.overallBest['team']){
+																			//if (firstbest!= mgame.overallBest['team']){
 																				newbest=true;
-																			}
+																			//}
 																		}
 																	}
 															
@@ -1380,9 +1381,9 @@ module.exports.bootstrap = function(cb) {
 																			mygame.overallBest['cost']=mygame.sessionBests[0]['cost'];
 																			mygame.overallBest['diff']=mygame.sessionBests[0]['diff'];
 																			mygame.overallBest['neg_nodes']=mygame.sessionBests[0]['neg_nodes'];
-																			if (firstbest!= mgame.overallBest['team']){
+																			//if (firstbest!= mgame.overallBest['team']){
 																				newbest=true;
-																			}
+																			//}
 																		}
 																	}
 															

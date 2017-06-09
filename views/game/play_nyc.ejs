@@ -256,7 +256,7 @@
 	</div>
 	<div id="score-message" style="position:absolute;visibility:hidden;z-index:40000"></div>
 	
-	<div id="high-score-table" style="position:absolute;visibility:hidden;z-index:40000" class="alert alert-warning alert-dismissible fade in" role="alert">
+	<div id="high-score-table" style="position:absolute;visibility:hidden;z-index:40000;height:400px;overflow-y: scroll;   " class="alert alert-warning alert-dismissible fade in" role="alert">
 	  <button type="button" class="close" onclick="closeAlert();">
 		<span aria-hidden="true">&times;</span>
 	  </button>
@@ -704,6 +704,11 @@
 	if (team!=-1){
 		if (game.last_solution && game.last_solution[team] && game.last_solution[team].length>0){
 			team_state= game.last_solution[team];
+			if (game.game_mode=='nyc'){
+				for (pipe in all_pipes){		
+						team_latest_diameters[pipe]=diameters_2_index[all_pipes[pipe]['Diameter']];
+				}
+			}
 			
 		}
 		else{
@@ -1309,7 +1314,7 @@
 	}
 	var fixed_pipes_nb = Object.keys(all_fixed_pipes).length;
 	var changeable_pipes_nb = Object.keys(all_changeable_pipes).length;
-	//console.log(changeable_pipes_nb)
+	//console.log(all_fixed_pipes)
 	//console.log(fixed_pipes_nb)
 	//console.log(game['pipes_roles'])
 	var all_fixed_pumps={};
