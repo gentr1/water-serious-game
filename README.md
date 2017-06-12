@@ -263,7 +263,7 @@ wds=#
 ```
 type \q to exit the database command line.
 
-14- go where the serious game folder has been extracted and start installing node.js related stuff:
+7- go where the serious game folder has been extracted and start installing node.js related stuff:
 e.g. cd Documents/myseriousgame/
 Go to  https://nodejs.org/en/ and download and install a recent stable version of node.js.
 Open a command line and type:
@@ -272,7 +272,7 @@ npm install sails -g
 npm install forever -g
 npm install
 ```
-15- in the serious game folder, edit 2 files:
+8- in the serious game folder, edit 2 files:
 
 config/connections.js
 
@@ -324,7 +324,7 @@ adapter: 'redis',
 ```
 ...
 
-16 - (finally) run the game server.
+9 - (finally) run the game server.
 You can either use:
 ```sails lift --port 80```
 or 
