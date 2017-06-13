@@ -149,6 +149,19 @@ e.g. cd Documents/myseriousgame/
 sudo apt install nodejs
 sudo apt install nodejs-legacy
 sudo apt install npm
+```
+Make sure that the node version installed is at least v7.10.0 or higher. (type ```node -v``` to get the version number).
+If the version installed is older, please refresh/update it using: 
+
+```
+sudo npm cache clean -f
+sudo npm install -g n
+sudo n stable
+sudo apt install nodejs-legacy
+```
+
+
+```
 sudo npm install sails -g
 sudo npm install forever -g
 npm install
