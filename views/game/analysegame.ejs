@@ -289,32 +289,36 @@
 		document.getElementById('nb-200').innerHTML=""+formatPer(percent_at_least_200_trials);
 		document.getElementById('b-c').innerHTML=""+d3.format("$,.0f")(best);
 		listUsersNbAttempts.sort(function(a, b){return a.bestcost-b.bestcost});
-		bc = game.game_state[listUsersNbAttempts[0].name][listUsersNbAttempts[0].usrind][1];
-		
-		//console.log(network.pipe_diameters)
-		//console.log(game.game_state)
-		var pipes_choices={};
-		for (var i=101;i<122;i++){
-			if (bc[i]>0){
-			pipes_choices[i]=network.pipe_diameters[bc[i]-1]
+		if (game.game_state[listUsersNbAttempts[0].name][listUsersNbAttempts[0].usrind]){
+			bc = game.game_state[listUsersNbAttempts[0].name][listUsersNbAttempts[0].usrind][1];
+			//console.log(network.pipe_diameters)
+			//console.log(game.game_state)
+			var pipes_choices={};
+			for (var i=101;i<122;i++){
+				if (bc[i]>0){
+				pipes_choices[i]=network.pipe_diameters[bc[i]-1]
+				}
+				else {
+					pipes_choices[i]=0
+				}
 			}
-			else {
-				pipes_choices[i]=0
+			
+			listUsersNbAttempts.sort(function(a, b){return a.attempts-b.attempts});
+			//console.log(pipes_choices)
+			var out="<table style='border: 1px solid black;'><tr><th style='border: 1px solid black;'>pipe id &nbsp;</th>";
+			for (elem in pipes_choices){
+				out+="<th style='border: 1px solid black;'> "+elem+" </th>";
 			}
+			out+="<tr style='border: 1px solid black;'><td style='border: 1px solid black;'>diameter &nbsp;</td>"
+			for (elem in pipes_choices){
+				out+="<td style='border: 1px solid black;'> "+pipes_choices[elem]+" </td>";
+			}
+			out+="</tr></table>"
+			document.getElementById('p-d').innerHTML=out;
 		}
 		
-		listUsersNbAttempts.sort(function(a, b){return a.attempts-b.attempts});
-		//console.log(pipes_choices)
-		var out="<table style='border: 1px solid black;'><tr><th style='border: 1px solid black;'>pipe id &nbsp;</th>";
-		for (elem in pipes_choices){
-			out+="<th style='border: 1px solid black;'> "+elem+" </th>";
-		}
-		out+="<tr style='border: 1px solid black;'><td style='border: 1px solid black;'>diameter &nbsp;</td>"
-		for (elem in pipes_choices){
-			out+="<td style='border: 1px solid black;'> "+pipes_choices[elem]+" </td>";
-		}
-		out+="</tr></table>"
-		document.getElementById('p-d').innerHTML=out;
+		
+		
 		//console.log(average_best_cost)
 		//console.log(average_nb_trials)
 		
@@ -457,32 +461,35 @@
 		document.getElementById('nb-200').innerHTML=""+formatPer(percent_at_least_200_trials);
 		document.getElementById('b-c').innerHTML=""+best;
 		listUsersNbAttempts.sort(function(a, b){return a.bestcost-b.bestcost});
-		bc = game.game_state[listUsersNbAttempts[0].name][listUsersNbAttempts[0].usrind][1];
 		
-		//console.log(network.pipe_diameters)
-		//console.log(game.game_state)
-		var pipes_choices={};
-		for (var i=2;i<26;i++){
-			if (bc[i]>0){
-			pipes_choices[i]=network.pipe_diameters[bc[i]-1]
+		if (game.game_state[listUsersNbAttempts[0].name][listUsersNbAttempts[0].usrind]){
+			bc = game.game_state[listUsersNbAttempts[0].name][listUsersNbAttempts[0].usrind][1];
+			
+			//console.log(network.pipe_diameters)
+			//console.log(game.game_state)
+			var pipes_choices={};
+			for (var i=2;i<26;i++){
+				if (bc[i]>0){
+				pipes_choices[i]=network.pipe_diameters[bc[i]-1]
+				}
+				else {
+					pipes_choices[i]=0
+				}
 			}
-			else {
-				pipes_choices[i]=0
+			
+			listUsersNbAttempts.sort(function(a, b){return a.attempts-b.attempts});
+			//console.log(pipes_choices)
+			var out="<table style='border: 1px solid black;'><tr><th style='border: 1px solid black;'>pipe id &nbsp;</th>";
+			for (elem in pipes_choices){
+				out+="<th style='border: 1px solid black;'> "+elem+" </th>";
 			}
+			out+="<tr style='border: 1px solid black;'><td style='border: 1px solid black;'>diameter &nbsp;</td>"
+			for (elem in pipes_choices){
+				out+="<td style='border: 1px solid black;'> "+pipes_choices[elem]+" </td>";
+			}
+			out+="</tr></table>"
+			document.getElementById('p-d').innerHTML=out;
 		}
-		
-		listUsersNbAttempts.sort(function(a, b){return a.attempts-b.attempts});
-		//console.log(pipes_choices)
-		var out="<table style='border: 1px solid black;'><tr><th style='border: 1px solid black;'>pipe id &nbsp;</th>";
-		for (elem in pipes_choices){
-			out+="<th style='border: 1px solid black;'> "+elem+" </th>";
-		}
-		out+="<tr style='border: 1px solid black;'><td style='border: 1px solid black;'>diameter &nbsp;</td>"
-		for (elem in pipes_choices){
-			out+="<td style='border: 1px solid black;'> "+pipes_choices[elem]+" </td>";
-		}
-		out+="</tr></table>"
-		document.getElementById('p-d').innerHTML=out;
 		//console.log(average_best_cost)
 		//console.log(average_nb_trials)
 		
