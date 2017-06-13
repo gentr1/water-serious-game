@@ -279,6 +279,7 @@ type \q to exit the database command line.
 7- go where the serious game folder has been extracted and start installing node.js related stuff:
 e.g. cd Documents/myseriousgame/
 Go to  https://nodejs.org/en/ and download and install a recent stable version of node.js.
+Make sure that the node version installed is at least v7.10.0 or higher. (type node -v to get the version number). 
 Open a command line and type:
 ```
 npm install sails -g
