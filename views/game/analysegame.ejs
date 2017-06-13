@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SeGWADE | Welcome back, <%= me.name %>!</title>
+    <!-- Viewport mobile tag for sensible mobile support -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    
+    <link rel="stylesheet" href="/styles/bootstrap.3.1.1.css">
+    <link rel="stylesheet" href="/styles/handsontable.full.min.css">
+    <link rel="stylesheet" href="/styles/importer.css">
+    
+    <!--Added this so the client has access to the csrf tag and it's grabbed first service side on every page -->
+    <script type="text/javascript">
+    window.SAILS_LOCALS = {
+      _csrf: '<%= _csrf %>',
+      me: <%- JSON.stringify(me) %>
+    };
+    var myuser = <%-JSON.stringify(me)%>
+	var game = <%-JSON.stringify(game)%>
+	var network = <%-JSON.stringify(network)%>
+	//var input=[];
+	//console.log(myuser);
+    </script>
+	
+	<style>
+	
+
+	.switch {
+	  position: relative;
+	  display: inline-block;
+	  width: 60px;
+	  height: 34px;
+	}
+
+	.switch input {display:none;}
+
+	.slider {
+	  position: absolute;
+	  cursor: pointer;
+	  top: 0;
+	  left: 0;
+	  right: 0;
+	  bottom: 0;
+	  background-color: #ccc;
+	  -webkit-transition: .4s;
+	  transition: .4s;
+	}
+
+	.slider:before {
+	  position: absolute;
+	  content: "";
+	  height: 26px;
+	  width: 26px;
+	  left: 4px;
+	  bottom: 4px;
+	  background-color: white;
+	  -webkit-transition: .4s;
+	  transition: .4s;
+	}
+
+	input:checked + .slider {
+	  background-color: #2196F3;
+	}
+
+	input:focus + .slider {
+	  box-shadow: 0 0 1px #2196F3;
+	}
+
+	input:checked + .slider:before {
+	  -webkit-transform: translateX(26px);
+	  -ms-transform: translateX(26px);
+	  transform: translateX(26px);
+	}
+
+	/* Rounded sliders */
+	.slider.round {
+	  border-radius: 34px;
+	}
+
+	.slider.round:before {
+	  border-radius: 50%;
+	}
+	
+	.bar {
+	  fill: steelblue;
+	}
+
+	.bar:hover {
+	  fill: brown;
+	}
+
+	.axis {
+	  font: 15px sans-serif;
+	}
+
+	.axis path,
+	.axis line {
+	  fill: none;
+	  stroke: #000;
+	  shape-rendering: crispEdges;
+	}
+
+	.x.axis path {
+	  display: none;
+	}
+	.line {
+	  fill: none;
+	  stroke: red;
+	  stroke-width: 1.5px;
+	}
+
+
+
+
+
+	</style>
+	
+  </head>
+  <body ng-app="DashboardModule" ng-controller="DashboardController">
+	
+    <!-- container = Fixed-width container container-fluid = full-width -->
+    <div id="big-container" >
+      <!-- Creates the navbar -->
+      <nav id ="mynav" class="navbar navbar-default navbar-inverse" style="margin-left:15px;margin-right:15px;height:50px">
+        <!-- This creates the mechanism for collapse button -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" ng-init="navCollapsed = true" ng-click="navCollapsed = !navCollapsed">
+        <!-- This controls the number of lines in the image when the nav collapse -->
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        </button>
+        <!-- This is the brand on the left-hand side. -->
+        <a class="navbar-brand" href="/#/"> SeGWADE</a>
+        <!-- This is what is the above collapse button points to when the mark-up below is collapsed -->
+        <div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'">
+          <!-- This is what "styles" the li's as navbar items -->
+          <ul class="nav navbar-nav navbar-right">
+            <!-- navbar-right pulls this element right -->
+            <!-- Using ng-show instead of ng-if because we need this mark-up to be in the dom when signup controller
+            fires.  If it's not there (which it wouldn't be in the case of ng-if) then the scope of the signup
+            controller will not be tied to this element. -->
+            <li>
+              <a id="useraccess" href="/editusers" style="">users</a>
+            </li>
+			<li>
+              <a id="gameaccess" href="/seegames" style="">games</a>
+            </li>
+			<li>
+              <a id="netaccess" href="/seenetworks">networks</a>
+            </li>
+			<li>
+              <a href="/logout">sign-out</a>
+            </li>
+            <!-- <a ng-controller="signinController" class="btn btn-default navbar-btn navbar-right" href="#" ng-if="!isAuthenticated">sign-in</a> -->
+            <!-- Using ng-show instead of ng-if because we need this mark-up to be in the dom when signup controller
+            fires.  If it's not there (which it wouldn't be in the case of ng-if) then the scope of the signup
+            controller will not be tied to this element. -->
+          </ul>
+        </div>
+      </nav>
+
+      <h1 id="maintitle" align="center" style="height:39px;">Serious Game for WDS Analysis, Design & Evaluation</h1>
+	  <h2 id="subtitle1" align="center" style="height:25px;">Game play analysis for <%- game.name %></h2>
+	  <!-- <div ng-repeat="n in [42, 42, 43, 43] track by $index">
+	    {{n}}
+	  </div>-->
+	  
+
+    </div>
+	
+	<br>
+	
+	<div id="graph1"></div>
+	Number of players: <span id="nb-pl"> </span><br>
+	Best cost found by a player so far: <span id="b-c"></span><br>
+	Using the following pipes diameters: <div id="p-d"></div><br>
+	<div id="a1">Best cost found by a GA optimiser: $38,642,592</div><br>
+	Average number of trials for all players: <span id="av-trials"> </span><br>
+	<div id="a2">Average best cost found by all players:</div> <span id="av-best-cost"> </span><br>
+	Percentage of players with 100 attempts or more: <span id="nb-100"> </span><br>
+	Percentage of players with 200 attempts or more: <span id="nb-200"> </span><br>
+	<br>
+	
+    <script src="/js/dependencies/sails.io.js"></script>
+    <script src="/js/dependencies/jquery-2.2.3.min.js"></script>    
+    <script src="/js/dependencies/Underscore.1.8.3.min.js"></script>
+    <script src="/js/dependencies/bootstrap-select.min.js"></script>
+    <script src="/js/dependencies/d3.min.js"></script>
+	
+	<script>
+	
+	var margin = {top: 20, right: 90, bottom: 120, left: 40},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+	var x = d3.scale.ordinal()
+		.rangeRoundBands([0, width], .1);
+
+	var y = d3.scale.linear()
+		.range([height, 0]);
+
+	var y2 = d3.scale.linear()//d3.scale.pow().exponent(.5)//d3.scale.linear()
+		.range([height, 0]);	
+
+	var xAxis = d3.svg.axis()
+		.scale(x)
+		.orient("bottom");
+
+	var yAxis = d3.svg.axis()
+		.scale(y)
+		.orient("left")
+		.ticks(10, "");
+	var formatCost = d3.format("$.2s");
+	var formatPer = d3.format("%");
+	var yAxis2 = d3.svg.axis()
+		.scale(y2)
+		.orient("right")
+		.tickFormat(function(d, i){if (d>=70000000){return formatCost(294156055.0)}else{return formatCost(d)+""}}).tickValues([70000000.0,55000000.0,50000000.0,45000000.0,40000000.0,38000000.0])
+		
+
+	var svg = d3.select("#graph1").append("svg")
+		.attr("width", width + margin.left + margin.right)
+		.attr("height", height + margin.top + margin.bottom)
+	  .append("g")
+		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+	
+	//console.log(game)
+	var listUsers= Object.keys(game.game_state);
+	var nbUsers=listUsers.length;
+	document.getElementById('nb-pl').innerHTML=""+nbUsers;
+	
+	if (game.game_mode=='nyc'){
+		var best=294156055.0;
+		var bc="";
+		
+		var listUsersNbAttempts=[];
+		for (usr in game.game_state){
+			var userind=-1;
+			var best_cost=294156055.0;
+			for (var i=0;i<game.game_state[usr].length;i++){
+				var session = game.game_state[usr][i];
+				var sum_deficit=parseInt(game.game_state[usr][i][0][6]);
+				
+				var sum_cost=parseFloat(game.game_state[usr][i][0][4]);
+				
+				if (sum_deficit==0 && sum_cost<best_cost){
+					best_cost=sum_cost;
+					userind=i;
+					
+				}
+			}
+			listUsersNbAttempts.push({name:usr,attempts:game.game_state[usr].length, bestcost:Math.min(best_cost,70000000),usrind:userind})
+			if (best_cost<best){
+				best=best_cost;
+				
+			}
+		}
+		listUsersNbAttempts.sort(function(a, b){return a.attempts-b.attempts});
+	
+		//console.log(listUsersNbAttempts);
+		var sum_nb_trials=0;
+		var sum_best_cost=0;
+		var nb_users_at_least_100_trials=0;
+		var nb_users_at_least_200_trials=0;
+		for (var i=0;i<listUsersNbAttempts.length;i++){
+			sum_nb_trials+=listUsersNbAttempts[i]['attempts'];
+			sum_best_cost+=listUsersNbAttempts[i]['bestcost'];
+			if (listUsersNbAttempts[i]['attempts']>=100){
+				nb_users_at_least_100_trials++;
+			}
+			if (listUsersNbAttempts[i]['attempts']>=200){
+				nb_users_at_least_200_trials++;
+			}
+		}
+		//console.log(listUsersNbAttempts)
+		var linedata_ref=[];
+		for (var i=0;i<listUsersNbAttempts.length;i++){
+			linedata_ref.push({name:listUsersNbAttempts[i]['name'],attempts:listUsersNbAttempts[i]['attempts'], bestcost:38642592.0});
+		}
+		
+		var average_best_cost=sum_best_cost/listUsersNbAttempts.length;
+		var average_nb_trials=sum_nb_trials/listUsersNbAttempts.length;
+		var percent_at_least_100_trials=nb_users_at_least_100_trials/listUsersNbAttempts.length;
+		var percent_at_least_200_trials=nb_users_at_least_200_trials/listUsersNbAttempts.length;
+		document.getElementById('av-trials').innerHTML=""+Math.ceil(average_nb_trials);
+		document.getElementById('av-best-cost').innerHTML=""+formatCost(average_best_cost);
+		document.getElementById('nb-100').innerHTML=""+formatPer(percent_at_least_100_trials);
+		document.getElementById('nb-200').innerHTML=""+formatPer(percent_at_least_200_trials);
+		document.getElementById('b-c').innerHTML=""+d3.format("$,.0f")(best);
+		listUsersNbAttempts.sort(function(a, b){return a.bestcost-b.bestcost});
+		bc = game.game_state[listUsersNbAttempts[0].name][listUsersNbAttempts[0].usrind][1];
+		
+		//console.log(network.pipe_diameters)
+		//console.log(game.game_state)
+		var pipes_choices={};
+		for (var i=101;i<122;i++){
+			if (bc[i]>0){
+			pipes_choices[i]=network.pipe_diameters[bc[i]-1]
+			}
+			else {
+				pipes_choices[i]=0
+			}
+		}
+		
+		listUsersNbAttempts.sort(function(a, b){return a.attempts-b.attempts});
+		//console.log(pipes_choices)
+		var out="<table style='border: 1px solid black;'><tr><th style='border: 1px solid black;'>pipe id &nbsp;</th>";
+		for (elem in pipes_choices){
+			out+="<th style='border: 1px solid black;'> "+elem+" </th>";
+		}
+		out+="<tr style='border: 1px solid black;'><td style='border: 1px solid black;'>diameter &nbsp;</td>"
+		for (elem in pipes_choices){
+			out+="<td style='border: 1px solid black;'> "+pipes_choices[elem]+" </td>";
+		}
+		out+="</tr></table>"
+		document.getElementById('p-d').innerHTML=out;
+		//console.log(average_best_cost)
+		//console.log(average_nb_trials)
+		
+		x.domain(listUsersNbAttempts.map(function(d) { return d.name; }));
+		y.domain([0, 400]);
+		//y2.domain([294156055.0, 38000000.0]);
+		y2.domain([70000000.0, 38000000.0]);
+		
+		var line = d3.svg.line()
+		.x(function(d) { return x(d.name)+(x.rangeBand()/2); })
+		.y(function(d) { return y2(d.bestcost); }).interpolate("linear");
+
+	
+
+		svg.append("g")
+			  .attr("class", "y axis")
+			  .call(yAxis)
+			.append("text")
+			  .attr("transform", "rotate(-90)")
+			  .attr("y", 6)
+			  .attr("dy", ".71em")
+			  .style("text-anchor", "end")
+			  .text("No attempts");
+
+		svg.append("g")
+			  .attr("class", "y axis")
+			  .attr("transform", "translate("+(width+15)+"," + 0 + ")")
+			  .call(yAxis2).style('fill', 'red')
+			.append("text")
+			  .attr("transform", "rotate(-90)")
+			  .attr("y", 6)
+			  .attr("dy", "-.71em")
+			  
+			  .style("text-anchor", "end")
+			  .text("Best Cost");	  
+		  
+		svg.append("g")
+			   .attr("class", "x axis")
+			   .attr("transform", "translate(0," + height + ")")
+			   .call(xAxis)
+			   .selectAll("text")  
+					.style("text-anchor", "end")
+					.attr("dx", "-.8em")
+					.attr("dy", ".15em")
+					.attr("font-size", "15px")
+					.attr("transform", "rotate(-45)" );
+		svg.selectAll(".bar")
+			  .data(listUsersNbAttempts)
+			.enter().append("rect")
+			  .attr("class", "bar")
+			  .attr("x", function(d) { return x(d.name); })
+			  .attr("width", x.rangeBand())
+			  .attr("y", function(d) { return y(d.attempts); })
+			  .attr("height", function(d) { return height - y(d.attempts); });
+		  
+		var nodeEnter = svg.selectAll(".node")
+		  .data(listUsersNbAttempts)
+		.enter().append("g")
+		  .attr("class", "node")
+		  .attr("transform", function(d) { 
+			  return "translate(" + (x(d.name)+(x.rangeBand()/2)) + "," + y2(d.bestcost) + ")"; });
+
+		nodeEnter.append("path")
+			.style("stroke", "red")
+			.style("stroke-width", 2.0)
+			.style("fill", "none")
+			.attr("d", d3.svg.symbol()
+						 .size(80)
+						 .type(function(d) { return "circle";}));  
+		  
+		svg.append("path")
+		  .datum(linedata_ref)
+		  .attr("class", "line")
+		  .attr("d", line).style("stroke","red").style("stroke-width",1).style("stroke-dasharray", ("3, 3"));
+
+		svg.selectAll(".text")
+		  .data(listUsersNbAttempts)
+		.enter().append("text").attr("class", "text")
+		  .attr("x", function(d) { return x(d.name); })
+		  .attr("y", function(d) { return y(d.attempts)-5; })
+		  .text(function(d,i) { return d.attempts});
+	}
+	if (game.game_mode=='aqualibrium'){
+		//console.log(game.game_state)
+		y2 = d3.scale.pow().exponent(.18)//d3.scale.linear()//d3.scale.pow().exponent(.5)//d3.scale.linear()
+		.range([height, 0]);	
+		yAxis2 = d3.svg.axis()
+		.scale(y2)
+		.orient("right")
+		.tickFormat(function(d, i){return d3.format(".f")(d)+""}).tickValues([3000.0,1000.0,250.0,100.0,50.0,10.0,3.0,1.0,0.1,0.01,0.001,0.0])
+		var best=3000.0;
+		var listUsersNbAttempts=[];
+		for (usr in game.game_state){
+			var userind=-1;
+			var best_cost=3000.0;
+			for (var i=0;i<game.game_state[usr].length;i++){
+				var session = game.game_state[usr][i];
+				var score=parseFloat(game.game_state[usr][i][0][7]);
+				if (score<best_cost){
+					best_cost=score;
+					userind=i;
+				}
+			}
+			listUsersNbAttempts.push({name:usr,attempts:game.game_state[usr].length, bestcost:Math.min(best_cost,3000.0),usrind:userind})
+			if (best_cost<best){
+				best=best_cost;
+				
+			}
+		}
+		listUsersNbAttempts.sort(function(a, b){return a.attempts-b.attempts});
+		var sum_nb_trials=0;
+		var sum_best_cost=0;
+		var nb_users_at_least_100_trials=0;
+		var nb_users_at_least_200_trials=0;
+		for (var i=0;i<listUsersNbAttempts.length;i++){
+			sum_nb_trials+=listUsersNbAttempts[i]['attempts'];
+			sum_best_cost+=listUsersNbAttempts[i]['bestcost'];
+			if (listUsersNbAttempts[i]['attempts']>=100){
+				nb_users_at_least_100_trials++;
+			}
+			if (listUsersNbAttempts[i]['attempts']>=200){
+				nb_users_at_least_200_trials++;
+			}
+		}
+		//console.log(listUsersNbAttempts)
+		var linedata_ref=[];
+		for (var i=0;i<listUsersNbAttempts.length;i++){
+			linedata_ref.push({name:listUsersNbAttempts[i]['name'],attempts:listUsersNbAttempts[i]['attempts'], bestcost:38644000.0});
+		}
+		
+		var average_best_cost=sum_best_cost/listUsersNbAttempts.length;
+		var average_nb_trials=sum_nb_trials/listUsersNbAttempts.length;
+		var percent_at_least_100_trials=nb_users_at_least_100_trials/listUsersNbAttempts.length;
+		var percent_at_least_200_trials=nb_users_at_least_200_trials/listUsersNbAttempts.length;
+		document.getElementById('a1').innerHTML="";
+		document.getElementById('a2').innerHTML="Average best score found by all players:";
+		document.getElementById('av-trials').innerHTML=""+Math.ceil(average_nb_trials);
+		document.getElementById('av-best-cost').innerHTML=""+d3.format(".0f")(average_best_cost);
+		document.getElementById('nb-100').innerHTML=""+formatPer(percent_at_least_100_trials);
+		document.getElementById('nb-200').innerHTML=""+formatPer(percent_at_least_200_trials);
+		document.getElementById('b-c').innerHTML=""+best;
+		listUsersNbAttempts.sort(function(a, b){return a.bestcost-b.bestcost});
+		bc = game.game_state[listUsersNbAttempts[0].name][listUsersNbAttempts[0].usrind][1];
+		
+		//console.log(network.pipe_diameters)
+		//console.log(game.game_state)
+		var pipes_choices={};
+		for (var i=2;i<26;i++){
+			if (bc[i]>0){
+			pipes_choices[i]=network.pipe_diameters[bc[i]-1]
+			}
+			else {
+				pipes_choices[i]=0
+			}
+		}
+		
+		listUsersNbAttempts.sort(function(a, b){return a.attempts-b.attempts});
+		//console.log(pipes_choices)
+		var out="<table style='border: 1px solid black;'><tr><th style='border: 1px solid black;'>pipe id &nbsp;</th>";
+		for (elem in pipes_choices){
+			out+="<th style='border: 1px solid black;'> "+elem+" </th>";
+		}
+		out+="<tr style='border: 1px solid black;'><td style='border: 1px solid black;'>diameter &nbsp;</td>"
+		for (elem in pipes_choices){
+			out+="<td style='border: 1px solid black;'> "+pipes_choices[elem]+" </td>";
+		}
+		out+="</tr></table>"
+		document.getElementById('p-d').innerHTML=out;
+		//console.log(average_best_cost)
+		//console.log(average_nb_trials)
+		
+		x.domain(listUsersNbAttempts.map(function(d) { return d.name; }));
+		y.domain([0, 400]);
+		//y2.domain([294156055.0, 38000000.0]);
+		y2.domain([3000.0, 0.0]);
+		
+		var line = d3.svg.line()
+		.x(function(d) { return x(d.name)+(x.rangeBand()/2); })
+		.y(function(d) { return y2(d.bestcost); }).interpolate("linear");
+
+	
+
+		svg.append("g")
+			  .attr("class", "y axis")
+			  .call(yAxis)
+			.append("text")
+			  .attr("transform", "rotate(-90)")
+			  .attr("y", 6)
+			  .attr("dy", ".71em")
+			  .style("text-anchor", "end")
+			  .text("No attempts");
+
+		svg.append("g")
+			  .attr("class", "y axis")
+			  .attr("transform", "translate("+(width+15)+"," + 0 + ")")
+			  .call(yAxis2).style('fill', 'red')
+			.append("text")
+			  .attr("transform", "rotate(-90)")
+			  .attr("y", 6)
+			  .attr("dy", "-.71em")
+			  
+			  .style("text-anchor", "end")
+			  .text("Best Score");	  
+		  
+		svg.append("g")
+			   .attr("class", "x axis")
+			   .attr("transform", "translate(0," + height + ")")
+			   .call(xAxis)
+			   .selectAll("text")  
+					.style("text-anchor", "end")
+					.attr("dx", "-.8em")
+					.attr("dy", ".15em")
+					.attr("font-size", "15px")
+					.attr("transform", "rotate(-45)" );
+		svg.selectAll(".bar")
+			  .data(listUsersNbAttempts)
+			.enter().append("rect")
+			  .attr("class", "bar")
+			  .attr("x", function(d) { return x(d.name); })
+			  .attr("width", x.rangeBand())
+			  .attr("y", function(d) { return y(d.attempts); })
+			  .attr("height", function(d) { return height - y(d.attempts); });
+		  
+		var nodeEnter = svg.selectAll(".node")
+		  .data(listUsersNbAttempts)
+		.enter().append("g")
+		  .attr("class", "node")
+		  .attr("transform", function(d) { 
+			  return "translate(" + (x(d.name)+(x.rangeBand()/2)) + "," + y2(d.bestcost) + ")"; });
+
+		nodeEnter.append("path")
+			.style("stroke", "red")
+			.style("stroke-width", 2.0)
+			.style("fill", "none")
+			.attr("d", d3.svg.symbol()
+						 .size(80)
+						 .type(function(d) { return "circle";}));  
+		  
+		svg.append("path")
+		  .datum(linedata_ref)
+		  .attr("class", "line")
+		  .attr("d", line).style("stroke","red").style("stroke-width",1).style("stroke-dasharray", ("3, 3"));
+
+		svg.selectAll(".text")
+		  .data(listUsersNbAttempts)
+		.enter().append("text").attr("class", "text")
+		  .attr("x", function(d) { return x(d.name); })
+		  .attr("y", function(d) { return y(d.attempts)-5; })
+		  .text(function(d,i) { return d.attempts});
+	}
+	
+	
+	
+
+	</script>
+  </body>
+</html>

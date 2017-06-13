@@ -78,7 +78,8 @@ module.exports.routes = {
   'POST /editgame': 'GameController.settings',
   'POST /setgame': 'GameController.setgame',
   'POST /showgame': 'GameController.showgame',
-  'POST /playgame': 'GameController.playgame'
+  'POST /playgame': 'GameController.playgame',
+  'POST /gameanalysis': 'GameController.analyseGame'
   // '/': {
   //   view: 'homepage'
   // }

@@ -643,6 +643,47 @@ module.exports = {
 		}
 	},
 	
+	analyseGame: function(req, res) {
+		if (req.session.me) {
+			User.findOne(req.session.me, function (err, user){
+				if (err) {
+					return res.negotiate(err);
+				}
+
+				if (!user) {
+					sails.log.verbose('Session refers to a user who no longer exists- did you delete a user, then try to refresh the page with an open tab logged-in as that user?');
+					return res.view('homepage');
+				}
+				Game.findOne(req.param('nid')).exec(function(err2, mgame) {
+					if (err2) {
+						return res.negotiate(err2);
+					}
+					Network.findOne({name: mgame.network_name}, function foundUser(err3, net) {
+						if (err3) {
+							return res.negotiate(err3);
+						}
+						return res.view('game/analysegame', {
+							me: {
+							  id: user.id,
+							  name: user.name,
+							  email: user.email,
+							  //title: user.title,
+							  history: user.history,
+							  admin: user.admin,
+							  gravatarUrl: user.gravatarUrl
+							},
+							game: mgame,
+							network: net
+						});
+					});
+				});
+			});
+    
+		
+		
+		}
+	},
+	
 	
 	playgame: function(req, res) {
 		if (req.session.me) {

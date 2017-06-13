@@ -246,6 +246,7 @@
 			// a2.className += "btn btn-xs btn-danger";
 			// //a.style.width="300px";
 			// a2.innerHTML = "Delete";
+			
 			var a32 = document.createElement("input");
 			a32.id = "f"+i;
 			a32.type="submit"; 
@@ -258,7 +259,34 @@
 			a33.value = window.SAILS_LOCALS._csrf;
 			td3.appendChild(myform3);
 			myform3.appendChild(a33);
-
+			
+			
+			var td5 = tr.insertCell();
+			var myform5 = document.createElement("form");
+			myform5.action = "/gameanalysis";
+			myform5.method = "POST";
+			var t5 = document.createElement("input");
+			t5.type = "text";
+			t5.value = games[i]['id'];
+			t5.style.visibility="hidden";
+			t5.name = "nid";
+			t5.style.height="0px";
+			myform5.appendChild(t5);
+			
+			
+			var a45 = document.createElement("input");
+			a45.id = "f"+i;
+			a45.type="submit"; 
+			a45.value = "Game Analysis";
+			a45.className+="btn btn-sm btn-info"
+			myform5.appendChild(a45);
+			var a45 = document.createElement("input");
+			a45.name="_csrf";
+			a45.type="hidden"; 
+			a45.value = window.SAILS_LOCALS._csrf;
+			td5.appendChild(myform5);
+			myform5.appendChild(a45);
+			
 			var td4 = tr.insertCell();
 			var myform4 = document.createElement("form");
 			myform4.action = "/export3BestToEpfiles";
@@ -270,11 +298,8 @@
 			t4.name = "nid";
 			t4.style.height="0px";
 			myform4.appendChild(t4);
-			// var a2 = document.createElement('a');
-			// a2.setAttribute('href','/network/delete/'+games[i]['id']);
-			// a2.className += "btn btn-xs btn-danger";
-			// //a.style.width="300px";
-			// a2.innerHTML = "Delete";
+			
+			
 			var a42 = document.createElement("input");
 			a42.id = "f"+i;
 			a42.type="submit"; 
@@ -289,6 +314,37 @@
 			myform4.appendChild(a43);
 		
         }
+		if (games[i]['game_mode']=='nyc'){
+		
+			var td3 = tr.insertCell();
+			var myform3 = document.createElement("form");
+			myform3.action = "/gameanalysis";
+			myform3.method = "POST";
+			var t3 = document.createElement("input");
+			t3.type = "text";
+			t3.value = games[i]['id'];
+			t3.style.visibility="hidden";
+			t3.name = "nid";
+			t3.style.height="0px";
+			myform3.appendChild(t3);
+			// var a2 = document.createElement('a');
+			// a2.setAttribute('href','/network/delete/'+games[i]['id']);
+			// a2.className += "btn btn-xs btn-danger";
+			// //a.style.width="300px";
+			// a2.innerHTML = "Delete";
+			var a32 = document.createElement("input");
+			a32.id = "f"+i;
+			a32.type="submit"; 
+			a32.value = "Game Analysis";
+			a32.className+="btn btn-sm btn-info"
+			myform3.appendChild(a32);
+			var a33 = document.createElement("input");
+			a33.name="_csrf";
+			a33.type="hidden"; 
+			a33.value = window.SAILS_LOCALS._csrf;
+			td3.appendChild(myform3);
+			myform3.appendChild(a33);
+		}
     }
 	
 	</script>
