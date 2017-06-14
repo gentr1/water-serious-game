@@ -1,9 +1,9 @@
 # water-serious-game
-A multi player online serious game for water engineers. You can upload towns distributed water systems in epanet format, visualise them in 3d, set up game situations as a dungeon master, make teams of users with different and complementary roles, and have the teams compete to solve problems. Two games: the team based modena game, and the single player aqualibrium game are present.
+A multi player online serious game for water engineers. You can upload towns distributed water systems in epanet format, visualise them in 3d, set up game situations as a dungeon master, make teams of users with different and complementary roles, and have the teams compete to solve problems. Three games: the team based Modena game, and the competitive Aqualibrium game and New York tunnels are present.
+The hydraulic simulator that goes with the game works for the nyc and the aqualibrium and modena game on both linux ubuntu and windows. 
 
-At the moment, the hydraulic simulator that goes with the game works for the nyc and the aqualibrium game on both linux ubuntu and windows. The modena game executable only works for windows for now, but a linux version will come in a coupke of weeks.
-
-
+### Demo game server running at : http://waterseriousgames.org/
+Note that the Modena games require to set up teams of players in a private session, so it can only be played on the demo server during organised events. If you want to play it independently, you can just install and set up the game on your machine. Setup instructions below.
 
 ////////////////////////////
 installation on LINUX UBUNTU 
