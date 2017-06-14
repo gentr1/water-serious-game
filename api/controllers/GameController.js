@@ -328,7 +328,7 @@ module.exports = {
 							command = 'assets\\game-engine\\aqualibriumConsole.exe ';							
 						}
 						else{
-							command = 'assets/game-engine/aqualibriumConsole.exe ';	
+							command = 'assets/game-engine/CWS_AquaLibrium_Server.v0-lin.exe ';	
 						}
 						command+='"'+game.sessionBests[i1]['team']+'" aqualibrium "Export" "'+game.network_name+'" 1 "export" S pipes';
 						//command+= '"t1" "aqualibrium" "Aqua" "A1" 1 "t11476281688727" c pipes ';
