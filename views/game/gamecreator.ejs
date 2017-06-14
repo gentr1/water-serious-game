@@ -133,9 +133,18 @@
 	var listUsersTeamsRoles=[];
 	listTeams.push(-1);
 	for(var i=0;i<listusers.length;i++){
-		listUsersTeamsRoles.push({user:listusers[i]['name'],team:(listusers[i]['name']),team_member:0});
-		listTeams.push(listusers[i]['name']);
-		obj_players_teams_roles[listusers[i]['name']]={team:(listusers[i]['name']),team_member:0};
+		if (listusers[i]['name']=='the_dm'){
+		
+			listUsersTeamsRoles.push({user:listusers[i]['name'],team:-1,team_member:-1});
+			listTeams.push(listusers[i]['name']);
+			obj_players_teams_roles[listusers[i]['name']]={team:-1,team_member:-1};
+		}
+		else{
+			listUsersTeamsRoles.push({user:listusers[i]['name'],team:(listusers[i]['name']),team_member:0});
+			listTeams.push(listusers[i]['name']);
+			obj_players_teams_roles[listusers[i]['name']]={team:(listusers[i]['name']),team_member:0};
+		}
+		
 	}
 	
 	
