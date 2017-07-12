@@ -1288,7 +1288,7 @@
 		topinfo +='<tr><td>Score: </td><td>'+parseFloat(overall_score).toFixed(3)+'</td><td>Reservoir 1: </td><td>'+(reservoir_1).toFixed(5)+'</td><td>Reservoir 2: </td><td>'+(reservoir_2).toFixed(5)+'</td><td>Reservoir 3: </td><td>'+(reservoir_3).toFixed(5)+'</td></tr></table>'
 	}
 	else if (game.game_mode=='nyc'){
-		topinfo +='<tr><td>Cost: </td><td>'+d3.format(",.0f")(parseFloat(overall_cost))+'</td><td>Pressure deficit: </td><td>'+(pressure_deficit).toFixed(2)+'</td><td>No. deficit nodes: </td><td>'+(nb_deficit_nodes).toFixed(0)+'</td></tr></table>'
+		topinfo +='<tr><td>Cost: </td><td>'+d3.format(",.0f")(parseFloat(overall_cost))+'</td><td>Pressure deficit: </td><td>'+(pressure_deficit).toFixed(2)+' PSI</td><td>No. deficit nodes: </td><td>'+(nb_deficit_nodes).toFixed(0)+'</td></tr></table>'
 	}
 	document.getElementById('info-top').innerHTML=topinfo;
 	
@@ -4686,10 +4686,10 @@
 									else{
 										if (user_junctions_data.hasOwnProperty(jid)){
 											
-											myinfo +='<tr><td>Pressure:</td><td>'+user_junctions_data[jid][0]+'</td></tr></table>' //team_junctions_data[][0]									
+											myinfo +='<tr><td>Pressure:</td><td>'+parseFloat(user_junctions_data[jid][0]).toFixed(2)+' PSI</td></tr></table>' //team_junctions_data[][0]									
 										}
 										else{
-											myinfo +='<tr><td>Starting pressure diff:</td><td>'+team_junctions_data[jid][0]+'</td></tr></table>' //team_junctions_data[][0]
+											myinfo +='<tr><td>Starting pressure diff:</td><td>'+parseFloat(team_junctions_data[jid][0]).toFixed(2)+' PSI</td></tr></table>' //team_junctions_data[][0]
 										}
 									}
 									
@@ -5022,10 +5022,10 @@
 									else{
 										if (user_junctions_data.hasOwnProperty(jid)){
 											
-											myinfo +='<tr><td>Pressure :</td><td>'+user_junctions_data[jid][0]+'</td></tr></table>' //team_junctions_data[][0]										
+											myinfo +='<tr><td>Pressure :</td><td>'+parseFloat(user_junctions_data[jid][0]).toFixed(2)+' PSI</td></tr></table>' //team_junctions_data[][0]										
 										}
 										else{
-											myinfo +='<tr><td>Pressure :</td><td>'+team_junctions_data[jid][0]+'</td></tr></table>' //team_junctions_data[][0]									
+											myinfo +='<tr><td>Pressure :</td><td>'+parseFloat(team_junctions_data[jid][0]).toFixed(2)+' PSI</td></tr></table>' //team_junctions_data[][0]									
 										}
 									}
 									myinfo +='</div>'
@@ -5601,7 +5601,7 @@
 				topinfo +='<tr><td>Score: </td><td>'+parseFloat(overall_score).toFixed(3)+'</td><td>Reservoir 1: </td><td>'+(reservoir_1).toFixed(5)+'</td><td>Reservoir 2: </td><td>'+(reservoir_2).toFixed(5)+'</td><td>Reservoir 3: </td><td>'+(reservoir_3).toFixed(5)+'</td></tr></table>'
 			}
 			else if (game.game_mode=='nyc'){
-				topinfo +='<tr><td>Cost: </td><td>'+parseFloat(overall_cost).toFixed(2)+'</td><td>Pressure deficit: </td><td>'+(pressure_deficit).toFixed(2)+'</td><td>No. deficit nodes: </td><td>'+(nb_deficit_nodes).toFixed(0)+'</td></tr></table>'
+				topinfo +='<tr><td>Cost: </td><td>'+parseFloat(overall_cost).toFixed(2)+'</td><td>Pressure deficit: </td><td>'+(pressure_deficit).toFixed(2)+' PSI</td><td>No. deficit nodes: </td><td>'+(nb_deficit_nodes).toFixed(0)+'</td></tr></table>'
 			}
 			document.getElementById('info-top').innerHTML=topinfo;
 			onWindowResize();
@@ -5628,7 +5628,7 @@
 				topinfo +='<tr><td>Score: </td><td>'+parseFloat(overall_score).toFixed(3)+'</td><td>Reservoir 1: </td><td>'+(reservoir_1).toFixed(5)+'</td><td>Reservoir 2: </td><td>'+(reservoir_2).toFixed(5)+'</td><td>Reservoir 3: </td><td>'+(reservoir_3).toFixed(5)+'</td></tr></table>'
 			}
 			else if (game.game_mode=='nyc'){
-				topinfo +='<tr><td>Cost: </td><td>'+parseFloat(overall_cost).toFixed(2)+'</td><td>Pressure deficit: </td><td>'+(pressure_deficit).toFixed(2)+'</td><td>No. deficit nodes: </td><td>'+(nb_deficit_nodes).toFixed(0)+'</td></tr></table>'
+				topinfo +='<tr><td>Cost: </td><td>'+parseFloat(overall_cost).toFixed(2)+'</td><td>Pressure deficit: </td><td>'+(pressure_deficit).toFixed(2)+' PSI</td><td>No. deficit nodes: </td><td>'+(nb_deficit_nodes).toFixed(0)+'</td></tr></table>'
 			}
 			document.getElementById('info-top').innerHTML=topinfo;
 			onWindowResize();
@@ -9658,7 +9658,7 @@
 				// update topinfo message with total cost etc...
 				var topinfo = '';
 				topinfo +='<table class="table-condensed" style="font-size:16px;border-style: solid;border-color: '+mycol+';border-width: 0px;color:'+mycol+'">';
-				topinfo +='<tr><td>Cost: </td><td>'+d3.format(",.0f")(parseFloat(overall_cost))+'</td><td>Pressure deficit: </td><td>'+(pressure_deficit).toFixed(2)+'</td><td>No. deficit nodes: </td><td>'+(nb_deficit_nodes).toFixed(0)+'</td></tr></table>'
+				topinfo +='<tr><td>Cost: </td><td>'+d3.format(",.0f")(parseFloat(overall_cost))+'</td><td>Pressure deficit: </td><td>'+(pressure_deficit).toFixed(2)+' PSI</td><td>No. deficit nodes: </td><td>'+(nb_deficit_nodes).toFixed(0)+'</td></tr></table>'
 				document.getElementById('info-top').innerHTML=topinfo;	
 				updatePipesColors();
 				updatePressureNodesColors()	
@@ -10212,7 +10212,7 @@
 				// update topinfo message with total cost etc...
 				var topinfo = '';
 				topinfo +='<table class="table-condensed" style="font-size:16px;border-style: solid;border-color: '+mycol+';border-width: 0px;color:'+mycol+'">';
-				topinfo +='<tr><td>Cost: </td><td>'+d3.format(",.0f")(parseFloat(overall_cost))+'</td><td>Pressure deficit: </td><td>'+(pressure_deficit).toFixed(2)+'</td><td>No. deficit nodes: </td><td>'+(nb_deficit_nodes).toFixed(0)+'</td></tr></table>'
+				topinfo +='<tr><td>Cost: </td><td>'+d3.format(",.0f")(parseFloat(overall_cost))+'</td><td>Pressure deficit: </td><td>'+(pressure_deficit).toFixed(2)+' PSI</td><td>No. deficit nodes: </td><td>'+(nb_deficit_nodes).toFixed(0)+'</td></tr></table>'
 				document.getElementById('info-top').innerHTML=topinfo;	
 				// update myhistory + selectvar 
 				res1_bar0.transition(200)
