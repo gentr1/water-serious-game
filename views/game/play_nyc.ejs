@@ -9707,203 +9707,48 @@
 					//   console.log('Sending aknowledgment of receipt to server ');
 					//})
 				}
-			}
 			
-			if (game.game_mode=='modena'){
-				//console.log(data.result)
-				overall_cost=parseFloat(data.result[5]);
-				leakage=parseFloat(data.result[6]).toFixed(2);
-				water_age=parseFloat(data.result[7]);
-				pressure_deficit=parseFloat(data.result[8]);
-				nb_deficit_nodes=0;
-				user_junctions_data={}
-				var indp=11;
-				for (var i =0; i<junctions_nb;i++){
-					var jid= data.result[indp]
-					indp++;
-					var pmin = parseFloat(data.result[indp]);
-					indp++;
-					var pmax = parseFloat(data.result[indp]);
-					indp++;
-					var maxage= parseFloat(data.result[indp]);
-					indp++;
-					if (jid){
-						user_junctions_data[jid]=[pmin,pmax,maxage];
-						team_junctions_data[jid]=[pmin,pmax,maxage];
-						if (pmin<0){
-							nb_deficit_nodes++;
-						}
-					}
-				}
-				
-				//console.log(user_junctions_data)
-				user_latest_diameters={};
-				user_pipes_leakage={};
-				for (var i =0; i<pipes_nb;i++){
-					var pid= data.result[indp];
-					indp++;
-					var mleakage= parseFloat(data.result[indp]);
-					indp++;
-					var pipediam= parseInt(data.result[indp]);
-					indp++;
-					if (pid){
-						if (all_changeable_pipes.hasOwnProperty(pid)){
-							if (pipediam!=-1 && pipediam!='-1'){
-								user_latest_diameters[pid]=pipediam;
-								team_latest_diameters[pid]=pipediam;
-							}
-							else{
-								delete user_latest_diameters[pid];
-								team_latest_diameters[pid]=pipediam;
+			
+				if (game.game_mode=='modena'){
+					//console.log(data.result)
+					overall_cost=parseFloat(data.result[5]);
+					leakage=parseFloat(data.result[6]).toFixed(2);
+					water_age=parseFloat(data.result[7]);
+					pressure_deficit=parseFloat(data.result[8]);
+					nb_deficit_nodes=0;
+					user_junctions_data={}
+					var indp=11;
+					for (var i =0; i<junctions_nb;i++){
+						var jid= data.result[indp]
+						indp++;
+						var pmin = parseFloat(data.result[indp]);
+						indp++;
+						var pmax = parseFloat(data.result[indp]);
+						indp++;
+						var maxage= parseFloat(data.result[indp]);
+						indp++;
+						if (jid){
+							user_junctions_data[jid]=[pmin,pmax,maxage];
+							team_junctions_data[jid]=[pmin,pmax,maxage];
+							if (pmin<0){
+								nb_deficit_nodes++;
 							}
 						}
-						else{
-							if (pipediam!=-1 && pipediam!='-1'){
-								
-								team_latest_diameters[pid]=pipediam;
-							}
-							else{
-								team_latest_diameters[pid]=diameters_2_index[all_pipes[pid]['Diameter']];
-							}
-						}
-						user_pipes_leakage[pid]=mleakage;
-						team_pipes_leakage[pid]=mleakage;
-					}
-				}
-				//console.log(team_latest_diameters[163])
-				// update color of junctions
-				updatePressureNodesColors();
-				
-				// update pipes not under control of the user after the whole team network is changed
-				// the user pipes diameters should not be changed by the team update
-				var def_line_col;
-				// lines
-				if (UIColor=="black"){
-					def_line_col=0xffffff;
-				}
-				else if (UIColor=="white"){
-					def_line_col=0x888888;
-				}
-				if (isWebGl==false){
-					var l_scene = scene.children[0].children.length;		
-					for (var s =0;s<l_scene;s++){
-						if (scene.children[0].children[s].name){
-							if(scene.children[0].children[s].name.startsWith('pf-')) {
-								var cpipe= scene.children[0].children[s].name.split('pf-')[1];
-								var index_diameter=0;
-								if (_.isEmpty(user_latest_diameters)){
-									index_diameter=team_latest_diameters[cpipe];
-								}
-								else{
-									if (user_latest_diameters.hasOwnProperty(cpipe)){
-										index_diameter=user_latest_diameters[cpipe];
-									}
-									else{
-										index_diameter=team_latest_diameters[cpipe];
-									}
-									
-								}
-								var material = new THREE.LineBasicMaterial( { color : def_line_col, linewidth:2+(index_diameter/4), opacity: 0.7 } );
-								scene.children[0].children[s].material=material;
-							}
-						}
-					}
-				}
-				else{
-					var m_group= scene.children[3].children;
-					var l_scene = m_group.length;
-					//console.log(l_scene)
-					for (var s =0;s<l_scene;s++){
-						if (m_group[s].type=="Mesh" ){
-							if (m_group[s].name){ //&& (m_group[s].name=='pc-'+cpipe)) {
-								if(m_group[s].name.startsWith('pf-')) {
-									var cpipe= m_group[s].name.split('pf-')[1];
-									var array_points=[];
-									for (var i=0;i< all_pipes[cpipe]['Vertices'].length;i++ ){
-										 array_points.push( new THREE.Vector3(((parseFloat(all_pipes[cpipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),0, ((parseFloat(all_pipes[cpipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
-									}
-									var curve = new THREE.CatmullRomCurve3(array_points);
-									var index_diameter=0;
-									if (_.isEmpty(user_latest_diameters)){
-										 index_diameter=team_latest_diameters[cpipe];
-									}
-									else{
-										if (user_latest_diameters.hasOwnProperty(cpipe)){
-											index_diameter=user_latest_diameters[cpipe];
-										}
-										else{
-											index_diameter=team_latest_diameters[cpipe];
-										}
-										
-									}
-									var rad=0.8+(index_diameter/(network['pipe_diameters'].length/3));
-									var seg =1;
-									if (array_points.length>2){
-										seg = 12;
-									}
-									var geometry = new THREE.TubeGeometry(
-										curve,  //path
-										seg,    //segments
-										rad,     //radius
-										8,     //radiusSegments
-										false  //closed
-									);
-									geometry.dynamic = true;
-									m_group[s].geometry=geometry;
-									
-								}
-							}
-							
-						}
-					}
-				}
-				updatePipesColors();	
-				// update topinfo message with total cost etc...
-				var topinfo = '';
-				topinfo +='<table class="table-condensed" style="font-size:16px;border-style: solid;border-color: '+mycol+';border-width: 0px;color:'+mycol+'">';
-				topinfo +='<tr><td>Cost: </td><td>$'+d3.format(",.0f")(overall_cost)+'</td><td>Leakage: </td><td>'+leakage+'</td><td>Max age: </td><td>'+(water_age).toFixed(2)+'</td><td>Pressure deficit: </td><td>'+(pressure_deficit).toFixed(2)+'</td><td>No. deficit nodes: </td><td>'+nb_deficit_nodes+'</td></tr></table>'
-				document.getElementById('info-top').innerHTML=topinfo;	
-				// update myhistory + selectvar 
-				
-				var compact_history_start=data.result.slice(1, 10);
-				var compact_history_end= {};
-				for (var i=data.result.length-1-(pipes_nb*3),j=data.result.length-1;i<j;i+=3){
-					if (data.result[i+2]!=-1 && data.result[i]!="" && data.result[i]!=null){
-						compact_history_end[data.result[i]]=data.result[i+2];
-					}
-				}
-				myhistory.push([compact_history_start, compact_history_end])
-				var opt = document.createElement('option');
-				opt.value = myhistory.length-1;
-				//console.log(myhistory[myhistory.length-1][0][4])
-				opt.innerHTML = "result "+(myhistory.length)+" - cost "+parseFloat(myhistory[myhistory.length-1][0][4]).toFixed(1)+" - Pressure diff "+parseFloat(myhistory[myhistory.length-1][0][6]).toFixed(1)+"- age "+parseFloat(myhistory[myhistory.length-1][0][6]).toFixed(1)+" - leakage "+parseFloat(myhistory[myhistory.length-1][0][5]).toFixed(2);
-				mySelect.appendChild(opt);
-				mySelect.value = myhistory.length-1;
-			}
-			else if (game.game_mode=='aqualibrium'){
-				if (myuser.name==data.name){
-					console.log("active")
-					overall_score=parseFloat(data.result[8]);
-					reservoir_1=parseFloat(data.result[5]);
-					reservoir_2=parseFloat(data.result[6]);
-					reservoir_3=parseFloat(data.result[7]);
-					if (data.result[9]===true || data.result[9]==='true' || data.result[9]==="true"){
-						score_valid=true;
 					}
 					
 					//console.log(user_junctions_data)
 					user_latest_diameters={};
-					var indp=10;
+					user_pipes_leakage={};
 					for (var i =0; i<pipes_nb;i++){
 						var pid= data.result[indp];
+						indp++;
+						var mleakage= parseFloat(data.result[indp]);
 						indp++;
 						var pipediam= parseInt(data.result[indp]);
 						indp++;
 						if (pid){
 							if (all_changeable_pipes.hasOwnProperty(pid)){
-								//console.log(pipediam)
 								if (pipediam!=-1 && pipediam!='-1'){
-									
 									user_latest_diameters[pid]=pipediam;
 									team_latest_diameters[pid]=pipediam;
 								}
@@ -9918,17 +9763,16 @@
 									team_latest_diameters[pid]=pipediam;
 								}
 								else{
-									if (team_latest_diameters[pid]){
-										team_latest_diameters[pid]=diameters_2_index[all_pipes[pid]['Diameter']];
-									}
+									team_latest_diameters[pid]=diameters_2_index[all_pipes[pid]['Diameter']];
 								}
 							}
+							user_pipes_leakage[pid]=mleakage;
+							team_pipes_leakage[pid]=mleakage;
 						}
 					}
-					//console.log(user_latest_diameters)
-					//console.log(team_latest_diameters)
+					//console.log(team_latest_diameters[163])
 					// update color of junctions
-					//updatePressureNodesColors();
+					updatePressureNodesColors();
 					
 					// update pipes not under control of the user after the whole team network is changed
 					// the user pipes diameters should not be changed by the team update
@@ -9944,8 +9788,8 @@
 						var l_scene = scene.children[0].children.length;		
 						for (var s =0;s<l_scene;s++){
 							if (scene.children[0].children[s].name){
-								if(scene.children[0].children[s].name.startsWith('pc-')) {
-									var cpipe= scene.children[0].children[s].name.split('pc-')[1];
+								if(scene.children[0].children[s].name.startsWith('pf-')) {
+									var cpipe= scene.children[0].children[s].name.split('pf-')[1];
 									var index_diameter=0;
 									if (_.isEmpty(user_latest_diameters)){
 										index_diameter=team_latest_diameters[cpipe];
@@ -9959,24 +9803,7 @@
 										}
 										
 									}
-									//console.log(index_diameter)
-									if (index_diameter === undefined) {
-										index_diameter=0;
-										
-									}
-									//console.log(index_diameter)
-									//var material;// = new THREE.LineBasicMaterial( { color : default_col, linewidth:2+(index_diameter/4), opacity: 0.7 } );
-									if (index_diameter==0){
-										material = new THREE.LineBasicMaterial( { color : def_line_col, linewidth:2+(index_diameter/(network['pipe_diameters'].length/5)), opacity: 1.0 } );
-									}
-									else if (index_diameter==1){
-										material = new THREE.LineBasicMaterial( { color : def_line_col, linewidth:6, opacity: 1.0 } );
-									}
-									else if (index_diameter==2){
-										material = new THREE.LineBasicMaterial( { color : def_line_col, linewidth:2+(index_diameter*8), opacity: 1.0 } );
-									}
-									
-									//var material = new THREE.LineBasicMaterial( { color : def_line_col, linewidth:2+(index_diameter/4), opacity: 0.7 } );
+									var material = new THREE.LineBasicMaterial( { color : def_line_col, linewidth:2+(index_diameter/4), opacity: 0.7 } );
 									scene.children[0].children[s].material=material;
 								}
 							}
@@ -9993,21 +9820,7 @@
 										var cpipe= m_group[s].name.split('pf-')[1];
 										var array_points=[];
 										for (var i=0;i< all_pipes[cpipe]['Vertices'].length;i++ ){
-											 //array_points.push( new THREE.Vector3(((parseFloat(all_pipes[cpipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),0, ((parseFloat(all_pipes[cpipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
-											var ypos=0.0;
-											if (game.game_mode=='aqualibrium'){
-												if (i==0 && all_fixed_pipes[cpipe]['Node1']=='Source'){
-													ypos = -10-((20)*0.5);
-												}
-												else if (i==1 && all_fixed_pipes[cpipe]['Node2']=='Source'){
-													ypos = -10-((20)*0.5);
-												}
-												
-											}
-											else{
-												
-											}
-											array_points.push( new THREE.Vector3(((parseFloat(all_fixed_pipes[cpipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),ypos, ((parseFloat(all_fixed_pipes[cpipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
+											 array_points.push( new THREE.Vector3(((parseFloat(all_pipes[cpipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),0, ((parseFloat(all_pipes[cpipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
 										}
 										var curve = new THREE.CatmullRomCurve3(array_points);
 										var index_diameter=0;
@@ -10043,139 +9856,293 @@
 								
 							}
 						}
-						updatePipesColors();	
 					}
-					
-					res1_bar0.transition(200)
-					  .attr("y", (((d3_height *0.4)-range_res((reservoir_1)))+95))//.attr("y", (7))
-					  .attr("height", range_res((reservoir_1)));
-					res2_bar0.transition(200)
-					  .attr("y", (((d3_height *0.4)-range_res((reservoir_2)))+95))//.attr("y", (7))
-					  .attr("height", range_res((reservoir_2)));
-					res3_bar0.transition(200)
-					  .attr("y", (((d3_height *0.4)-range_res((reservoir_3)))+95))//.attr("y", (7))
-					  .attr("height", range_res((reservoir_3)));
-					res1_text.text((reservoir_1).toFixed(3));
-					res2_text.text((reservoir_2).toFixed(3));  
-					res3_text.text((reservoir_3).toFixed(3));  	
+					updatePipesColors();	
 					// update topinfo message with total cost etc...
 					var topinfo = '';
 					topinfo +='<table class="table-condensed" style="font-size:16px;border-style: solid;border-color: '+mycol+';border-width: 0px;color:'+mycol+'">';
-					topinfo +='<tr><td>Score: </td><td>'+parseFloat(overall_score).toFixed(3)+'</td><td>Reservoir 1: </td><td>'+(reservoir_1).toFixed(5)+'</td><td>Reservoir 2: </td><td>'+(reservoir_2).toFixed(5)+'</td><td>Reservoir 3: </td><td>'+(reservoir_3).toFixed(5)+'</td></tr></table>'
+					topinfo +='<tr><td>Cost: </td><td>$'+d3.format(",.0f")(overall_cost)+'</td><td>Leakage: </td><td>'+leakage+'</td><td>Max age: </td><td>'+(water_age).toFixed(2)+'</td><td>Pressure deficit: </td><td>'+(pressure_deficit).toFixed(2)+'</td><td>No. deficit nodes: </td><td>'+nb_deficit_nodes+'</td></tr></table>'
 					document.getElementById('info-top').innerHTML=topinfo;	
 					// update myhistory + selectvar 
-					//console.log(data.result)
+					
 					var compact_history_start=data.result.slice(1, 10);
-					//console.log(compact_history_start)
 					var compact_history_end= {};
-					for (var i=data.result.length-1-(changeable_pipes_nb*2),j=data.result.length-1;i<j;i+=2){
-						if (data.result[i+1]!=-1 && data.result[i]!="" && data.result[i]!=null){
-							compact_history_end[data.result[i]]=parseInt(data.result[i+1]);
+					for (var i=data.result.length-1-(pipes_nb*3),j=data.result.length-1;i<j;i+=3){
+						if (data.result[i+2]!=-1 && data.result[i]!="" && data.result[i]!=null){
+							compact_history_end[data.result[i]]=data.result[i+2];
 						}
 					}
-					//console.log(compact_history_end)
 					myhistory.push([compact_history_start, compact_history_end])
 					var opt = document.createElement('option');
 					opt.value = myhistory.length-1;
-					//opt.innerHTML = "result "+(myhistory.length)+" - cost "+parseFloat(myhistory[myhistory.length-1][0][3]).toFixed(1)+" - Pressure diff "+parseFloat(myhistory[myhistory.length-1][0][6]).toFixed(1)+"- age "+parseFloat(myhistory[myhistory.length-1][0][5]).toFixed(1)+" - leakage "+parseFloat(myhistory[myhistory.length-1][0][4]).toFixed(2);
-					opt.innerHTML = "result "+(myhistory.length)+" - score "+parseFloat(myhistory[myhistory.length-1][0][7]).toFixed(3)+" - res1 "+parseFloat(myhistory[myhistory.length-1][0][4]).toFixed(3)+"- res2 "+parseFloat(myhistory[myhistory.length-1][0][5]).toFixed(3)+" - res3 "+parseFloat(myhistory[myhistory.length-1][0][6]).toFixed(3);
+					//console.log(myhistory[myhistory.length-1][0][4])
+					opt.innerHTML = "result "+(myhistory.length)+" - cost "+parseFloat(myhistory[myhistory.length-1][0][4]).toFixed(1)+" - Pressure diff "+parseFloat(myhistory[myhistory.length-1][0][6]).toFixed(1)+"- age "+parseFloat(myhistory[myhistory.length-1][0][6]).toFixed(1)+" - leakage "+parseFloat(myhistory[myhistory.length-1][0][5]).toFixed(2);
 					mySelect.appendChild(opt);
 					mySelect.value = myhistory.length-1;
-					updateReservoirsLevels();
 				}
-			}
-			else if (game.game_mode=='nyc'){
-				//console.log(data.result)
-				overall_cost=parseFloat(data.result[5]);
-				pressure_deficit=parseFloat(data.result[6]);
-				nb_deficit_nodes = parseInt(data.result[7]);
-				//nb_deficit_nodes=0;
-				user_junctions_data={};
-				user_latest_diameters={};
-				var indp=8;
-				for (var i =0; i<21;i++){
-					var pid= data.result[indp];
-					indp++;
-					var pipediam= parseInt(data.result[indp]);
-					indp++;
-					if (pid){
-						if (pipediam!=-1){
-							user_latest_diameters[pid]=pipediam;
-							team_latest_diameters[pid]=pipediam;
+				else if (game.game_mode=='aqualibrium'){
+					if (myuser.name==data.name){
+						console.log("active")
+						overall_score=parseFloat(data.result[8]);
+						reservoir_1=parseFloat(data.result[5]);
+						reservoir_2=parseFloat(data.result[6]);
+						reservoir_3=parseFloat(data.result[7]);
+						if (data.result[9]===true || data.result[9]==='true' || data.result[9]==="true"){
+							score_valid=true;
 						}
-						else{
-							//console.log(pid)
-							team_latest_diameters[pid]=diameters_2_index[all_pipes[pid]['Diameter']];
-						}
-					}
-				}
-				for (var i =0; i<junctions_nb;i++){
-					var jid= data.result[indp]
-					indp++;
-					var psi= parseFloat(data.result[indp]);
-					indp++;
-					if (jid){
-						user_junctions_data[jid]=[psi];
-						team_junctions_data[jid]=[psi];
-					}
-				}
-				
-				//console.log(team_latest_diameters[163])
-				// update color of junctions
-				updatePressureNodesColors();
-				
-				// update pipes not under control of the user after the whole team network is changed
-				// the user pipes diameters should not be changed by the team update
-				var def_line_col;
-				// lines
-				if (UIColor=="black"){
-					def_line_col=0xffffff;
-				}
-				else if (UIColor=="white"){
-					def_line_col=0x888888;
-				}
-				if (isWebGl==false){
-					var l_scene = scene.children[0].children.length;		
-					for (var s =0;s<l_scene;s++){
-						if (scene.children[0].children[s].name){
-							if(scene.children[0].children[s].name.startsWith('pf-')) {
-								var cpipe= scene.children[0].children[s].name.split('pf-')[1];
-								var index_diameter=0;
-								if (_.isEmpty(user_latest_diameters)){
-									index_diameter=team_latest_diameters[cpipe];
-								}
-								else{
-									if (user_latest_diameters.hasOwnProperty(cpipe)){
-										index_diameter=user_latest_diameters[cpipe];
+						
+						//console.log(user_junctions_data)
+						user_latest_diameters={};
+						var indp=10;
+						for (var i =0; i<pipes_nb;i++){
+							var pid= data.result[indp];
+							indp++;
+							var pipediam= parseInt(data.result[indp]);
+							indp++;
+							if (pid){
+								if (all_changeable_pipes.hasOwnProperty(pid)){
+									//console.log(pipediam)
+									if (pipediam!=-1 && pipediam!='-1'){
+										
+										user_latest_diameters[pid]=pipediam;
+										team_latest_diameters[pid]=pipediam;
 									}
 									else{
-										index_diameter=team_latest_diameters[cpipe];
+										delete user_latest_diameters[pid];
+										team_latest_diameters[pid]=pipediam;
+									}
+								}
+								else{
+									if (pipediam!=-1 && pipediam!='-1'){
+										
+										team_latest_diameters[pid]=pipediam;
+									}
+									else{
+										if (team_latest_diameters[pid]){
+											team_latest_diameters[pid]=diameters_2_index[all_pipes[pid]['Diameter']];
+										}
+									}
+								}
+							}
+						}
+						//console.log(user_latest_diameters)
+						//console.log(team_latest_diameters)
+						// update color of junctions
+						//updatePressureNodesColors();
+						
+						// update pipes not under control of the user after the whole team network is changed
+						// the user pipes diameters should not be changed by the team update
+						var def_line_col;
+						// lines
+						if (UIColor=="black"){
+							def_line_col=0xffffff;
+						}
+						else if (UIColor=="white"){
+							def_line_col=0x888888;
+						}
+						if (isWebGl==false){
+							var l_scene = scene.children[0].children.length;		
+							for (var s =0;s<l_scene;s++){
+								if (scene.children[0].children[s].name){
+									if(scene.children[0].children[s].name.startsWith('pc-')) {
+										var cpipe= scene.children[0].children[s].name.split('pc-')[1];
+										var index_diameter=0;
+										if (_.isEmpty(user_latest_diameters)){
+											index_diameter=team_latest_diameters[cpipe];
+										}
+										else{
+											if (user_latest_diameters.hasOwnProperty(cpipe)){
+												index_diameter=user_latest_diameters[cpipe];
+											}
+											else{
+												index_diameter=team_latest_diameters[cpipe];
+											}
+											
+										}
+										//console.log(index_diameter)
+										if (index_diameter === undefined) {
+											index_diameter=0;
+											
+										}
+										//console.log(index_diameter)
+										//var material;// = new THREE.LineBasicMaterial( { color : default_col, linewidth:2+(index_diameter/4), opacity: 0.7 } );
+										if (index_diameter==0){
+											material = new THREE.LineBasicMaterial( { color : def_line_col, linewidth:2+(index_diameter/(network['pipe_diameters'].length/5)), opacity: 1.0 } );
+										}
+										else if (index_diameter==1){
+											material = new THREE.LineBasicMaterial( { color : def_line_col, linewidth:6, opacity: 1.0 } );
+										}
+										else if (index_diameter==2){
+											material = new THREE.LineBasicMaterial( { color : def_line_col, linewidth:2+(index_diameter*8), opacity: 1.0 } );
+										}
+										
+										//var material = new THREE.LineBasicMaterial( { color : def_line_col, linewidth:2+(index_diameter/4), opacity: 0.7 } );
+										scene.children[0].children[s].material=material;
+									}
+								}
+							}
+						}
+						else{
+							var m_group= scene.children[3].children;
+							var l_scene = m_group.length;
+							//console.log(l_scene)
+							for (var s =0;s<l_scene;s++){
+								if (m_group[s].type=="Mesh" ){
+									if (m_group[s].name){ //&& (m_group[s].name=='pc-'+cpipe)) {
+										if(m_group[s].name.startsWith('pf-')) {
+											var cpipe= m_group[s].name.split('pf-')[1];
+											var array_points=[];
+											for (var i=0;i< all_pipes[cpipe]['Vertices'].length;i++ ){
+												 //array_points.push( new THREE.Vector3(((parseFloat(all_pipes[cpipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),0, ((parseFloat(all_pipes[cpipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
+												var ypos=0.0;
+												if (game.game_mode=='aqualibrium'){
+													if (i==0 && all_fixed_pipes[cpipe]['Node1']=='Source'){
+														ypos = -10-((20)*0.5);
+													}
+													else if (i==1 && all_fixed_pipes[cpipe]['Node2']=='Source'){
+														ypos = -10-((20)*0.5);
+													}
+													
+												}
+												else{
+													
+												}
+												array_points.push( new THREE.Vector3(((parseFloat(all_fixed_pipes[cpipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),ypos, ((parseFloat(all_fixed_pipes[cpipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
+											}
+											var curve = new THREE.CatmullRomCurve3(array_points);
+											var index_diameter=0;
+											if (_.isEmpty(user_latest_diameters)){
+												 index_diameter=team_latest_diameters[cpipe];
+											}
+											else{
+												if (user_latest_diameters.hasOwnProperty(cpipe)){
+													index_diameter=user_latest_diameters[cpipe];
+												}
+												else{
+													index_diameter=team_latest_diameters[cpipe];
+												}
+												
+											}
+											var rad=0.8+(index_diameter/(network['pipe_diameters'].length/3));
+											var seg =1;
+											if (array_points.length>2){
+												seg = 12;
+											}
+											var geometry = new THREE.TubeGeometry(
+												curve,  //path
+												seg,    //segments
+												rad,     //radius
+												8,     //radiusSegments
+												false  //closed
+											);
+											geometry.dynamic = true;
+											m_group[s].geometry=geometry;
+											
+										}
 									}
 									
 								}
-								var material = new THREE.LineBasicMaterial( { color : def_line_col, linewidth:2+(index_diameter/4), opacity: 0.7 } );
-								scene.children[0].children[s].material=material;
+							}
+							updatePipesColors();	
+						}
+						
+						res1_bar0.transition(200)
+						  .attr("y", (((d3_height *0.4)-range_res((reservoir_1)))+95))//.attr("y", (7))
+						  .attr("height", range_res((reservoir_1)));
+						res2_bar0.transition(200)
+						  .attr("y", (((d3_height *0.4)-range_res((reservoir_2)))+95))//.attr("y", (7))
+						  .attr("height", range_res((reservoir_2)));
+						res3_bar0.transition(200)
+						  .attr("y", (((d3_height *0.4)-range_res((reservoir_3)))+95))//.attr("y", (7))
+						  .attr("height", range_res((reservoir_3)));
+						res1_text.text((reservoir_1).toFixed(3));
+						res2_text.text((reservoir_2).toFixed(3));  
+						res3_text.text((reservoir_3).toFixed(3));  	
+						// update topinfo message with total cost etc...
+						var topinfo = '';
+						topinfo +='<table class="table-condensed" style="font-size:16px;border-style: solid;border-color: '+mycol+';border-width: 0px;color:'+mycol+'">';
+						topinfo +='<tr><td>Score: </td><td>'+parseFloat(overall_score).toFixed(3)+'</td><td>Reservoir 1: </td><td>'+(reservoir_1).toFixed(5)+'</td><td>Reservoir 2: </td><td>'+(reservoir_2).toFixed(5)+'</td><td>Reservoir 3: </td><td>'+(reservoir_3).toFixed(5)+'</td></tr></table>'
+						document.getElementById('info-top').innerHTML=topinfo;	
+						// update myhistory + selectvar 
+						//console.log(data.result)
+						var compact_history_start=data.result.slice(1, 10);
+						//console.log(compact_history_start)
+						var compact_history_end= {};
+						for (var i=data.result.length-1-(changeable_pipes_nb*2),j=data.result.length-1;i<j;i+=2){
+							if (data.result[i+1]!=-1 && data.result[i]!="" && data.result[i]!=null){
+								compact_history_end[data.result[i]]=parseInt(data.result[i+1]);
+							}
+						}
+						//console.log(compact_history_end)
+						myhistory.push([compact_history_start, compact_history_end])
+						var opt = document.createElement('option');
+						opt.value = myhistory.length-1;
+						//opt.innerHTML = "result "+(myhistory.length)+" - cost "+parseFloat(myhistory[myhistory.length-1][0][3]).toFixed(1)+" - Pressure diff "+parseFloat(myhistory[myhistory.length-1][0][6]).toFixed(1)+"- age "+parseFloat(myhistory[myhistory.length-1][0][5]).toFixed(1)+" - leakage "+parseFloat(myhistory[myhistory.length-1][0][4]).toFixed(2);
+						opt.innerHTML = "result "+(myhistory.length)+" - score "+parseFloat(myhistory[myhistory.length-1][0][7]).toFixed(3)+" - res1 "+parseFloat(myhistory[myhistory.length-1][0][4]).toFixed(3)+"- res2 "+parseFloat(myhistory[myhistory.length-1][0][5]).toFixed(3)+" - res3 "+parseFloat(myhistory[myhistory.length-1][0][6]).toFixed(3);
+						mySelect.appendChild(opt);
+						mySelect.value = myhistory.length-1;
+						updateReservoirsLevels();
+					}
+				}
+				else if (game.game_mode=='nyc'){
+					//console.log(data.result)
+					overall_cost=parseFloat(data.result[5]);
+					pressure_deficit=parseFloat(data.result[6]);
+					nb_deficit_nodes = parseInt(data.result[7]);
+					//nb_deficit_nodes=0;
+					user_junctions_data={};
+					user_latest_diameters={};
+					var indp=8;
+					for (var i =0; i<21;i++){
+						var pid= data.result[indp];
+						indp++;
+						var pipediam= parseInt(data.result[indp]);
+						indp++;
+						if (pid){
+							if (pipediam!=-1){
+								user_latest_diameters[pid]=pipediam;
+								team_latest_diameters[pid]=pipediam;
+							}
+							else{
+								//console.log(pid)
+								team_latest_diameters[pid]=diameters_2_index[all_pipes[pid]['Diameter']];
 							}
 						}
 					}
-				}
-				else{
-					var m_group= scene.children[3].children;
-					var l_scene = m_group.length;
-					//console.log(l_scene)
-					for (var s =0;s<l_scene;s++){
-						if (m_group[s].type=="Mesh" ){
-							if (m_group[s].name){ //&& (m_group[s].name=='pc-'+cpipe)) {
-								if(m_group[s].name.startsWith('pf-')) {
-									var cpipe= m_group[s].name.split('pf-')[1];
-									var array_points=[];
-									for (var i=0;i< all_pipes[cpipe]['Vertices'].length;i++ ){
-										 array_points.push( new THREE.Vector3(((parseFloat(all_pipes[cpipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),0, ((parseFloat(all_pipes[cpipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
-									}
-									var curve = new THREE.CatmullRomCurve3(array_points);
+					for (var i =0; i<junctions_nb;i++){
+						var jid= data.result[indp]
+						indp++;
+						var psi= parseFloat(data.result[indp]);
+						indp++;
+						if (jid){
+							user_junctions_data[jid]=[psi];
+							team_junctions_data[jid]=[psi];
+						}
+					}
+					
+					//console.log(team_latest_diameters[163])
+					// update color of junctions
+					updatePressureNodesColors();
+					
+					// update pipes not under control of the user after the whole team network is changed
+					// the user pipes diameters should not be changed by the team update
+					var def_line_col;
+					// lines
+					if (UIColor=="black"){
+						def_line_col=0xffffff;
+					}
+					else if (UIColor=="white"){
+						def_line_col=0x888888;
+					}
+					if (isWebGl==false){
+						var l_scene = scene.children[0].children.length;		
+						for (var s =0;s<l_scene;s++){
+							if (scene.children[0].children[s].name){
+								if(scene.children[0].children[s].name.startsWith('pf-')) {
+									var cpipe= scene.children[0].children[s].name.split('pf-')[1];
 									var index_diameter=0;
 									if (_.isEmpty(user_latest_diameters)){
-										 index_diameter=team_latest_diameters[cpipe];
+										index_diameter=team_latest_diameters[cpipe];
 									}
 									else{
 										if (user_latest_diameters.hasOwnProperty(cpipe)){
@@ -10186,68 +10153,102 @@
 										}
 										
 									}
-									var rad=0.8+(index_diameter/(network['pipe_diameters'].length/3));
-									var seg =1;
-									if (array_points.length>2){
-										seg = 12;
-									}
-									var geometry = new THREE.TubeGeometry(
-										curve,  //path
-										seg,    //segments
-										rad,     //radius
-										8,     //radiusSegments
-										false  //closed
-									);
-									geometry.dynamic = true;
-									m_group[s].geometry=geometry;
-									
+									var material = new THREE.LineBasicMaterial( { color : def_line_col, linewidth:2+(index_diameter/4), opacity: 0.7 } );
+									scene.children[0].children[s].material=material;
 								}
 							}
-							
 						}
 					}
-				}
-				updatePipesColors();	
-				updatePressureNodesColors()	;
-				// update topinfo message with total cost etc...
-				var topinfo = '';
-				topinfo +='<table class="table-condensed" style="font-size:16px;border-style: solid;border-color: '+mycol+';border-width: 0px;color:'+mycol+'">';
-				topinfo +='<tr><td>Cost: </td><td>'+d3.format(",.0f")(parseFloat(overall_cost))+'</td><td>Pressure deficit: </td><td>'+(pressure_deficit).toFixed(2)+' PSI</td><td>No. deficit nodes: </td><td>'+(nb_deficit_nodes).toFixed(0)+'</td></tr></table>'
-				document.getElementById('info-top').innerHTML=topinfo;	
-				// update myhistory + selectvar 
-				res1_bar0.transition(200)
-				  .attr("y", (((d3_height *0.4)-range_cost((overall_cost)))+95))//.attr("y", (7))
-				  .attr("height", range_cost((overall_cost)));
-				res2_bar0.transition(200)
-				  .attr("y", (((d3_height *0.4)-range_diff((pressure_deficit)))+95))//.attr("y", (7))
-				  .attr("height", range_diff((pressure_deficit)));
-				res3_bar0.transition(200)
-				  .attr("y", (((d3_height *0.4)-range_nodes((nb_deficit_nodes)))+95))//.attr("y", (7))
-				  .attr("height", range_nodes((nb_deficit_nodes)));
-				res1_text.text(''+d3.format(".2s")(overall_cost));
-				res2_text.text((pressure_deficit).toFixed(2));  
-				res3_text.text((nb_deficit_nodes).toFixed(0));
-				
-				var compact_history_start=data.result.slice(1, 8);
-				//console.log(data.result)
-				var compact_history_end= {};
-				for (var i=8,j=data.result.length-1;i<j;i+=2){
-					if (data.result[i+1]!=-1 && data.result[i]!="" && data.result[i]!=null){
-						compact_history_end[data.result[i]]=data.result[i+1];
+					else{
+						var m_group= scene.children[3].children;
+						var l_scene = m_group.length;
+						//console.log(l_scene)
+						for (var s =0;s<l_scene;s++){
+							if (m_group[s].type=="Mesh" ){
+								if (m_group[s].name){ //&& (m_group[s].name=='pc-'+cpipe)) {
+									if(m_group[s].name.startsWith('pf-')) {
+										var cpipe= m_group[s].name.split('pf-')[1];
+										var array_points=[];
+										for (var i=0;i< all_pipes[cpipe]['Vertices'].length;i++ ){
+											 array_points.push( new THREE.Vector3(((parseFloat(all_pipes[cpipe]['Vertices'][i][0])-left_coord)*scale_3d)-(max_3d_width*0.5),0, ((parseFloat(all_pipes[cpipe]['Vertices'][i][1])-low_coord)*scale_3d)-(max_3d_width*0.5) ));
+										}
+										var curve = new THREE.CatmullRomCurve3(array_points);
+										var index_diameter=0;
+										if (_.isEmpty(user_latest_diameters)){
+											 index_diameter=team_latest_diameters[cpipe];
+										}
+										else{
+											if (user_latest_diameters.hasOwnProperty(cpipe)){
+												index_diameter=user_latest_diameters[cpipe];
+											}
+											else{
+												index_diameter=team_latest_diameters[cpipe];
+											}
+											
+										}
+										var rad=0.8+(index_diameter/(network['pipe_diameters'].length/3));
+										var seg =1;
+										if (array_points.length>2){
+											seg = 12;
+										}
+										var geometry = new THREE.TubeGeometry(
+											curve,  //path
+											seg,    //segments
+											rad,     //radius
+											8,     //radiusSegments
+											false  //closed
+										);
+										geometry.dynamic = true;
+										m_group[s].geometry=geometry;
+										
+									}
+								}
+								
+							}
+						}
 					}
+					updatePipesColors();	
+					updatePressureNodesColors()	;
+					// update topinfo message with total cost etc...
+					var topinfo = '';
+					topinfo +='<table class="table-condensed" style="font-size:16px;border-style: solid;border-color: '+mycol+';border-width: 0px;color:'+mycol+'">';
+					topinfo +='<tr><td>Cost: </td><td>'+d3.format(",.0f")(parseFloat(overall_cost))+'</td><td>Pressure deficit: </td><td>'+(pressure_deficit).toFixed(2)+' PSI</td><td>No. deficit nodes: </td><td>'+(nb_deficit_nodes).toFixed(0)+'</td></tr></table>'
+					document.getElementById('info-top').innerHTML=topinfo;	
+					// update myhistory + selectvar 
+					res1_bar0.transition(200)
+					  .attr("y", (((d3_height *0.4)-range_cost((overall_cost)))+95))//.attr("y", (7))
+					  .attr("height", range_cost((overall_cost)));
+					res2_bar0.transition(200)
+					  .attr("y", (((d3_height *0.4)-range_diff((pressure_deficit)))+95))//.attr("y", (7))
+					  .attr("height", range_diff((pressure_deficit)));
+					res3_bar0.transition(200)
+					  .attr("y", (((d3_height *0.4)-range_nodes((nb_deficit_nodes)))+95))//.attr("y", (7))
+					  .attr("height", range_nodes((nb_deficit_nodes)));
+					res1_text.text(''+d3.format(".2s")(overall_cost));
+					res2_text.text((pressure_deficit).toFixed(2));  
+					res3_text.text((nb_deficit_nodes).toFixed(0));
+					
+					var compact_history_start=data.result.slice(1, 8);
+					//console.log(data.result)
+					var compact_history_end= {};
+					for (var i=8,j=data.result.length-1;i<j;i+=2){
+						if (data.result[i+1]!=-1 && data.result[i]!="" && data.result[i]!=null){
+							compact_history_end[data.result[i]]=data.result[i+1];
+						}
+					}
+					//console.log(compact_history_end)
+					myhistory.push([compact_history_start, compact_history_end])
+					var opt = document.createElement('option');
+					opt.value = myhistory.length-1;
+					//console.log(myhistory[myhistory.length-1][0][4])
+					//opt.innerHTML = "result "+(myhistory.length)+" - cost "+parseFloat(myhistory[myhistory.length-1][0][4]).toFixed(1)+" - Pressure diff "+parseFloat(myhistory[myhistory.length-1][0][6]).toFixed(1)+"- age "+parseFloat(myhistory[myhistory.length-1][0][6]).toFixed(1)+" - leakage "+parseFloat(myhistory[myhistory.length-1][0][5]).toFixed(2);
+					//console.log(myhistory[myhistory.length-1])
+					opt.innerHTML = "result "+(myhistory.length)+" - cost "+d3.format(".2s")(parseFloat(myhistory[myhistory.length-1][0][4]))+" - Pressure diff "+parseFloat(myhistory[myhistory.length-1][0][5]).toFixed(2)+"- neg nodes "+parseInt(myhistory[myhistory.length-1][0][6]);
+					mySelect.appendChild(opt);
+					mySelect.value = myhistory.length-1;
 				}
-				//console.log(compact_history_end)
-				myhistory.push([compact_history_start, compact_history_end])
-				var opt = document.createElement('option');
-				opt.value = myhistory.length-1;
-				//console.log(myhistory[myhistory.length-1][0][4])
-				//opt.innerHTML = "result "+(myhistory.length)+" - cost "+parseFloat(myhistory[myhistory.length-1][0][4]).toFixed(1)+" - Pressure diff "+parseFloat(myhistory[myhistory.length-1][0][6]).toFixed(1)+"- age "+parseFloat(myhistory[myhistory.length-1][0][6]).toFixed(1)+" - leakage "+parseFloat(myhistory[myhistory.length-1][0][5]).toFixed(2);
-				//console.log(myhistory[myhistory.length-1])
-				opt.innerHTML = "result "+(myhistory.length)+" - cost "+d3.format(".2s")(parseFloat(myhistory[myhistory.length-1][0][4]))+" - Pressure diff "+parseFloat(myhistory[myhistory.length-1][0][5]).toFixed(2)+"- neg nodes "+parseInt(myhistory[myhistory.length-1][0][6]);
-				mySelect.appendChild(opt);
-				mySelect.value = myhistory.length-1;
+				updateSpreadSheet();
 			}
-			updateSpreadSheet();
 		}
 		else if ( ((team==myuser.name) ||(game.players_teams[data.name] && team==game.players_teams[data.name]['team'])) && (data.game==game.name) && (data.type=='d' || data.type=='D')){
 			console.log('User `' + data.name + '` changed dm team network status with a network evaluation - new result available');
